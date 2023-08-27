@@ -1,4 +1,3 @@
-python -m pytest
 sh ./tests/test_01_a_rdf_enpkg_metadata_indi.sh
 sh ./tests/test_02_a_rdf_features_indi.sh
 sh ./tests/test_03_rdf_csi_annotations_indi.sh
