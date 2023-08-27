@@ -1,0 +1,31 @@
+paths:
+  - path_to_data: '/home/allardpm/git_repos/ENPKG/enpkg_sirius_canopus/tests/data/enpkg_mn_isdb_taxo_output/output' # Path to files to process
+  - path_to_sirius: '/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
+options:
+  - sirius_version: 5 # Sirius version: 4 or 5
+  - ionization: 'pos' # Ionization mode to process: pos or neg
+  - sirius_command_arg:  "-i {file} --output {output_name} --maxmz 800 formula --ppm-max 10 \
+ --profile orbitrap --candidates 10 --tree-timeout 50 --compound-timeout 500 --ions-considered [M+H3N+H]+,[M+H]+,[M+K]+,[M+Na]+,[M+NH4]+ \
+ --ions-enforced [M+H]+ zodiac fingerprint structure --db bio canopus write-summaries --output {output_name}"
+        # Don't change input and output parameters
+  - recompute: True # Recompute files for which output directory (with the same prefix) already exists: True of False (no quotes)
+  - zip_output: True # Zip individual features outputs to save disk space: True of False (no quotes)
+
+# Example command for sirius 4:
+
+# pos
+# sirius -i {file} --output {output_name} --maxmz 800 formula --ppm-max 10 \
+# --profile orbitrap --candidates 10 --tree-timeout 50 --compound-timeout 500 --ions-considered [M+H3N+H]+,[M+H]+,[M+K]+,[M+Na]+,[M+NH4]+ \
+# --ions-enforced [M+H]+ zodiac structure --database bio canopus
+
+# Example command for sirius 5:
+
+# pos
+# "sirius -i {file} --output {output_name} --maxmz 800 formula --ppm-max 10 \
+# --profile orbitrap --candidates 10 --tree-timeout 50 --compound-timeout 500 --ions-considered [M+H3N+H]+,[M+H]+,[M+K]+,[M+Na]+,[M+NH4]+ \
+# --ions-enforced [M+H]+ zodiac fingerprint structure --db bio canopus write-summaries --output {output_name}"
+
+# neg
+# "sirius -i {file} --output {output_name} --maxmz 800 formula --ppm-max 10 \
+# --profile orbitrap --candidates 10 --tree-timeout 50 --compound-timeout 500 --ions-considered [M-H+K-H]-,[M-H]-,[M-H+Na-H]- \
+# --ions-enforced [M-H]- zodiac fingerprint structure --db bio canopus write-summaries --output {output_name}"

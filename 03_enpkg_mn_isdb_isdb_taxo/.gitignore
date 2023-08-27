@@ -1,0 +1,11 @@
+.DS_Store
+*.json
+db_metadata/*
+db_spectra/*
+data_loc/*
+!data_loc/adducts.tsv
+src/__pycache__/
+user/
+
+tests/__pycache__
+tests/data

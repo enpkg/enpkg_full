@@ -1,0 +1,19 @@
+name: sirius_canopus_single_files
+channels:
+  - defaults
+  - conda-forge
+  - anaconda
+dependencies:
+  - python==3.9
+  - numpy==1.24.3
+  - pandas==1.5.3
+  - scikit-learn==1.2.2
+  - scipy==1.10.1
+  - seaborn==0.12.2
+  - matplotlib==3.7.1
+  - pyyaml==6.0
+  - tqdm==4.65.0
+  - pip:
+    -GitPython==3.1.31
+
+prefix: \opt\anaconda3\envs\sirius_canopus_single_files

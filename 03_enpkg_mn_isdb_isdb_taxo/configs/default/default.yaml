@@ -1,0 +1,35 @@
+# parameters
+general_params:
+  recompute: True  # Recompute for samples with results already done
+  ionization_mode: 'pos' # ionization mode to treat
+
+paths:
+  repository_path: 'Path\to\your\data\' # Path where samples are located
+  taxo_db_metadata_path: db_metadata/220525_frozen_metadata.csv.gz  # Path to your spectral library file
+  spectral_db_pos_path: db_spectra/isdb_pos.mgf # Path to the metadata of the spectral file in PI mode
+  spectral_db_neg_path: db_spectra/isdb_neg.mgf # Path to the metadata of the spectral file in NI mode
+  adducts_pos_path: data_loc/220525_frozen_metadata/220525_frozen_metadata_adducts_pos.tsv.gz # Path to the adducts file in pos mode
+  adducts_neg_path: data_loc/220525_frozen_metadata/220525_frozen_metadata_adducts_neg.tsv.gz # Path to the adducts file in neg mode
+
+spectral_match_params:
+  parent_mz_tol: 0.01 # the parent mass tolerance to use for spectral matching (in Da) (if cosine)
+  msms_mz_tol: 0.01 # the msms mass tolerance to use for spectral matching (in Da) (if cosine)
+  min_score: 0.2 # the minimal cosine to use for spectral matching (if cosine)
+  min_peaks: 6 # the minimal matching peaks number to use for spectral matching (if cosine)
+
+networking_params:
+  mn_msms_mz_tol: 0.01 # the msms mass tolerance to use for spectral matching (in Da)
+  mn_score_cutoff: 0.7 # the minimal modified cosine score for edge creation
+  mn_max_links: 10 # Consider edge between spectrumA and spectrumB if score falls into top_n for spectrumA and spectrumB
+  mn_top_n: 15 # Maximum number of links to add per node.
+
+reweighting_params:
+  top_to_output: 1 # Number of candidate structures to output for each feature
+  ppm_tol_ms1: 2 # Tolerance for MS1 matching (adducts)
+  use_post_taxo: True # Use cluster chemical consistency after taxonomical reweighting (True or False)
+  top_N_chemical_consistency: 15 # Top N candidates to consider for cluster chemical consistency 
+  min_score_taxo_ms1: 8 # Minimal taxonomical score for MS1-only candidates (6: family, 7 genus, 8 species)
+  min_score_chemo_ms1: 2 # Minimum chemical consistency score (1 = NPClassifier pathway level consistency, 2 = NPClassifier superclass level consistency, 3 = NPClassifier class level consistency )
+  msms_weight: 4 # A weight attributed to the spectral score
+  taxo_weight: 1 # A weight attributed to the taxonomical score
+  chemo_weight: 0.5 # A weight attributed to the chemical consistency score

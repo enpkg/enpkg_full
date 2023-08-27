@@ -1,0 +1,5 @@
+sample_filename_pos	sample_id	source_id  sample_type	source_taxon
+211027_AG_ZC_Blank_pos_20211028131401.mzML	  AG_ZC_Blank_01	blank	
+211027_AG_ZC_Blank2_pos_20211028170815.mzML 	  AG_ZC_Blank_02	blank
+211027_AG_ZC012714_pos_20211028181555.mzML	material_id1  AG_ZC012714	sample	Ailanthus altissima
+211027_AG_ZC012715_pos_20211028182535.mzML	BAS111256  AG_ZC012715	sample	Ailanthus altissima

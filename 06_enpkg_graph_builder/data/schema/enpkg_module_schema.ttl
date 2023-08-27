@@ -1,0 +1,72 @@
+@prefix rdf:            <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   .
+@prefix rdfs:           <http://www.w3.org/2000/01/rdf-schema#>         .
+@prefix xsd:            <http://www.w3.org/2001/XMLSchema#>             .
+@prefix owl:            <http://www.w3.org/2002/07/owl#>                .
+@prefix skos:           <http://www.w3.org/2004/02/skos/core#>          .
+@prefix foaf:           <http://xmlns.com/foaf/0.1/>                    .
+@prefix wd:             <http://www.wikidata.org/entity/>               .
+@prefix vann:           <http://purl.org/vocab/vann/>                   .
+@prefix dcterms:        <http://purl.org/dc/terms/>                     .
+@prefix sdo: 	        <http://schema.org/>                            .
+@prefix orcid:	        <http://orcid.org/>                             .
+@prefix void:	        <http://rdfs.org/ns/void#>                      .
+@prefix enpkg:          <https://enpkg.commons-lab.org/kg/>             .
+@prefix enpkgmodule:    <https://enpkg.commons-lab.org/module/>         .
+
+# -------------------------------------------------- #
+# Semantic Versioning 2.0.0
+# https://semver.org
+# https://dgarijo.github.io/Widoco/doc/bestPractices/index-en.html
+# -------------------------------------------------- #
+
+
+enpkgmodule:SwissTPHBioAssay a rdfs:Class ;
+	rdfs:subClassOf enpkg:BioAssayResults       ;
+	rdfs:label "SwissTPHBioAssay" ;
+	rdfs:comment "A bioasay result from Swiss Tropical and Public Health Institute (sTPH)" .
+enpkgmodule:Ldono10ugml a rdfs:Class ;
+	rdfs:subClassOf enpkgmodule:SwissTPHBioAssay       ;
+	rdfs:label "Ldono10ugml" ;
+	rdfs:comment "A screening result at 10ug/mL from a phenotypic assay against L.donovani" .
+enpkgmodule:Ldono2ugml a rdfs:Class ;
+	rdfs:subClassOf enpkgmodule:SwissTPHBioAssay       ;
+	rdfs:label "Ldono2ugml" ;
+	rdfs:comment "A screening result at 2ug/mL from a phenotypic assay against L.donovani" .
+enpkgmodule:Tbrucei10ugml a rdfs:Class ;
+	rdfs:subClassOf enpkgmodule:SwissTPHBioAssay       ;
+	rdfs:label "Tbrucei10ugml" ;
+	rdfs:comment "A screening result at 10ug/mL from a phenotypic assay against T.brucei rhodesiense" .
+enpkgmodule:Tbrucei2ugml a rdfs:Class ;
+	rdfs:subClassOf enpkgmodule:SwissTPHBioAssay       ;
+	rdfs:label "Tbrucei2ugml" ;
+	rdfs:comment "A screening result at 2ug/mL from a phenotypic assay against T.brucei rhodesiense" .
+enpkgmodule:Tcruzi10ugml a rdfs:Class ;
+	rdfs:subClassOf enpkgmodule:SwissTPHBioAssay       ;
+	rdfs:label "Tcruzi10ugml" ;
+	rdfs:comment "A screening result at 10ug/mL from a phenotypic assay against T.cruzi" .
+enpkgmodule:L610ugml a rdfs:Class ;
+	rdfs:subClassOf enpkgmodule:SwissTPHBioAssay       ;
+	rdfs:label "L610ugml" ;
+	rdfs:comment "A screening result at 10ug/mL from a phenotypic assay against L6 cells" .
+
+enpkgmodule:ChEMBLTarget a rdfs:Class ;
+	rdfs:subClassOf enpkg:XRef     ;
+	rdfs:label "A ChEMBL target"   ;
+	rdfs:comment "A ChEMBL target" .
+enpkgmodule:ChEMBLChemical a rdfs:Class ;
+	rdfs:subClassOf enpkg:XRef     ;
+	rdfs:label "A ChEMBL chemical"   ;
+	rdfs:comment "A ChEMBL chemical" .
+enpkgmodule:ChEMBLDocument a rdfs:Class ;
+	rdfs:subClassOf enpkg:XRef     ;
+	rdfs:label "A ChEMBL document"   ;
+	rdfs:comment "A ChEMBL document" .
+enpkgmodule:ChEMBLAssay a rdfs:Class ;
+	rdfs:subClassOf enpkg:XRef     ;
+	rdfs:label "A ChEMBL assay"   ;
+	rdfs:comment "A ChEMBL assay" .
+enpkgmodule:ChEMBLAssayResults a rdfs:Class ;
+	rdfs:subClassOf enpkg:XRef     ;
+	rdfs:label "A ChEMBL assay result"   ;
+	rdfs:comment "A ChEMBL assay result" .
+    
