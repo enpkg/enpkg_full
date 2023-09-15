@@ -29,6 +29,9 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-p', '--sample_dir_path', required=True,
                     help='The path to the directory where samples folders to process are located')
+# Additional argument defining the format of the files to utput (default is .ttl format, but can be .nt)
+parser.add_argument('-f', '--format', required=False, default='ttl',
+                    help='The format of the output files (default is .ttl format (ttl), but can be .nt (nt)))')
 
 args = parser.parse_args()
 sample_dir_path = os.path.normpath(args.sample_dir_path)
@@ -90,11 +93,20 @@ for directory in tqdm(samples_dir):
                 
         pathout = os.path.join(sample_dir_path, directory, "rdf/")
         os.makedirs(pathout, exist_ok=True)
-        pathout_graph = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph.ttl'))
-        merged_graph.serialize(destination=pathout_graph, format="ttl", encoding="utf-8")
+        # Save the merged graph using the format specified by the user
+        if args.format == 'ttl':
+            pathout_graph = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph.ttl'))
+            merged_graph.serialize(destination=pathout_graph, format="ttl", encoding="utf-8")
+        elif args.format == 'nt':
+            pathout_graph = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph.nt'))
+            merged_graph.serialize(destination=pathout_graph, format="nt", encoding="utf-8")
 
         hash_merged = get_hash(pathout_graph)
-        pathout_graph_hash = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph_{hash_merged}.ttl'))
+        # Save the merged graph using the format specified by the user
+        if args.format == 'ttl':
+            pathout_graph_hash = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph_{hash_merged}.ttl'))
+        elif args.format == 'nt':
+            pathout_graph_hash = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph_{hash_merged}.nt'))
         if os.path.isfile(pathout_graph_hash):
             os.remove(pathout_graph_hash)
         os.rename(pathout_graph, pathout_graph_hash)
