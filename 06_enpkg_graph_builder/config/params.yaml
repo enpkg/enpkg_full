@@ -1,0 +1,16 @@
+kg_uri : https://dbgi.vital-it.ch/
+prefix : dbgi
+wd_namespace : http://www.wikidata.org/entity/
+graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
+sample_dir_path : ../tests/data/output
+gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
+gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
+massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='
+
+# https://dashboard.gnps2.org/mspreview?usi=mzspec:MSV000087728:VGF159_H08_pos.mzXML
+
+# https://dashboard.gnps2.org/?usi=mzspec:MSV000087728:VGF159_H08_pos.mzXML
+
+# https://metabolomics-usi.gnps2.org/png/?usi1=mzspec:MSV000087728:VGF159_H08_features_ms2_pos.mgf:scan:49
+
+# http://metabolomics-usi.gnps2.org/dashinterface?usi1=mzspec:MSV000087728:VGF159_H08_features_ms2_pos.mgf:scan:49
