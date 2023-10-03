@@ -1,0 +1,511 @@
+{
+  "context": "All life",
+  "governing_code": "undefined",
+  "includes_approximate_matches": true,
+  "includes_deprecated_taxa": false,
+  "includes_suppressed_names": false,
+  "matched_names": [
+    "A",
+    "r",
+    "a",
+    "b",
+    "i",
+    "d",
+    "o",
+    "i",
+    "a",
+    "l",
+    "i",
+    "a",
+    "n",
+    "a"
+  ],
+  "results": [
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "A1",
+          "nomenclature_code": "undefined",
+          "score": 0.5,
+          "search_string": "a",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "A1",
+            "ott_id": 5247541,
+            "rank": "no rank - terminal",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "silva:AY642746/#5"
+            ],
+            "unique_name": "A1"
+          }
+        }
+      ],
+      "name": "A"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Ra",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "r",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Ichthyborus",
+            "ott_id": 961168,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [
+              "Gavialocharax",
+              "Ichthyoborus",
+              "Neoborus",
+              "Onouphrios",
+              "Phagoborus",
+              "Psalidostoma",
+              "Ra"
+            ],
+            "tax_sources": [
+              "ncbi:304035",
+              "worms:269477",
+              "gbif:2355893",
+              "irmng:1431765"
+            ],
+            "unique_name": "Ichthyborus"
+          }
+        }
+      ],
+      "name": "r"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "A1",
+          "nomenclature_code": "undefined",
+          "score": 0.5,
+          "search_string": "a",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "A1",
+            "ott_id": 5247541,
+            "rank": "no rank - terminal",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "silva:AY642746/#5"
+            ],
+            "unique_name": "A1"
+          }
+        }
+      ],
+      "name": "a"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "B7",
+          "nomenclature_code": "ICN",
+          "score": 0.5,
+          "search_string": "b",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "B7",
+            "ott_id": 5248790,
+            "rank": "no rank - terminal",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "silva:FJ914409/#6"
+            ],
+            "unique_name": "B7"
+          }
+        }
+      ],
+      "name": "b"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Ia",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "i",
+          "taxon": {
+            "flags": [
+              "sibling_higher"
+            ],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Ia",
+            "ott_id": 797469,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [
+              "Parascotomanes"
+            ],
+            "tax_sources": [
+              "ncbi:360966",
+              "gbif:2432576",
+              "irmng:1045133"
+            ],
+            "unique_name": "Ia"
+          }
+        }
+      ],
+      "name": "i"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Do",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "d",
+          "taxon": {
+            "flags": [
+              "sibling_higher"
+            ],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Do",
+            "ott_id": 6207496,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "gbif:8131492"
+            ],
+            "unique_name": "Do"
+          }
+        }
+      ],
+      "name": "d"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Oa",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "o",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Pteroptrix",
+            "ott_id": 662079,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [
+              "Aphelosoma",
+              "Apteroptrix",
+              "Archenomiscus",
+              "Archenomus",
+              "Artas",
+              "Casca",
+              "Gyrolasia",
+              "Hispaniella",
+              "Oa",
+              "Pseudopteroptrix",
+              "Pteroptrichoides",
+              "Pterothrix",
+              "Pterotrix"
+            ],
+            "tax_sources": [
+              "ncbi:1119475",
+              "gbif:1365830",
+              "irmng:1330697"
+            ],
+            "unique_name": "Pteroptrix"
+          }
+        }
+      ],
+      "name": "o"
+    },
+    {
+      "matches": [],
+      "name": "p"
+    },
+    {
+      "matches": [],
+      "name": "s"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Ia",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "i",
+          "taxon": {
+            "flags": [
+              "sibling_higher"
+            ],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Ia",
+            "ott_id": 797469,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [
+              "Parascotomanes"
+            ],
+            "tax_sources": [
+              "ncbi:360966",
+              "gbif:2432576",
+              "irmng:1045133"
+            ],
+            "unique_name": "Ia"
+          }
+        }
+      ],
+      "name": "i"
+    },
+    {
+      "matches": [],
+      "name": "s"
+    },
+    {
+      "matches": [],
+      "name": " "
+    },
+    {
+      "matches": [],
+      "name": "t"
+    },
+    {
+      "matches": [],
+      "name": "h"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "A1",
+          "nomenclature_code": "undefined",
+          "score": 0.5,
+          "search_string": "a",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "A1",
+            "ott_id": 5247541,
+            "rank": "no rank - terminal",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "silva:AY642746/#5"
+            ],
+            "unique_name": "A1"
+          }
+        }
+      ],
+      "name": "a"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "La",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "l",
+          "taxon": {
+            "flags": [
+              "sibling_higher"
+            ],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "La",
+            "ott_id": 3173504,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "gbif:1881097",
+              "irmng:1287000"
+            ],
+            "unique_name": "La"
+          }
+        }
+      ],
+      "name": "l"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Ia",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "i",
+          "taxon": {
+            "flags": [
+              "sibling_higher"
+            ],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Ia",
+            "ott_id": 797469,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [
+              "Parascotomanes"
+            ],
+            "tax_sources": [
+              "ncbi:360966",
+              "gbif:2432576",
+              "irmng:1045133"
+            ],
+            "unique_name": "Ia"
+          }
+        }
+      ],
+      "name": "i"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "A1",
+          "nomenclature_code": "undefined",
+          "score": 0.5,
+          "search_string": "a",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "A1",
+            "ott_id": 5247541,
+            "rank": "no rank - terminal",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "silva:AY642746/#5"
+            ],
+            "unique_name": "A1"
+          }
+        }
+      ],
+      "name": "a"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "Nu",
+          "nomenclature_code": "ICZN",
+          "score": 0.5,
+          "search_string": "n",
+          "taxon": {
+            "flags": [
+              "sibling_higher"
+            ],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Nu",
+            "ott_id": 7489078,
+            "rank": "genus",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "ncbi:2489059",
+              "gbif:10008615"
+            ],
+            "unique_name": "Nu"
+          }
+        }
+      ],
+      "name": "n"
+    },
+    {
+      "matches": [
+        {
+          "is_approximate_match": true,
+          "is_synonym": false,
+          "matched_name": "A1",
+          "nomenclature_code": "undefined",
+          "score": 0.5,
+          "search_string": "a",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "A1",
+            "ott_id": 5247541,
+            "rank": "no rank - terminal",
+            "source": "ott3.6draft1",
+            "synonyms": [],
+            "tax_sources": [
+              "silva:AY642746/#5"
+            ],
+            "unique_name": "A1"
+          }
+        }
+      ],
+      "name": "a"
+    }
+  ],
+  "taxonomy": {
+    "author": "open tree of life project",
+    "name": "ott",
+    "source": "ott3.6draft1",
+    "version": "3.6",
+    "weburl": "https://tree.opentreeoflife.org/about/taxonomy-version/ott3.6"
+  },
+  "unambiguous_names": [
+    "A",
+    "r",
+    "a",
+    "b",
+    "i",
+    "d",
+    "o",
+    "i",
+    "a",
+    "l",
+    "i",
+    "a",
+    "n",
+    "a"
+  ],
+  "unmatched_names": [
+    "p",
+    "s",
+    "s",
+    " ",
+    "t",
+    "h"
+  ]
+}
