@@ -5,7 +5,7 @@ def test_taxon_name():
     taxon = Taxon(taxon_name="Arabidopsis thaliana")
     assert taxon.get_taxon_name() == "Arabidopsis thaliana"
 
-def test_tnrs_lookup_oop():
-    tnrs_lookup_oop(taxon=Taxon(taxon_name="Arabidopsis thaliana"))
+def test_tnrs_lookup():
+    tnrs_lookup(taxon=Taxon(taxon_name="Arabidopsis thaliana"))
 
 

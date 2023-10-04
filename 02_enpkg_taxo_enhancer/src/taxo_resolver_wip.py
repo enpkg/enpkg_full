@@ -23,18 +23,18 @@ species_tnrs_matched = OT.tnrs_match(
 
 species_tnrs_matched.response_dict
 
-def tnrs_lookup_oop(taxon : Type[Taxon]):
+def tnrs_lookup(taxon : Type[AbstractTaxon]) -> dict:
     """ Fetches the taxonomic information for a given species name using the OpenTree Taxonomic Name Resolution Service.
 
     Parameters
     ----------
-    taxon : Type[Taxon]
+    taxon : Type[AbstractTaxon]
         The taxon to be resolved.
-    path_to_results_folders : str
-        The path to the results folder.
-    project_name : str
-        The name of the project.
 
+    Returns
+    -------
+    taxon_tnrs_matched.response_dict : dict
+        The response of the OT call.
     """
 
     # The taxon name is fetched from the taxon object
@@ -51,8 +51,8 @@ def tnrs_lookup_oop(taxon : Type[Taxon]):
     )
 
     # The response of the OT call is returned
-    print(taxon_tnrs_matched.response_dict)
-    # return taxon_tnrs_matched.response_dict
+    # print(taxon_tnrs_matched.response_dict)
+    return taxon_tnrs_matched.response_dict
 
 
 
@@ -110,6 +110,155 @@ def get_taxonomic_information_from_open_tree_of_life_id(
         path=path,
         json_kwargs=dict(indent=2, sort_keys=True),
     )
+
+def taxa_lineage_appender_wip(
+    taxon: Type[AbstractTaxon]
+):
+   """ Fetches the taxonomic information for a given species name using the OpenTree Taxonomic Name Resolution Service.
+   """
+
+    samples_metadata[organism_header].dropna(inplace=True)
+    samples_metadata[organism_header] = samples_metadata[organism_header].str.lower()
+    species = samples_metadata[organism_header].unique()
+
+    if do_taxo_resolving:
+        taxonomic_name_resolution_service_lookup(
+            species, path_to_results_folders, project_name
+        )
+
+    path = path_to_results_folders + project_name + "_species.json"
+    jsondic = compress_json.load(path)
+
+    df_species_tnrs_matched = json_normalize(
+        jsondic, record_path=["results", "matches"]
+    )
+
+    # We then want to match with the accepted name instead of the synonym in case both are present.
+    # We thus order by matched_name and then by is_synonym status prior to returning the first row.
+    if len(df_species_tnrs_matched) == 0:
+        samples_metadata["matched_name"] = "None"
+    else:
+        df_species_tnrs_matched.sort_values(
+            ["search_string", "is_synonym"], axis=0, inplace=True
+        )
+        df_species_tnrs_matched_unique = df_species_tnrs_matched.drop_duplicates(
+            "search_string", keep="first"
+        )
+
+        # both df are finally merged
+        merged_df = pd.merge(
+            samples_metadata,
+            df_species_tnrs_matched_unique,
+            how="left",
+            left_on=organism_header,
+            right_on="search_string",
+            indicator=True,
+        )
+
+        # converting 'ott_ids' from float to int (check the astype('Int64') whic will work while the astype('int') won't see https://stackoverflow.com/a/54194908)
+        merged_df["taxon.ott_id"] = merged_df["taxon.ott_id"].astype("Int64")
+
+        # However, we then need to put them back to
+        ott_list = list(merged_df["taxon.ott_id"].dropna().astype("int"))
+
+        if do_taxo_resolving:
+            get_taxonomic_information_from_open_tree_of_life_id(
+                ott_list, path_to_results_folders, project_name
+            )
+
+        path = path_to_results_folders + project_name + "_taxon_info.json"
+        jsondic = compress_json.load(path)
+
+        df_tax_lineage = json_normalize(
+            jsondic,
+            record_path=["lineage"],
+            meta=["ott_id", "unique_name"],
+            record_prefix="sub_",
+            errors="ignore",
+        )
+
+        # This keeps the last occurence of each ott_id / sub_rank grouping https://stackoverflow.com/a/41886945
+        df_tax_lineage_filtered = df_tax_lineage.groupby(
+            ["ott_id", "sub_rank"], as_index=False
+        ).last()
+
+        # Here we pivot long to wide to get the taxonomy
+        df_tax_lineage_filtered_flat = df_tax_lineage_filtered.pivot(
+            index="ott_id", columns="sub_rank", values="sub_name"
+        )
+
+        # Here we actually also want the lowertaxon (species usually) name
+        df_tax_lineage_filtered_flat = pd.merge(
+            df_tax_lineage_filtered_flat,
+            df_tax_lineage_filtered[["ott_id", "unique_name"]],
+            how="left",
+            on="ott_id",
+        )
+
+        # Despite the left join ott_id are duplicated
+        df_tax_lineage_filtered_flat.drop_duplicates(
+            subset=["ott_id", "unique_name"], inplace=True
+        )
+
+        # here we want to have these columns whatevere happens
+        col_list = [
+            "ott_id",
+            "domain",
+            "kingdom",
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "tribe",
+            "genus",
+            "unique_name",
+        ]
+
+        df_tax_lineage_filtered_flat = df_tax_lineage_filtered_flat.reindex(
+            columns=col_list, fill_value=np.NaN
+        )
+
+        # We now rename our columns of interest
+        renaming_dict = {
+            "domain": "query_otol_domain",
+            "kingdom": "query_otol_kingdom",
+            "phylum": "query_otol_phylum",
+            "class": "query_otol_class",
+            "order": "query_otol_order",
+            "family": "query_otol_family",
+            "tribe": "query_otol_tribe",
+            "genus": "query_otol_genus",
+            "unique_name": "query_otol_species",
+        }
+
+        df_tax_lineage_filtered_flat.rename(columns=renaming_dict, inplace=True)
+
+        # We select columns of interest
+        cols_to_keep = [
+            "ott_id",
+            "query_otol_domain",
+            "query_otol_kingdom",
+            "query_otol_phylum",
+            "query_otol_class",
+            "query_otol_order",
+            "query_otol_family",
+            "query_otol_tribe",
+            "query_otol_genus",
+            "query_otol_species",
+        ]
+
+        df_tax_lineage_filtered_flat = df_tax_lineage_filtered_flat[cols_to_keep]
+
+        # We merge this back with the samplemetadata only if we have an ott.id in the merged df
+        samples_metadata = pd.merge(
+            merged_df[pd.notnull(merged_df["taxon.ott_id"])],
+            df_tax_lineage_filtered_flat,
+            how="left",
+            left_on="taxon.ott_id",
+            right_on="ott_id",
+        )
+    return samples_metadata
+
 
 
 def taxa_lineage_appender(

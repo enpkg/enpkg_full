@@ -8,6 +8,7 @@ class AbstractTaxon:
             "This method should be implemented by a child class."
         )
 
+
 class Taxon(AbstractTaxon):
 
     def __init__(self, taxon_name: str):
@@ -21,9 +22,6 @@ class Taxon(AbstractTaxon):
         Returns the taxon name of the sample.
         """
         return self.taxon_name
-
-
-
 
         
 
