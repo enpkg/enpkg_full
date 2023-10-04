@@ -44,7 +44,7 @@ def tnrs_lookup(taxon: Type[AbstractTaxon]) -> dict:
     return taxon_tnrs_matched.response_dict
 
 
-def otl_taxa_lineage_appender(taxon: Type[AbstractTaxon]) -> OTLTaxonInfo:
+def otl_taxon_lineage_appender(taxon: Type[AbstractTaxon]) -> OTLTaxonInfo:
     """Fetches the taxonomic information for a given taxon name using the OpenTree Taxonomic Name Resolution Service."""
     jsondic = tnrs_lookup(taxon)
 
