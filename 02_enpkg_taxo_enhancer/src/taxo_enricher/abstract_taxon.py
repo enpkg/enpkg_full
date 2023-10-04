@@ -24,7 +24,7 @@ class Taxon(AbstractTaxon):
         return self.taxon_name
 
 
-class OTLOutput:
+class OTLTaxonInfo:
 
     def __init__(self, ott_id: int, otol_domain: str, otol_kingdom: str, otol_phylum: str, otol_class: str, otol_order: str, otol_family: str, otol_tribe: str, otol_genus: str, otol_species: str, taxon_source: str, taxon_rank: str, search_string: str, score: float, matched_name: str, is_synonym: bool, is_approximate_match: bool):
         self.ott_id = ott_id
@@ -158,3 +158,36 @@ class OTLOutput:
         Creates a fake OTLOutput object.
         """
         return OTLOutput('111111', 'domain', 'kingdom', 'phylum', 'class_', 'order', 'family', 'tribe', 'genus', 'unique_name')
+
+
+class WDTaxonInfo:
+
+    def __init__(self, wd_qid: str, wd_qid_url: str, wd_img_url: str):
+        self.wd_qid = wd_qid
+        self.wd_qid_url = wd_qid_url
+        self.wd_img_url = wd_img_url
+
+    def get_wd_qid(self) -> str:
+        """
+        Returns the Wikidata QID of Taxon.
+        """
+        return self.wd_qid
+    
+    def get_wd_qid_url(self) -> str:
+        """
+        Returns the Wikidata QID URL of Taxon.
+        """
+        return self.wd_qid_url
+
+    def get_wd_img_url(self) -> str:
+        """
+        Returns the Wikidata image URL of Taxon.
+        """
+        return self.wd_img_url
+
+    def __str__(self):
+        return f"The Wikidata QID of this object is {self.wd_qid}."
+
+    
+
+

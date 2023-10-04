@@ -8,7 +8,7 @@ from opentree import OT
 from pandas import json_normalize
 
 
-from abstract_taxon import AbstractTaxon, Taxon, OTLOutput
+from abstract_taxon import AbstractTaxon, Taxon, OTLTaxonInfo
 
 
 
@@ -102,7 +102,7 @@ def get_taxonomic_information_from_open_tree_of_life_id(
 
 def taxa_lineage_appender_wip(
     taxon: Type[AbstractTaxon]
-) -> OTLOutput:
+) -> OTLTaxonInfo:
     """ Fetches the taxonomic information for a given species name using the OpenTree Taxonomic Name Resolution Service.
     """
     jsondic = tnrs_lookup(taxon)
@@ -218,9 +218,9 @@ def taxa_lineage_appender_wip(
         right_on="ott_id",
     )
 
-    # We now populate the OTLOutput object
+    # We now populate the OTLTaxonInfo object
 
-    taxon_lineage = OTLOutput(
+    taxon_lineage = OTLTaxonInfo(
         ott_id = samples_metadata["taxon.ott_id"],
         otol_domain = samples_metadata["query_otol_domain"],
         otol_kingdom = samples_metadata["query_otol_kingdom"],

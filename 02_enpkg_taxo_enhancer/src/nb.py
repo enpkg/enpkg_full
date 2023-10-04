@@ -4,6 +4,7 @@ from pandas import json_normalize
 import requests
 import os
 from taxo_resolver_wip import *
+from taxo_info_fetcher_wip import *
 from pathlib import Path
 import argparse
 import textwrap
@@ -77,3 +78,13 @@ print(arabido_taxo_lineage)
 
 
 arabido_taxo_lineage.get_otol_class()
+
+
+wd_info = wd_taxo_fetcher_from_ott(ott_id=309263)
+
+
+
+
+print(wd_info)
+
+wd_info.wd_img_url
