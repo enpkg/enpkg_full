@@ -11,7 +11,8 @@ from .abstract_taxon_metadata import AbstractTaxonMetadata, OTLOutput
 
 
 def taxonomic_name_resolution_service_lookup(
-    species: str, 
+    # species: str, 
+    taxon_name: str,
     path_to_results_folders: str, 
     project_name: str
 ):
@@ -29,7 +30,8 @@ def taxonomic_name_resolution_service_lookup(
     """
     # Taxonomic Name Resolution Service lookup
     species_tnrs_matched = OT.tnrs_match(
-        species,
+        # species,
+        names = taxon_name,
         context_name=None,
         do_approximate_matching=True,
         include_suppressed=False,
@@ -68,12 +70,13 @@ def get_taxonomic_information_from_open_tree_of_life_id(
 
 
 def taxa_lineage_appender(
-    samples_metadata: pd.DataFrame,
-    organism_header: str,
+    taxon : Type[AbstractTaxonMetadata],
+    # samples_metadata: pd.DataFrame,
+    # organism_header: str,
     do_taxo_resolving: bool,
     path_to_results_folders: str,
     project_name: str,
-):
+) -> OTLOutput:
     """Fetches the taxonomic information for a given OpenTree of Life ID using the OpenTree Taxonomic Name Resolution Service.
 
     Parameters
@@ -94,9 +97,14 @@ def taxa_lineage_appender(
     # so we first want to extract the species information from the metadata file
 
     
-    samples_metadata[organism_header].dropna(inplace=True)
-    samples_metadata[organism_header] = samples_metadata[organism_header].str.lower()
-    species = samples_metadata[organism_header].unique()
+    # samples_metadata[organism_header].dropna(inplace=True)
+    # samples_metadata[organism_header] = samples_metadata[organism_header].str.lower()
+    # species = samples_metadata[organism_header].unique()
+
+    taxon_name = taxon.get_taxon_name()
+
+    print(taxon_name)
+
 
     if do_taxo_resolving:
         taxonomic_name_resolution_service_lookup(
@@ -121,6 +129,29 @@ def taxa_lineage_appender(
         df_species_tnrs_matched_unique = df_species_tnrs_matched.drop_duplicates(
             "search_string", keep="first"
         )
+
+        print(df_species_tnrs_matched_unique)
+
+        fake_otl_output = OTLOutput.create_fake_otl_output()
+
+        print(fake_otl_output.get_ott_id())
+
+
+        otl_output = OTLOutput(
+            ott_id=df_species_tnrs_matched_unique["taxon.ott_id"],
+            domain=df_species_tnrs_matched_unique["taxon.domain"],
+            kingdom=df_species_tnrs_matched_unique["taxon.kingdom"],
+            phylum=df_species_tnrs_matched_unique["taxon.phylum"],
+            class_=df_species_tnrs_matched_unique["taxon.class"],
+            order=df_species_tnrs_matched_unique["taxon.order"],
+            family=df_species_tnrs_matched_unique["taxon.family"],
+            tribe=df_species_tnrs_matched_unique["taxon.tribe"],
+            genus=df_species_tnrs_matched_unique["taxon.genus"],
+            unique_name=df_species_tnrs_matched_unique["taxon.unique_name"],
+        )
+
+        return otl_output
+
         # both df are finally merged
         merged_df = pd.merge(
             samples_metadata,

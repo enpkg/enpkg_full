@@ -83,3 +83,10 @@ class OTLOutput:
         Returns the unique name of the sample.
         """
         return self.unique_name
+        
+    @classmethod
+    def create_fake_otl_output(cls):
+        """
+        Creates a fake OTLOutput object.
+        """
+        return OTLOutput('111111', 'domain', 'kingdom', 'phylum', 'class_', 'order', 'family', 'tribe', 'genus', 'unique_name')
