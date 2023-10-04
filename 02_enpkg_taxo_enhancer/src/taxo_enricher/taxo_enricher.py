@@ -1,24 +1,17 @@
-"""This module contains the functions to perform taxonomic name resolution using the OpenTree Taxonomic Name Resolution Service. It also contains function to retrieve Wikidata taxonomic information once that the taxonomic name resolution has been performed."""
+"""This module contains the functions to perform taxonomic name resolution using the OpenTree Taxonomic Name Resolution Service.
+It also contains function to retrieve Wikidata taxonomic information once that the taxonomic name resolution has been performed."""
 
-from typing import List, Type
+from typing import Type
 
-import argparse
-import compress_json
-import git
+
 import numpy as np
-import opentree
-import os
 import pandas as pd
 import requests
-import textwrap
-import yaml
 from opentree import OT
 from pandas import json_normalize
-from pathlib import Path
-from taxo_resolver import *
 
 
-from abstract_taxon import AbstractTaxon, Taxon, OTLTaxonInfo, WDTaxonInfo
+from abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
 
 
 def tnrs_lookup(taxon: Type[AbstractTaxon]) -> dict:
