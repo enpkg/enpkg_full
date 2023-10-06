@@ -6,6 +6,18 @@ class AbstractTaxon:
         raise NotImplementedError("This method should be implemented by a child class.")
 
 
+class Taxon(AbstractTaxon):
+    def __init__(self, taxon_name: str):
+        self.taxon_name = taxon_name
+
+    def __str__(self):
+        return f"The taxon name of this object is {self.taxon_name}."
+
+    def get_taxon_name(self) -> str:
+        """
+        Returns the taxon name of the sample.
+        """
+        return self.taxon_name
 
 
 class OTLTaxonInfo:

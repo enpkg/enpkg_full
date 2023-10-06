@@ -240,7 +240,7 @@ def taxa_lineage_appender_wip(
         is_approximate_match = samples_metadata["is_approximate_match"]
     )
 
-    return taxon_lineage
+    return samples_metadata
 
 
 
