@@ -6,6 +6,9 @@ from matchms.similarity import ModifiedCosine
 from matchms.networking import SimilarityNetwork
 import networkx as nx
 
+
+from src.classes.abstract_msoutput import MgfOutput, MNOutput
+
 def connected_component_subgraphs(G):
             for c in nx.connected_components(G):
                 yield G.subgraph(c)
@@ -14,7 +17,7 @@ def sorted_connected_component_subgraphs(G):
             for c in sorted(nx.connected_components(G), key=len, reverse=True):
                 yield G.subgraph(c)
                 
-def generate_mn(spectra_query, mn_msms_mz_tol, mn_score_cutoff, mn_top_n, mn_max_links):
+def generate_mn(MgfOutput, mn_msms_mz_tol, mn_score_cutoff, mn_top_n, mn_max_links) -> MNOutput:
     """Generate a Molecular Network from MS/MS spectra using the modified cosine score
 
     Args:
@@ -29,13 +32,21 @@ def generate_mn(spectra_query, mn_msms_mz_tol, mn_score_cutoff, mn_top_n, mn_max
         mn_max_links (int): Maximum number of links to add per node.
     """    
     score = ModifiedCosine(tolerance=float(mn_msms_mz_tol))
+
+    # The spectra_query is the spectrum_list of the MgfOutput object
+    spectra_query = MgfOutput.get_spectrum_list()
+
     scores = calculate_scores(spectra_query, spectra_query, score, is_symmetric=True)
     ms_network = SimilarityNetwork(identifier_key="scans", score_cutoff = mn_score_cutoff, top_n = mn_top_n, max_links = mn_max_links, link_method = 'mutual')
     ms_network.create_network(scores, score_name="ModifiedCosine_score")
     # os.makedirs(os.path.dirname(mn_graphml_ouput_path), exist_ok=True)
     # ms_network.export_to_graphml(mn_graphml_ouput_path)
 
-    return ms_network
+    # Instantiate a MNOutput object with the name of the MS output, the type of the MS output, the polarity of the MS output, the input file and the MS network
+
+    mn_output = MNOutput(ms_output_name=MgfOutput.get_ms_output_name(), ms_output_polarity = MgfOutput.get_ms_output_polarity(), ms_output_type=MgfOutput.get_ms_output_type(), input_file=MgfOutput, ms_network=ms_network)
+
+    return mn_output
 
     # # Here we use the sorted_connected_component_subgraphs in ordere to make sure that components are sequentially labelled from the largest to the smallest
     # components = sorted_connected_component_subgraphs(ms_network.graph)
