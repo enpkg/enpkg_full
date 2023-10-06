@@ -1,90 +1,68 @@
-import pandas as pd
-import numpy as np
-from pandas import json_normalize
-import requests
-import os
-from taxo_resolver_wip import *
-from taxo_info_fetcher_wip import *
-from pathlib import Path
-import argparse
-import textwrap
-import yaml
-import git
-import opentree
-from opentree import OT
+from taxo_enricher.taxo_enricher import tnrs_lookup, otl_taxon_lineage_appender, wd_taxo_fetcher
+from taxo_enricher.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
+
+
+class Taxon(AbstractTaxon):
+    def __init__(self, taxon_name: str):
+        self.taxon_name = taxon_name
+
+    def __str__(self):
+        return f"The taxon name of this object is {self.taxon_name}."
+
+    def get_taxon_name(self) -> str:
+        """
+        Returns the taxon name of the sample.
+        """
+        return self.taxon_name
 
 
 
+# Instantiate a Taxon object with the taxon name of interest, here Arabidopsis thaliana
 
-from abstract_taxon import AbstractTaxon, Taxon
+taxon_test = Taxon(taxon_name="Arabidopsis thiana")
 
+taxon_test.get_taxon_name()
 
+print(taxon_test)
 
-# We instantiate a Taxon object
+# Return the an OTLTaxonInfo object with the taxonomic lineage of the taxon of interest
 
-taxon_a = Taxon(taxon_name="Arabidopsis thaliana")
+taxon_lineage = otl_taxon_lineage_appender(taxon_test)
 
+# Retrieve the ott_id of the taxon of interest
 
-taxon_a.taxon_name
+taxon_lineage.get_ott_id()[0]
 
-taxon_a.get_taxon_name()
+# Retrieve the taxon rank of the taxon of interest
 
-
-print(taxon_a)
-
-
-tnrs = tnrs_lookup(taxon=Taxon(taxon_name="Arabidopsis thaliana"))
-
-
-tnrs.keys()
+taxon_lineage.get_taxon_rank()[0]
 
 
+# Return Wikidata information about the taxon of interest
 
-# taxon_tnrs_matched = OT.tnrs_match(
-#     names = ['Arabidopsis thaliana'],
-#     context_name=None,
-#     do_approximate_matching=True,
-#     include_suppressed=False,
-# )
-# print(dir(taxon_tnrs_matched))
+wd_info = wd_taxo_fetcher(ott_id=taxon_lineage.get_ott_id()[0])
 
-# taxon_tnrs_matched.response_dict
-# taxon_tnrs_matched.taxon.uniq
-
-
-# print(dir(taxon_tnrs_matched.taxon))
-
-
-
-# print(taxon_tnrs_matched.taxon.ott_id)
-
-
-# df_species_tnrs_matched = json_normalize(
-#         taxon_tnrs_matched.response_dict, record_path=["results", "matches"]
-#     )
-
-arabido_taxo_lineage = taxa_lineage_appender_wip(Taxon(taxon_name="Arabidopsis thaliana"))
-
-
-
-pprint(arabido_taxo_lineage)
-
-%pprint
-
-pd.options.display.max_columns = 4000
-
-
-print(arabido_taxo_lineage)
-
-
-arabido_taxo_lineage.get_otol_class()
-
-
-wd_info = wd_taxo_fetcher_from_ott(ott_id=309263)
-
-
-
+# Return the Wikidata QID of the taxon of interest
 
 print(wd_info)
 
-wd_info.wd_img_url
+
+wd_info.get_wd_qid()
+
+
+from abc import ABC, abstractmethod
+ 
+class AbstractClassExample(ABC):
+    
+    @abstractmethod
+    def do_something(self):
+        print("Some implementation!")
+        
+class AnotherSubclass(AbstractClassExample):
+
+    def do_something(self):
+        super().do_something()
+        print("The enrichment from AnotherSubclass")
+        
+x = AnotherSubclass()
+x.do_something()

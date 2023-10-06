@@ -1,11 +1,15 @@
-class AbstractTaxon:
+from abc import ABC, abstractmethod
+
+
+class AbstractTaxon(ABC):
+
+    @abstractmethod
     def get_taxon_name(self) -> str:
         """
         Returns the taxon name of the sample.
         """
-        raise NotImplementedError("This method should be implemented by a child class.")
-
-
+        pass
+        # raise NotImplementedError("This method should be implemented by a child class.")
 
 
 class OTLTaxonInfo:
