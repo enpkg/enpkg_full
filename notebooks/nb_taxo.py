@@ -1,5 +1,12 @@
-from taxo_enricher.taxo_enricher import tnrs_lookup, otl_taxon_lineage_appender, wd_taxo_fetcher
-from taxo_enricher.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
+import sys 
+sys.path.append('../')
+
+
+from src.taxo_enricher.taxo_enricher import tnrs_lookup, otl_taxon_lineage_appender, wd_taxo_fetcher
+from src.classes.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
+
+
+
 
 
 class Taxon(AbstractTaxon):

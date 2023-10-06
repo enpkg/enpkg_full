@@ -1,8 +1,6 @@
 from src.taxo_enricher.taxo_enricher import tnrs_lookup, otl_taxon_lineage_appender, wd_taxo_fetcher
-from src.taxo_enricher.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
+from src.classes.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
 
-import os
-print(os.getcwd()) 
 
 class Taxon(AbstractTaxon):
     def __init__(self, taxon_name: str):

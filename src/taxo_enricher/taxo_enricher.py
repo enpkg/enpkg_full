@@ -11,7 +11,7 @@ from opentree import OT
 from pandas import json_normalize
 
 
-from .abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
+from src.classes.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
 
 
 def tnrs_lookup(taxon: Type[AbstractTaxon]) -> dict:
