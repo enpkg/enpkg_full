@@ -11,6 +11,15 @@ class AbstractTaxon(ABC):
         pass
         # raise NotImplementedError("This method should be implemented by a child class.")
 
+class InfoTable(ABC):
+
+    @abstractmethod
+    def get_id(self) -> str:
+        """
+        Returns a unique id in the InfoTable.
+        """
+        pass
+
 
 class OTLTaxonInfo:
     def __init__(
