@@ -133,7 +133,6 @@ dmypy.json
 .pyre/
 
 
-/user
-
+# /user
 
 tests/data
