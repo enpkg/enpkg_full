@@ -3,9 +3,9 @@ import argparse
 import os
 import shutil
 import textwrap
+import pandas as pd
 
 from userinput.utils import must_be_in_set
-import pandas as pd
 
 
 def organize_folder(
