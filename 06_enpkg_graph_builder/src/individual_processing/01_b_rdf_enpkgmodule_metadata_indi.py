@@ -42,6 +42,8 @@ with open(r'config/params.yaml') as file:
 
 
 sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+output_format = params_list['graph_format']
+
 
 WD = Namespace(params_list['wd_namespace'])
 
@@ -110,10 +112,10 @@ for directory in tqdm(samples_dir):
 
     pathout = os.path.join(sample_dir_path, directory, "rdf/")
     os.makedirs(pathout, exist_ok=True)
-    pathout = os.path.normpath(os.path.join(pathout, 'metadata_module_enpkg.ttl'))
+    pathout = os.path.normpath(os.path.join(pathout, f'metadata_module_enpkg.{output_format}}'))
     
     if len(g)>0:
-        g.serialize(destination=pathout, format="ttl", encoding="utf-8")
+        g.serialize(destination=pathout, format=output_format, encoding="utf-8")
         
         # Save parameters:
         params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")

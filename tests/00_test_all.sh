@@ -1,3 +1,6 @@
+eval "$(conda shell.bash hook)"
+conda activate enpkg_full
+
 cd ./tests/
 python -m pytest
 cd ..
@@ -31,6 +34,9 @@ sh ./tests/09_test_memo.sh
 
 echo "Launching 10_test_graph_builder.sh"
 sh ./tests/10_test_graph_builder.sh
+
+
+conda deactivate
 
 echo "Done !"
 

@@ -9,7 +9,7 @@ dependencies:
   - ipykernel
   - ipython
   - matchms==0.20.0
-  - matplotlib==3.7.1
+  - matplotlib
   - networkx
   - numpy==1.24.3
   - pandas==2.0.2
@@ -31,7 +31,9 @@ dependencies:
     - chembl_webresource_client
     - compress_json
     - datatable
+    - downloaders
     - GitPython==3.1.31
     - memo_ms
     - opentree==1.0.1
     - pyyaml
+    - userinput
