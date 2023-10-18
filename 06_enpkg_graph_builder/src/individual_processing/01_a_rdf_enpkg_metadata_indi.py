@@ -53,6 +53,7 @@ with open(r'config/params.yaml') as file:
 
 sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
 output_format = params_list['graph_format']
+ionization_mode = params_list['ionization_mode']
 
 
 WD = Namespace(params_list['wd_namespace'])
@@ -91,7 +92,7 @@ for directory in tqdm(samples_dir):
         g.add((sample, RDFS.label, rdflib.term.Literal(f"Sample {metadata.sample_id[0]}")))
         
         # Add GNPS Dashboard link for pos & neg: only if sample_filename_pos column exists and is not NaN and MassIVE id is present
-        if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns):
+        if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'pos':
             if not pd.isna(metadata['sample_filename_pos'][0]):
                 sample_filename_pos = metadata['sample_filename_pos'][0]
                 massive_id = metadata['massive_id'][0]
@@ -117,7 +118,7 @@ for directory in tqdm(samples_dir):
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_license, rdflib.URIRef("https://creativecommons.org/publicdomain/zero/1.0/")))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), FOAF.depiction, rdflib.URIRef(gnps_tic_pic))) 
                 
-        if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns):
+        if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'neg':
             if not pd.isna(metadata['sample_filename_neg'][0]):
                 sample_filename_neg = metadata['sample_filename_neg'][0]
                 massive_id = metadata['massive_id'][0]    
@@ -168,7 +169,7 @@ for directory in tqdm(samples_dir):
         g.add((sample, RDF.type, ns_kg.LabBlank))
         g.add((sample, RDFS.label, rdflib.term.Literal(f"Blank {metadata.sample_id[0]}")))
 
-        if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns):
+        if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'pos':
             if not pd.isna(metadata['sample_filename_pos'][0]):
                 sample_filename_pos = metadata['sample_filename_pos'][0]
                 massive_id = metadata['massive_id'][0]
@@ -177,7 +178,7 @@ for directory in tqdm(samples_dir):
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), RDF.type, ns_kg.LCMSAnalysisPos))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_doi, rdflib.URIRef(link_to_massive)))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_license, rdflib.URIRef("https://creativecommons.org/publicdomain/zero/1.0/")))
-        if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns):
+        if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'neg':
             if not pd.isna(metadata['sample_filename_neg'][0]):
                 sample_filename_neg = metadata['sample_filename_neg'][0]
                 massive_id = metadata['massive_id'][0]
@@ -191,7 +192,7 @@ for directory in tqdm(samples_dir):
     elif metadata.sample_type[0] == 'qc':
         g.add((sample, RDF.type, ns_kg.LabQc))
         g.add((sample, RDFS.label, rdflib.term.Literal(f"QC {metadata.sample_id[0]}")))
-        if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns):
+        if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'pos':
             if not pd.isna(metadata['sample_filename_pos'][0]):
                 sample_filename_pos = metadata['sample_filename_pos'][0]
                 massive_id = metadata['massive_id'][0]
@@ -200,7 +201,7 @@ for directory in tqdm(samples_dir):
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), RDF.type, ns_kg.LCMSAnalysisPos))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_doi, rdflib.URIRef(link_to_massive)))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_license, rdflib.URIRef("https://creativecommons.org/publicdomain/zero/1.0/")))
-        if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns):
+        if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'neg':
             if not pd.isna(metadata['sample_filename_neg'][0]):
                 sample_filename_neg = metadata['sample_filename_neg'][0]
                 massive_id = metadata['massive_id'][0]
