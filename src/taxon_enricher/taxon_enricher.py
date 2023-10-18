@@ -183,7 +183,7 @@ def otl_taxon_lineage_appender(taxon: Type[AbstractTaxon]) -> OTLTaxonInfo:
     return taxon_lineage
 
 
-def wd_taxo_fetcher(ott_id: int) -> WDTaxonInfo:
+def wd_taxon_fetcher(ott_id: int) -> WDTaxonInfo:
     """This function return the Wikidata QID and an image URL for a given OTT ID."""
 
     # Define the SPARQL query

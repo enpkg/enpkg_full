@@ -1,4 +1,4 @@
-from src.taxo_enricher.taxo_enricher import tnrs_lookup, otl_taxon_lineage_appender, wd_taxo_fetcher
+from src.taxon_enricher.taxon_enricher import tnrs_lookup, otl_taxon_lineage_appender, wd_taxon_fetcher
 from src.classes.abstract_taxon import AbstractTaxon, OTLTaxonInfo, WDTaxonInfo
 
 
@@ -26,10 +26,10 @@ def test_otl_taxon_lineage_appender():
     assert taxon_lineage.get_taxon_rank()[0] == 'species', f"Expected species, but got {taxon_lineage.get_taxon_rank()[0]}"
 
 
-def test_wd_taxo_fetcher():
+def test_wd_taxon_fetcher():
     """
     Test that the Wikidata information of the taxon of interest is returned.
     """
-    wd_info = wd_taxo_fetcher(ott_id=309263)
+    wd_info = wd_taxon_fetcher(ott_id=309263)
     assert wd_info.get_wd_qid() == "Q158695", f"Expected Q158695, but got {wd_info.get_wd_qid()}"
 
