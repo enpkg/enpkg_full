@@ -1,0 +1,37 @@
+name: enpkg_full
+channels:
+  - anaconda
+  - bioconda
+  - conda-forge
+  - defaults
+  - rdkit
+dependencies:
+  - ipykernel
+  - ipython
+  - matchms==0.20.0
+  - matplotlib==3.7.1
+  - networkx
+  - numpy==1.24.3
+  - pandas==2.0.2
+  - pip==23.1.2
+  - plotly==5.14.1
+  - python==3.9
+  - pyyaml==6.0
+  - rdflib
+  - rdkit
+  - requests
+  - scikit-bio
+  - scikit-learn==1.2.2
+  - scipy==1.10.1
+  - seaborn==0.12.2
+  - spec2vec
+  - sqlite
+  - tqdm==4.65.0
+  - pip :
+    - chembl_webresource_client
+    - compress_json
+    - datatable
+    - GitPython==3.1.31
+    - memo_ms
+    - opentree==1.0.1
+    - pyyaml
