@@ -172,7 +172,7 @@ for directory in tqdm(samples_dir):
             if not pd.isna(metadata['sample_filename_pos'][0]):
                 sample_filename_pos = metadata['sample_filename_pos'][0]
                 massive_id = metadata['massive_id'][0]
-                link_to_massive = f'{massive_prefix}{massive_id}'
+                link_to_massive = f'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession={massive_id}'
                 g.add((sample, ns_kg.has_LCMS, rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0])))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), RDF.type, ns_kg.LCMSAnalysisPos))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_doi, rdflib.URIRef(link_to_massive)))
@@ -181,7 +181,7 @@ for directory in tqdm(samples_dir):
             if not pd.isna(metadata['sample_filename_neg'][0]):
                 sample_filename_neg = metadata['sample_filename_neg'][0]
                 massive_id = metadata['massive_id'][0]
-                link_to_massive = f'{massive_prefix}{massive_id}'
+                link_to_massive = f'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession={massive_id}'
                 g.add((sample, ns_kg.has_LCMS, rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0])))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0]), RDF.type, ns_kg.LCMSAnalysisNeg))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0]), ns_kg.has_massive_doi, rdflib.URIRef(link_to_massive)))
@@ -195,7 +195,7 @@ for directory in tqdm(samples_dir):
             if not pd.isna(metadata['sample_filename_pos'][0]):
                 sample_filename_pos = metadata['sample_filename_pos'][0]
                 massive_id = metadata['massive_id'][0]
-                link_to_massive = f'{massive_prefix}{massive_id}'
+                link_to_massive = f'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession={massive_id}'
                 g.add((sample, ns_kg.has_LCMS, rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0])))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), RDF.type, ns_kg.LCMSAnalysisPos))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_doi, rdflib.URIRef(link_to_massive)))
@@ -204,7 +204,7 @@ for directory in tqdm(samples_dir):
             if not pd.isna(metadata['sample_filename_neg'][0]):
                 sample_filename_neg = metadata['sample_filename_neg'][0]
                 massive_id = metadata['massive_id'][0]
-                link_to_massive = f'{massive_prefix}{massive_id}'
+                link_to_massive = f'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession={massive_id}'
                 g.add((sample, ns_kg.has_LCMS, rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0])))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0]), RDF.type, ns_kg.LCMSAnalysisNeg))
                 g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0]), ns_kg.has_massive_doi, rdflib.URIRef(link_to_massive)))
