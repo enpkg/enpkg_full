@@ -117,14 +117,14 @@ for sample_dir in samples_dir[:]:
 
 print(f'{len(samples_dir)} samples folder were found to be complete and will be processed.')
 
-if input("Do you wish to continue and process samples? (y/n)") != ("y"):
-    exit()
+# if input("Do you wish to continue and process samples? (y/n)") != ("y"):
+#     exit()
     
 # Load spectral DB
 if ionization_mode == 'pos':
-    spectral_db = load_spectral_db(spectral_db_pos_path)
+    spectral_db = load_clean_spectral_db(spectral_db_pos_path)
 elif ionization_mode == 'neg':
-    spectral_db = load_spectral_db(spectral_db_neg_path)
+    spectral_db = load_clean_spectral_db(spectral_db_neg_path)
 
 # Calculate min and max m/z value using user's tolerance for adducts search
 if ionization_mode == 'pos':
