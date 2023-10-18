@@ -17,50 +17,62 @@ from hash_functions import get_hash
 p = Path(__file__).parents[2]
 os.chdir(p)
 
-""" Argument parser """
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        This script generate a unique RDF graph by sample (.ttl format) from multiples sample specific .rdf files.
-         --------------------------------
-            Arguments:
-            - Path to the directory where samples folders are located
-            - The format of the output files (default is .ttl format (ttl), but can be .nt (nt))
-        '''))
+# Loading the parameters from yaml file
 
-parser.add_argument('-p', '--sample_dir_path', required=True,
-                    help='The path to the directory where samples folders to process are located')
-# Additional argument defining the format of the files to utput (default is .ttl format, but can be .nt)
-parser.add_argument('-f', '--output_format', required=False, default='ttl',
-                    help='The format of the output files (default is .ttl format (ttl), but can be .nt (nt))')
 
-args = parser.parse_args()
-sample_dir_path = os.path.normpath(args.sample_dir_path)
-output_format = args.output_format
+if not os.path.exists('config/params.yaml'):
+    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
+with open(r'config/params.yaml') as file:
+    params_list = yaml.load(file, Loader=yaml.FullLoader)
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+# """ Argument parser """
+# parser = argparse.ArgumentParser(
+#     formatter_class=argparse.RawDescriptionHelpFormatter,
+#     description=textwrap.dedent('''\
+#         This script generate a unique RDF graph by sample (.ttl format) from multiples sample specific .rdf files.
+#          --------------------------------
+#             Arguments:
+#             - Path to the directory where samples folders are located
+#             - The format of the output files (default is .ttl format (ttl), but can be .nt (nt))
+#         '''))
+
+# parser.add_argument('-p', '--sample_dir_path', required=True,
+#                     help='The path to the directory where samples folders to process are located')
+# # Additional argument defining the format of the files to utput (default is .ttl format, but can be .nt)
+# parser.add_argument('-f', '--output_format', required=False, default='ttl',
+#                     help='The format of the output files (default is .ttl format (ttl), but can be .nt (nt))')
+
+# args = parser.parse_args()
+sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+output_format = params_list['graph_format']
 
 # Create enpkg namespace
-kg_uri = "https://enpkg.commons-lab.org/kg/"
+kg_uri = params_list['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix_kg = "enpkg"
+prefix = params_list['prefix']
 
 # Create enpkgmodule namespace
-module_uri = "https://enpkg.commons-lab.org/module/"
+module_uri = params_list['module_uri']
 ns_module = rdflib.Namespace(module_uri)
-prefix_module = "enpkgmodule"
-WD = Namespace('http://www.wikidata.org/entity/')
+prefix_module = params_list['prefix_module']
+
+WD = Namespace(params_list['wd_namespace'])
+
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 df_list = []
 
-files = ["rdf/canopus_pos.ttl", "rdf/canopus_neg.ttl", 
-        "rdf/features_pos.ttl", "rdf/features_neg.ttl", 
-        "rdf/features_spec2vec_pos.ttl", "rdf/features_spec2vec_neg.ttl",
-        "rdf/individual_mn_pos.ttl", "rdf/individual_mn_neg.ttl",
-        "rdf/isdb_pos.ttl", "rdf/isdb_neg.ttl",
-        "rdf/sirius_pos.ttl", "rdf/sirius_neg.ttl",
-        "rdf/metadata_enpkg.ttl", "rdf/metadata_module_enpkg.ttl",
-        "rdf/structures_metadata.ttl"]
+files = [f"rdf/canopus_pos.{output_format}", f"rdf/canopus_neg.{output_format}", 
+        f"rdf/features_pos.{output_format}", f"rdf/features_neg.{output_format}", 
+        f"rdf/features_spec2vec_pos.{output_format}", f"rdf/features_spec2vec_neg.{output_format}",
+        f"rdf/individual_mn_pos.{output_format}", f"rdf/individual_mn_neg.{output_format}",
+        f"rdf/isdb_pos.{output_format}", f"rdf/isdb_neg.{output_format}",
+        f"rdf/sirius_pos.{output_format}", f"rdf/sirius_neg.{output_format}",
+        f"rdf/metadata_enpkg.{output_format}", f"rdf/metadata_module_enpkg.{output_format}",
+        f"rdf/structures_metadata.{output_format}"]
 
 for directory in tqdm(samples_dir):
     metadata_path = os.path.join(path, directory, directory + '_metadata.tsv')
@@ -80,14 +92,14 @@ for directory in tqdm(samples_dir):
     if len(exist_files) > 0:
         merged_graph = Graph()
         nm = merged_graph.namespace_manager
-        nm.bind(prefix_kg, ns_kg)
+        nm.bind(prefix, ns_kg)
         nm.bind(prefix_module, ns_module)
         nm.bind("wd", WD)
 
         for file_path in exist_files:
             with open(file_path, "r", encoding="utf8") as f:
                 file_content = f.read()
-                merged_graph.parse(data=file_content, format="ttl")
+                merged_graph.parse(data=file_content, format=output_format)
 
         for file in os.listdir(os.path.join(os.path.join(sample_dir_path, directory, 'rdf'))):
             if file.startswith(massive_id):

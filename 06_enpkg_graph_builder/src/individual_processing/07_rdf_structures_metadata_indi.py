@@ -15,26 +15,40 @@ import yaml
 p = Path(__file__).parents[2]
 os.chdir(p)
 
-""" Argument parser """
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        This script generate a RDF graph (.ttl format) from chemical structures metadata
-         --------------------------------
-            Arguments:
-            - Path to the directory where samples folders are located
-            - Path to the SQL metadata DB with compounds' metadata
-        '''))
-
-parser.add_argument('-p', '--sample_dir_path', required=True,
-                    help='The path to the directory where samples folders to process are located')
-parser.add_argument('-db', '--metadata_path', required=True,
-                    help='The path to the structures metadata SQL DB')
+# Loading the parameters from yaml file
 
 
-args = parser.parse_args()
-sample_dir_path = os.path.normpath(args.sample_dir_path)
-metadata_path = os.path.normpath(args.metadata_path)
+if not os.path.exists('config/params.yaml'):
+    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
+with open(r'config/params.yaml') as file:
+    params_list = yaml.load(file, Loader=yaml.FullLoader)
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+# """ Argument parser """
+# parser = argparse.ArgumentParser(
+#     formatter_class=argparse.RawDescriptionHelpFormatter,
+#     description=textwrap.dedent('''\
+#         This script generate a RDF graph (.ttl format) from chemical structures metadata
+#          --------------------------------
+#             Arguments:
+#             - Path to the directory where samples folders are located
+#             - Path to the SQL metadata DB with compounds' metadata
+#         '''))
+
+# parser.add_argument('-p', '--sample_dir_path', required=True,
+#                     help='The path to the directory where samples folders to process are located')
+# parser.add_argument('-db', '--metadata_path', required=True,
+#                     help='The path to the structures metadata SQL DB')
+
+
+# args = parser.parse_args()
+
+sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+output_format = params_list['graph_format']
+ionization_mode = params_list['ionization_mode']
+
+metadata_path = params_list['structures_db_path']
 
 greek_alphabet = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩωÎ²Iµ'
 latin_alphabet = 'AaBbGgDdEeZzHhJjIiKkLlMmNnXxOoPpRrSssTtUuFfQqYyWwI2Iu'
@@ -46,9 +60,9 @@ query = dat.execute("SELECT * From structures_metadata")
 cols = [column[0] for column in query.description]
 df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
 
-kg_uri = "https://enpkg.commons-lab.org/kg/"
+kg_uri = params_list['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = "enpkg"
+prefix = params_list['prefix']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
@@ -56,10 +70,10 @@ df_list = []
 for directory in tqdm(samples_dir):    
     
     paths = []
-    isdb_pos_path = os.path.join(path, directory, 'rdf/isdb_pos.ttl')
-    isdb_neg_path = os.path.join(path, directory, 'rdf/isdb_neg.ttl')
-    sirius_pos_path = os.path.join(path, directory, 'rdf/sirius_pos.ttl')
-    sirius_neg_path = os.path.join(path, directory, 'rdf/sirius_neg.ttl')
+    isdb_pos_path = os.path.join(path, directory, f'rdf/isdb_pos.{output_format}')
+    isdb_neg_path = os.path.join(path, directory, f'rdf/isdb_neg.{output_format}')
+    sirius_pos_path = os.path.join(path, directory, f'rdf/sirius_pos.{output_format}')
+    sirius_neg_path = os.path.join(path, directory, f'rdf/sirius_neg.{output_format}')
 
     paths = [isdb_pos_path, isdb_neg_path, sirius_pos_path, sirius_neg_path]
     path_exist = []
@@ -77,7 +91,7 @@ for directory in tqdm(samples_dir):
     for path_annot in path_exist:
         with open(path_annot, "r") as f:
             file_content = f.read()
-            merged_graph.parse(data=file_content, format="ttl")
+            merged_graph.parse(data=file_content, format=output_format)
     
     sample_short_ik = []
     for s, p, o in merged_graph.triples((None,  RDF.type, ns_kg.InChIkey2D)):
@@ -142,8 +156,8 @@ for directory in tqdm(samples_dir):
                 
     pathout = os.path.join(sample_dir_path, directory, "rdf/")
     os.makedirs(pathout, exist_ok=True)
-    pathout = os.path.normpath(os.path.join(pathout, 'structures_metadata.ttl'))
-    g.serialize(destination=pathout, format="ttl", encoding="utf-8")
+    pathout = os.path.normpath(os.path.join(pathout, f'structures_metadata.{output_format}'))
+    g.serialize(destination=pathout, format=output_format, encoding="utf-8")
     
     # Save parameters:
     params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")
