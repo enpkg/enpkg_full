@@ -16,6 +16,8 @@ formula zodiac fingerprint structure canopus write-summaries --output {output_na
         # Don't change input and output parameters
   - recompute: True # Recompute files for which output directory (with the same prefix) already exists: True of False (no quotes)
   - zip_output: True # Zip individual features outputs to save disk space: True of False (no quotes)
+  - sirius_user_env: SIRIUS_USERNAME
+  - sirius_password_env: SIRIUS_PASSWORD
 
 # Example command for sirius 4:
 
