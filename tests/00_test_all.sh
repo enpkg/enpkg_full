@@ -1,6 +1,6 @@
-# cd ./tests/
-# python -m pytest
-# cd ..
+cd ./tests/
+python -m pytest
+cd ..
 
 echo "Launching 01_test_create_architecture.sh"
 sh ./tests/01_test_create_architecture.sh
