@@ -6,6 +6,7 @@ channels:
   - defaults
   - rdkit
 dependencies:
+  - bokeh==2.4.3
   - ipykernel
   - ipython
   - matchms==0.20.0
