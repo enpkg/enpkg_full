@@ -67,7 +67,7 @@ for directory in tqdm(samples_dir):
     g = Graph()
     nm = g.namespace_manager
     nm.bind('wd', WD)
-    nm.bind(prefix_kg, ns_kg)
+    nm.bind(prefix, ns_kg)
     nm.bind(prefix_module, ns_module)
 
     metadata_path = os.path.join(path, directory, directory + '_metadata.tsv')
