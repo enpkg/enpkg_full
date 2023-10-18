@@ -1,5 +1,10 @@
 kg_uri : https://enpkg.commons-lab.org/kg/ #https://dbgi.vital-it.ch/
 prefix : enpkg #dbgi #emi
+module_uri : https://enpkg.commons-lab.org/module/
+prefix_module : enpkgmodule
+target_chembl_url : https://www.ebi.ac.uk/chembl/target_report_card/
+
+
 wd_namespace : http://www.wikidata.org/entity/
 graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
 sample_dir_path : ../tests/data/output

@@ -13,35 +13,49 @@ import yaml
 p = Path(__file__).parents[2]
 os.chdir(p)
 
-""" Argument parser """
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        This script generate a RDF graph (.ttl format) from samples' MODULE metadata 
-         --------------------------------
-            Arguments:
-            - Path to the directory where samples folders are located
-        '''))
 
-parser.add_argument('-p', '--sample_dir_path', required=True,
-                    help='The path to the directory where samples folders to process are located')
+# Loading the parameters from yaml file
 
-args = parser.parse_args()
-sample_dir_path = os.path.normpath(args.sample_dir_path)
 
-WD = Namespace('http://www.wikidata.org/entity/')
+if not os.path.exists('config/params.yaml'):
+    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
+with open(r'config/params.yaml') as file:
+    params_list = yaml.load(file, Loader=yaml.FullLoader)
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+
+# """ Argument parser """
+# parser = argparse.ArgumentParser(
+#     formatter_class=argparse.RawDescriptionHelpFormatter,
+#     description=textwrap.dedent('''\
+#         This script generate a RDF graph (.ttl format) from samples' MODULE metadata 
+#          --------------------------------
+#             Arguments:
+#             - Path to the directory where samples folders are located
+#         '''))
+
+# parser.add_argument('-p', '--sample_dir_path', required=True,
+#                     help='The path to the directory where samples folders to process are located')
+
+# args = parser.parse_args()
+
+
+sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+
+WD = Namespace(params_list['wd_namespace'])
 
 # Create enpkg namespace
-kg_uri = "https://enpkg.commons-lab.org/kg/"
+kg_uri = params_list['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix_kg = "enpkg"
+prefix = params_list['prefix']
 
 # Create enpkgmodule namespace
-module_uri = "https://enpkg.commons-lab.org/module/"
+module_uri = params_list['module_uri']
 ns_module = rdflib.Namespace(module_uri)
-prefix_module = "enpkgmodule"
+prefix_module = params_list['prefix_module']
 
-target_chembl_url = 'https://www.ebi.ac.uk/chembl/target_report_card/'
+target_chembl_url = params_list['target_chembl_url']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
