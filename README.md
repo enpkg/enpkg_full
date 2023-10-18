@@ -23,6 +23,11 @@ You will need to edit the following files:
 - Knowledge Graph construction parameters at [params.yaml](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/06_enpkg_graph_builder/config/params.yaml)
 
 
+## Select the dataset to process
+
+You can enter the record_id and record_name of a Zenodo dataset on [line](https://github.com/enpkg/enpkg_full/blob/23203ce9f54dff7552244155df85134d16219a27/tests/test_data_organization.py#L8)
+As set up here, this will download a small test dataset (https://zenodo.org/records/10018590/).
+
 ## Testing the workflow
 
 From the root of the repository, run:
@@ -31,4 +36,4 @@ From the root of the repository, run:
 sh tests/00_test_all.sh
 ```
 
-This will download a small dataset (https://zenodo.org/records/10018590/) and run the full workflow on it. It should take less than 10 minutes to complete.
+On the previous test dataset, this should take about 10 minutes to run.
