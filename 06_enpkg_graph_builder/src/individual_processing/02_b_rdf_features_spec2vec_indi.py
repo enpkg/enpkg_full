@@ -19,25 +19,44 @@ import git
 p = Path(__file__).parents[2]
 os.chdir(p)
 
-""" Argument parser """
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        This script generate a RDF graph (.ttl format) from the features' MS/MS spectra using spec2vec
-         --------------------------------
-            Arguments:
-            - Path to the directory where samples folders are located
-            - Ionization mode to process
-        '''))
+# Loading the parameters from yaml file
 
-parser.add_argument('-p', '--sample_dir_path', required=True,
-                    help='The path to the directory where samples folders to process are located')
-parser.add_argument('-ion', '--ionization_mode', required=True,
-                    help='The ionization mode to process')
 
-args = parser.parse_args()
-sample_dir_path = os.path.normpath(args.sample_dir_path)
-ionization_mode = args.ionization_mode
+if not os.path.exists('config/params.yaml'):
+    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
+with open(r'config/params.yaml') as file:
+    params_list = yaml.load(file, Loader=yaml.FullLoader)
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+
+# """ Argument parser """
+# parser = argparse.ArgumentParser(
+#     formatter_class=argparse.RawDescriptionHelpFormatter,
+#     description=textwrap.dedent('''\
+#         This script generate a RDF graph (.ttl format) from the features' MS/MS spectra using spec2vec
+#          --------------------------------
+#             Arguments:
+#             - Path to the directory where samples folders are located
+#             - Ionization mode to process
+#         '''))
+
+# parser.add_argument('-p', '--sample_dir_path', required=True,
+#                     help='The path to the directory where samples folders to process are located')
+# parser.add_argument('-ion', '--ionization_mode', required=True,
+#                     help='The ionization mode to process')
+
+# args = parser.parse_args()
+sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+ionization_mode = params_list['ionization_mode']
+output_format = params_list['graph_format']
+
+
+kg_uri = params_list['kg_uri']
+ns_kg = rdflib.Namespace(kg_uri)
+prefix = params_list['prefix']
+
+
 
 # Define function
 def load_and_filter_from_mgf(path) -> list:
@@ -59,9 +78,7 @@ def load_and_filter_from_mgf(path) -> list:
 
 path = os.path.normpath(sample_dir_path)
 
-kg_uri = "https://enpkg.commons-lab.org/kg/"
-ns_kg = rdflib.Namespace(kg_uri)
-prefix = "enpkg"
+
 
 i=1
 samples_dir = [directory for directory in os.listdir(path)]
@@ -117,8 +134,8 @@ for directory in tqdm(samples_dir):
 
             pathout = os.path.join(sample_dir_path, directory, "rdf/")
             os.makedirs(pathout, exist_ok=True)
-            pathout = os.path.normpath(os.path.join(pathout, f'features_spec2vec_{ionization_mode}.ttl'))
-            g.serialize(destination=pathout, format="ttl", encoding="utf-8")
+            pathout = os.path.normpath(os.path.join(pathout, f'features_spec2vec_{ionization_mode}.{output_format}'))
+            g.serialize(destination=pathout, format=output_format, encoding="utf-8")
             
             # Save parameters:
             params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")
