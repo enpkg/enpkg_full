@@ -64,8 +64,14 @@ gnps_dashboard_prefix = params_list['gnps_dashboard_prefix']
 gnps_tic_pic_prefix = params_list['gnps_tic_pic_prefix']
 massive_prefix = params_list['massive_prefix']
 
+source_taxon_header = params_list['source_taxon_header']
+source_id_header = params_list['source_id_header']
+
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
+
+#For debugging only 
+directory = 'VGF151_E05'
 
 for directory in tqdm(samples_dir):
     g = Graph()
@@ -84,9 +90,9 @@ for directory in tqdm(samples_dir):
     sample = rdflib.term.URIRef(kg_uri + metadata.sample_id[0])
     
     if metadata.sample_type[0] == 'sample':
-        material_id = rdflib.term.URIRef(kg_uri + metadata.source_id[0])
+        material_id = rdflib.term.URIRef(kg_uri + metadata[source_id_header][0])
         g.add((material_id, RDF.type, ns_kg.RawMaterial))
-        g.add((material_id, ns_kg.submitted_taxon, rdflib.term.Literal(metadata.source_taxon[0])))
+        g.add((material_id, ns_kg.submitted_taxon, rdflib.term.Literal(metadata[source_taxon_header][0])))
         g.add((material_id, ns_kg.has_lab_process, sample))
         g.add((sample, RDF.type, ns_kg.LabExtract))
         g.add((sample, RDFS.label, rdflib.term.Literal(f"Sample {metadata.sample_id[0]}")))

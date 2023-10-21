@@ -61,6 +61,7 @@ prefix = params_list['prefix']
 
 spectrum_dashboard_prefix = params_list['spectrum_dashboard_prefix']
 spectrum_png_prefix = params_list['spectrum_png_prefix']
+gnps_fast_search_prefix = params_list['gnps_fast_search_prefix']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
@@ -127,6 +128,12 @@ for directory in tqdm(samples_dir):
             g.add((feature_id, ns_kg.has_usi, rdflib.term.Literal(usi)))
             link_spectrum = spectrum_dashboard_prefix + usi
             g.add((feature_id, ns_kg.gnps_dashboard_view, rdflib.URIRef(link_spectrum)))
+
+            # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/
+            link_fast_search = gnps_fast_search_prefix + usi
+            g.add((feature_id, ns_kg.fast_search, rdflib.URIRef(link_fast_search)))
+
+
             link_png = spectrum_png_prefix + usi
             g.add((feature_id, FOAF.depiction, rdflib.URIRef(link_png))) 
             

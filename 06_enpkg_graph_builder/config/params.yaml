@@ -8,13 +8,17 @@ ionization_mode : pos # pos or neg
 
 wd_namespace : http://www.wikidata.org/entity/
 graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
-sample_dir_path : ../tests/data/output
-graph_output_dir_path : ../tests/data/output/standalone_graphs
+sample_dir_path : /home/allardpm/ENPKG/data/pf1600
+graph_output_dir_path : /home/allardpm/ENPKG/data/pf1600/standalone_graphs
 structures_db_path : ../05_enpkg_meta_analysis/output_data/sql_db/structures_metadata.db
 gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
 gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
 massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='
 spectrum_dashboard_prefix : 'https://metabolomics-usi.gnps2.org/dashinterface?usi1='
 spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1='
+gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1='
+
+source_taxon_header : organism_species
+source_id_header : sample_substance_name
 
 compress_outputs : False 
