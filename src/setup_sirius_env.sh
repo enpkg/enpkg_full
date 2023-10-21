@@ -25,3 +25,6 @@ echo "Environment variables set for session."
 # To check the variables, you could use:
 # echo "Username: $SIRIUS_USERNAME"
 # echo "Password: $SIRIUS_PASSWORD"
+
+# To use 
+# ./setup_sirius_env.sh user@example.com mypassword
