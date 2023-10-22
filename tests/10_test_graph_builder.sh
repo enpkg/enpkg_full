@@ -1,5 +1,5 @@
-eval "$(conda shell.bash hook)"
-conda activate graph_builder
+# eval "$(conda shell.bash hook)"
+# conda activate graph_builder
 
 echo "Running test_01_a_rdf_enpkg_metadata_indi.sh"
 sh ./tests/test_01_a_rdf_enpkg_metadata_indi.sh
