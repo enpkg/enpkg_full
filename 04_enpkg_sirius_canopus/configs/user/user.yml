@@ -1,6 +1,6 @@
 paths:
-  - path_to_data: '../tests/data/output' # Path to files to process
-  - path_to_sirius: '/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
+  - path_to_data: 'temporary_output/' # Path to files to process
+  - path_to_sirius: 'sirius/bin' # Path to sirius executable (default is 'sirius').
 options:
   - sirius_version: 5 # Sirius version: 4 or 5
   - ionization: 'pos' # Ionization mode to process: pos or neg
