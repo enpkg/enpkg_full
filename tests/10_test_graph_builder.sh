@@ -34,4 +34,4 @@ sh ./tests/test_08_rdf_merger.sh
 echo "Running test_09_rdf_exporter.sh"
 sh ./tests/test_09_rdf_exporter.sh
 
-conda deactivate
+# conda deactivate
