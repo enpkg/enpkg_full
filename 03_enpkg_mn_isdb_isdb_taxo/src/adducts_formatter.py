@@ -5,8 +5,8 @@ from pathlib import Path
 import os
 from pathlib import PurePath
 
-p = Path(__file__).parents[1]
-os.chdir(p)
+# p = Path(__file__).parents[1]
+# os.chdir(p)
 
 """ Argument parser """
 parser = argparse.ArgumentParser(
