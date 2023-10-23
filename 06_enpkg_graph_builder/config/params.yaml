@@ -8,9 +8,9 @@ ionization_mode : pos # pos or neg
 
 wd_namespace : http://www.wikidata.org/entity/
 graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
-sample_dir_path : ../tests/data/output
-graph_output_dir_path : ../tests/data/output/standalone_graphs
-structures_db_path : ../05_enpkg_meta_analysis/output_data/sql_db/structures_metadata.db
+sample_dir_path : /home/allardpm/ENPKG/data/pf1600_sub #../tests/data/output #
+graph_output_dir_path : /home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs #
+structures_db_path : /home/allardpm/ENPKG/data/structures_db/structures_metadata.db
 gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
 gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
 massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='

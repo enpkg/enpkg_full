@@ -129,10 +129,21 @@ for directory in tqdm(samples_dir):
             link_spectrum = spectrum_dashboard_prefix + usi
             g.add((feature_id, ns_kg.gnps_dashboard_view, rdflib.URIRef(link_spectrum)))
 
-            # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/
+            # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the index and no analog search
             link_fast_search = gnps_fast_search_prefix + usi
             g.add((feature_id, ns_kg.fast_search, rdflib.URIRef(link_fast_search)))
 
+            # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the index and analog search
+            link_fast_search_analog = gnps_fast_search_prefix + usi + '&analog_select=Yes'
+            g.add((feature_id, ns_kg.fast_search_analog, rdflib.URIRef(link_fast_search_analog)))
+
+            # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the GNPS library and no analog search
+            link_fast_search_gnps_no_analog = gnps_fast_search_prefix + usi + '&library_select=gnpslibrary&analog_select=No'
+            g.add((feature_id, ns_kg.fast_search_gnps_no_analog, rdflib.URIRef(link_fast_search_gnps_no_analog)))
+
+            # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the GNPS library and analog search
+            link_fast_search_gnps_analog = gnps_fast_search_prefix + usi + '&library_select=gnpslibrary&analog_select=Yes'
+            g.add((feature_id, ns_kg.fast_search_gnps_analog, rdflib.URIRef(link_fast_search_gnps_analog)))
 
             link_png = spectrum_png_prefix + usi
             g.add((feature_id, FOAF.depiction, rdflib.URIRef(link_png))) 
