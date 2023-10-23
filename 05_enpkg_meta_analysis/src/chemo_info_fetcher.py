@@ -33,7 +33,7 @@ parser.add_argument('-id', '--gnps_job_id', required = False,
 
 args = parser.parse_args()
 sample_dir_path = args.sample_dir_path
-sql_path = os.path.join(os.getcwd() + '/output_data/sql_db/' + args.sql_name)
+sql_path = args.sql_name
 gnps_id = args.gnps_job_id
 
 """ Functions """
