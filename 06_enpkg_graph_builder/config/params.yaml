@@ -18,7 +18,7 @@ spectrum_dashboard_prefix : 'https://metabolomics-usi.gnps2.org/dashinterface?us
 spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1='
 gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1='
 
-source_taxon_header : organism_species
-source_id_header : sample_substance_name
+source_taxon_header : source_taxon
+source_id_header : source_id
 
 compress_outputs : False 
