@@ -8,10 +8,9 @@ ionization_mode : pos # pos or neg
 
 wd_namespace : http://www.wikidata.org/entity/
 graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
-sample_dir_path : ../tests/data/output # /home/allardpm/ENPKG/data/pf1600_sub # #
-graph_output_dir_path : ../tests/data/output/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs # #
-structures_db_path : ../05_enpkg_meta_analysis/output_data/sql_db/structures_metadata.db/
-#home/allardpm/ENPKG/data/structures_db/structures_metadata.db
+sample_dir_path : /home/allardpm/ENPKG/data/pf1600_sub #../tests/data/output #  # #
+graph_output_dir_path : /home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # # #
+structures_db_path : /home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../05_enpkg_meta_analysis/output_data/sql_db/structures_metadata.db/
 gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
 gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
 massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='
@@ -19,7 +18,7 @@ spectrum_dashboard_prefix : 'https://metabolomics-usi.gnps2.org/dashinterface?us
 spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1='
 gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1='
 
-source_taxon_header : source_taxon
-source_id_header : source_id
+source_taxon_header : organism_species #source_taxon
+source_id_header : sample_substance_name #source_id
 
 compress_outputs : False 

@@ -29,24 +29,6 @@ with open(r'config/params.yaml') as file:
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-
-# """ Argument parser """
-# parser = argparse.ArgumentParser(
-#     formatter_class=argparse.RawDescriptionHelpFormatter,
-#     description=textwrap.dedent('''\
-#         This script generate a RDF graph (.ttl format) from the features' MS/MS spectra using spec2vec
-#          --------------------------------
-#             Arguments:
-#             - Path to the directory where samples folders are located
-#             - Ionization mode to process
-#         '''))
-
-# parser.add_argument('-p', '--sample_dir_path', required=True,
-#                     help='The path to the directory where samples folders to process are located')
-# parser.add_argument('-ion', '--ionization_mode', required=True,
-#                     help='The ionization mode to process')
-
-# args = parser.parse_args()
 sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
 ionization_mode = params_list['ionization_mode']
 output_format = params_list['graph_format']

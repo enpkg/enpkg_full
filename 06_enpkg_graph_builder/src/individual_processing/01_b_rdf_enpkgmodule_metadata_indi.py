@@ -59,8 +59,14 @@ prefix_module = params_list['prefix_module']
 
 target_chembl_url = params_list['target_chembl_url']
 
+source_taxon_header = params_list['source_taxon_header']
+source_id_header = params_list['source_id_header']
+
+
+
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
+
 
 
 for directory in tqdm(samples_dir):
@@ -81,7 +87,7 @@ for directory in tqdm(samples_dir):
     sample = rdflib.term.URIRef(kg_uri + metadata.sample_id[0])
     
     if metadata.sample_type[0] == 'sample':
-        material_id = rdflib.term.URIRef(kg_uri + metadata.source_id[0])
+        material_id = rdflib.term.URIRef(kg_uri + metadata[source_id_header][0])
         plant_parts = metadata[['organism_organe', 'organism_broad_organe', 'organism_tissue', 'organism_subsystem']].copy()
         plant_parts.fillna('unkown', inplace=True)
         plant_parts.replace(' ', '_', regex=True, inplace=True)
