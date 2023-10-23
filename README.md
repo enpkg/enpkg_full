@@ -12,6 +12,11 @@ mamba env create -f environment.yml
 
 Follow instructions at https://boecker-lab.github.io/docs.sirius.github.io/install/
 
+Navigate to the directory where you want to install Sirius and run:
+
+```bash
+bash 
+
 Once Sirius is installed, you will need to precise the path to the executable in [here](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/04_enpkg_sirius_canopus/configs/user/user.yml#L3)
 
 ## Editing config files
