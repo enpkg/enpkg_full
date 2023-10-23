@@ -4,7 +4,7 @@ general_params:
   ionization_mode: 'pos' # ionization mode to treat
 
 paths:
-  repository_path: 'temporary_output/' # Path where samples are located
+  repository_path: '/app/temporary_output' # Path where samples are located
   taxo_db_metadata_path: db_metadata/230106_frozen_metadata.csv.gz  # Path to your spectral library file
   spectral_db_pos_path: db_spectra/isdb_pos_cleaned.pkl # Path to the metadata of the spectral file in PI mode
   spectral_db_neg_path: db_spectra/isdb_neg.mgf # Path to the metadata of the spectral file in NI mode
