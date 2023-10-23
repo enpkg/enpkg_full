@@ -50,3 +50,12 @@ sh tests/00_test_all.sh
 ```
 
 On the previous test dataset, this should take about 10 minutes to run.
+
+## Exploring the generated Knowledge Graph
+
+You can use GraphDB to explore the generated Knowledge Graph. To do so, you will need to install GraphDB (https://graphdb.ontotext.com/download/) and import the generated .ttl files.
+
+
+# Note
+
+This workflow is still under development. It is currently being ported to the EMIKG framework (https://github.com/earth-metabolome-initiative/emikg).
