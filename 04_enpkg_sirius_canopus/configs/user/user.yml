@@ -1,6 +1,6 @@
 paths:
   - path_to_data: '../tests/data/output' # Path to files to process
-  - path_to_sirius: '/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
+  - path_to_sirius: '/Applications/sirius.app/Contents/MacOS/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
 options:
   - sirius_version: 5 # Sirius version: 4 or 5
   - ionization: 'pos' # Ionization mode to process: pos or neg
@@ -14,7 +14,7 @@ options:
 --FormulaResultThreshold=true --InjectElGordoCompounds=true --StructureSearchDB=BIO --RecomputeResults=false \
 formula zodiac fingerprint structure canopus write-summaries --output {output_name}"
         # Don't change input and output parameters
-  - recompute: True # Recompute files for which output directory (with the same prefix) already exists: True of False (no quotes)
+  - recompute: False # Recompute files for which output directory (with the same prefix) already exists: True of False (no quotes)
   - zip_output: True # Zip individual features outputs to save disk space: True of False (no quotes)
   - sirius_user_env: SIRIUS_USERNAME
   - sirius_password_env: SIRIUS_PASSWORD
