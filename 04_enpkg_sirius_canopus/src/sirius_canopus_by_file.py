@@ -34,7 +34,7 @@ sirius_command = path_to_sirius + ' ' + sirius_command_arg
 sirius_login_command = path_to_sirius + ' ' + 'login' + ' ' + '--user-env=' + sirius_user_env + ' ' + '--password-env=' + sirius_password_env
 
 """ Parameters used """
-sirius_version_str = subprocess.check_output(["/prog/sirius/bin/sirius", "--version"]).decode().split('\n')
+sirius_version_str = subprocess.check_output([path_to_sirius, "--version"]).decode().split('\n')
 params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
                                     {'git_commit_link':f'https://github.com/enpkg/enpkg_sirius_canopus/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
                                     {'SIRIUS':sirius_version_str[0]},
