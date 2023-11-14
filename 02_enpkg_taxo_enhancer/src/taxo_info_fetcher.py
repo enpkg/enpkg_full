@@ -13,6 +13,7 @@ import opentree
 from opentree import OT
 
 
+
 def wd_taxo_fetcher_from_ott(url: str, ott_id: int):
     query = f"""
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -46,32 +47,19 @@ if __name__ == "__main__":
     os.chdir(p)
     url = "https://query.wikidata.org/sparql"
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent(
-            """\
-        This script creates a <sample>_taxo_metadata.tsv file with the WD ID of the samples taxon and its OTT taxonomy
-        --------------------------------
-            You should just enter the path to the directory where samples folders are located
-        """
-        ),
-    )
-    parser.add_argument(
-        "-p",
-        "--sample_dir_path",
-        required=True,
-        help="The path to the directory where samples folders to process are located",
-    )
-    parser.add_argument(
-        "-f",
-        "--force_research",
-        default=False,
-        action="store_true",
-        help="Reanalyze samples for which a result folder is already present",
-    )
-    args = parser.parse_args()
-    sample_dir_path = args.sample_dir_path
-    force_res = args.force_research
+    # Loading the parameters from yaml file
+
+    if not os.path.exists('../params/user.yml'):
+        print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+    with open (r'../params/user.yml') as file:    
+        params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+    params_list = params_list_full['taxo-info-fetching']
+
+    # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+    sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+    force_res = params_list['recompute']
 
     params = {"git": [], "package_versions": [], "ott": []}
 

@@ -4,8 +4,11 @@ import os
 import shutil
 import textwrap
 import pandas as pd
+import yaml
 
 from userinput.utils import must_be_in_set
+from pathlib import Path
+
 
 
 def organize_folder(
@@ -147,61 +150,28 @@ def organize_folder(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent(
-            """\
-            Organize folder with unaligned feature list files [features spectra file, feature area file \
-                and sirius spectra file (optional)] and their aggregated metadata in individual folders
-            --------------------------------
-            You should just enter the path to the directory where files are located, \
-                the aggregated metadata filename and the analysis polarity. 
-            """
-        ),
-    )
+    os.chdir(os.getcwd())
 
-    parser.add_argument(
-        "--source_path",
-        required=True,
-        help="The path to the directory where data files are located",
-    )
-    parser.add_argument(
-        "--source_metadata_path",
-        required=True,
-        help="The path to the directory where metadata files are located",
-    )
-    parser.add_argument(
-        "--target_path",
-        required=True,
-        help="The path to the directory where files will be moved",
-    )
-    parser.add_argument(
-        "--sample_metadata_filename",
-        required=True,
-        help="The name of the metadata file to use (it has to be located in sample_dir_path)",
-    )
-    parser.add_argument(
-        "--lcms_method_params_filename",
-        required=True,
-        help="The name of the metadata file to use (it has to be located in sample_dir_path)",
-    )
-    parser.add_argument(
-        "--lcms_processing_params_filename",
-        required=True,
-        help="The name of the metadata file to use (it has to be located in sample_dir_path)",
-    )
-    parser.add_argument(
-        "--polarity", required=True, help="The polarity mode of LC-MS/MS analyses"
-    )
+    p = Path(__file__).parents[1]
+    os.chdir(p)
 
-    args = parser.parse_args()
+    # Loading the parameters from yaml file
+
+    if not os.path.exists('../params/user.yml'):
+        print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+    with open (r'../params/user.yml') as file:    
+        params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+    params_list = params_list_full['data-organization']
+
+    # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
     organize_folder(
-        source_path=os.path.normpath(args.source_path),
-        target_path=os.path.normpath(args.target_path),
-        source_metadata_path=args.source_metadata_path,
-        metadata_filename=args.sample_metadata_filename,
-        lcms_method_filename=args.lcms_method_params_filename,
-        lcms_processing_filename=args.lcms_processing_params_filename,
-        polarity=args.polarity,
+        source_path=os.path.normpath(params_list['source_path']),
+        target_path=os.path.normpath(params_list['target_path']),
+        source_metadata_path=params_list['source_metadata_path'],
+        metadata_filename=params_list['sample_metadata_filename'],
+        lcms_method_filename=params_list['lcms_method_params_filename'],
+        lcms_processing_filename=params_list['lcms_processing_params_filename'],
+        polarity=params_list['polarity']
     )

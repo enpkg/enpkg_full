@@ -1,5 +1,24 @@
 # parameters
+data-organization:
+  source_path: ../tests/data/input/enpkg_toy_dataset/msdata/processed
+  target_path: ../tests/data/output
+  source_metadata_path: ../tests/data/input/enpkg_toy_dataset/metadata
+  sample_metadata_filename: metadata.tsv
+  lcms_method_params_filename: lcms_method_params.txt
+  lcms_processing_params_filename: lcms_processing_params.xml
+  polarity: pos
+
+massive-id-addition:
+  massive_id: MSV000093199
+  sample_dir_path: ../tests/data/output
+
+taxo-info-fetching:
+  sample_dir_path: ../tests/data/output
+  recompute: True
+
 isdb:
+  adducts-formatter:
+    taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
   general_params:
     recompute: True  # Recompute for samples with results already done
     ionization_mode: 'pos' # ionization mode to treat
@@ -57,6 +76,24 @@ sirius:
     sirius_user_env: SIRIUS_USERNAME
     sirius_password_env: SIRIUS_PASSWORD
 
+
+chemo-info-fetching:
+  sample_dir_path: ../tests/data/output
+  sql_name: structures_metadata.db
+
+memo:
+  sample_dir_path: ./tests/data/output # required=True, help='The path to the directory where samples folders to process are located'
+  ionization: pos # required=True, help="ionization mode to use to build the memo_matrix: pos, neg or both", type= str
+  output: memo_matrix # required=True, help="Output name to use for the generated MEMO matrix", type= str
+  min_relative_intensity: 0.01 # help="Minimal relative intensity to keep a peak max_relative_intensity, default 0.01", type= float, default= 0.01)
+  max_relative_intensity: 1 # ', help="Maximal relative intensity to keep a peak max_relative_intensity, default 1", type= float, default= 1.0)
+  min_peaks_required: 10 # ', help="Minimum number of peaks to keep a spectrum, default 10", type= int, default= 10)
+  losses_from: 10 # ', help="Minimal m/z value for losses losses_to (int): maximal m/z value for losses, default 10", type= int, default= 10)
+  losses_to: 200 # ', help="Maximal m/z value for losses losses_to (int): maximal m/z value for losses, default 200", type= int, default= 200)
+  n_decimals: 2 # ', help="Number of decimal when translating peaks/losses into words, default 2", type= int, default= 2)
+  filter_blanks: False # ', help="Remove blanks samples from the MEMO matrix", type= bool, default= False)
+  word_max_occ_blanks: -1 # ', help="Set --filter_blanks to True to use. If word is present in more than n blanks, word is removed from MEMO matrix, default -1 (all words kept)", type= int, default= -1)
+
 graph-builder:
   kg_uri : https://enpkg.commons-lab.org/kg/ #https://dbgi.vital-it.ch/
   prefix : enpkg #dbgi #emi
@@ -77,9 +114,6 @@ graph-builder:
   spectrum_dashboard_prefix : 'https://metabolomics-usi.gnps2.org/dashinterface?usi1='
   spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1='
   gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1='
-
-
-
 
   source_taxon_header : source_taxon #organism_species #
   source_id_header : source_id #sample_substance_name 

@@ -12,29 +12,26 @@ import argparse
 import textwrap
 from pathlib import Path
 from rdkit.Chem import AllChem
+import yaml
 
 p = Path(__file__).parents[1]
 os.chdir(p)
 
-""" Argument parser """
 
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        This script generates an SQL DB (structures_metadata.db) in the /output_data/sql_db/ with WD ID and NPClassfier taxonomy for annotated structures.
-        '''))
-parser.add_argument('-p', '--sample_dir_path', required=True,
-                    help='The path to the directory where samples folders to process are located')
-parser.add_argument('-sql', '--sql_name', default = 'structures_metadata.db',
-                    help='The name of a previsouly generated SQL DB (that will be updated with new structures). \
-                        If no SQL DB is available, will create new one /output_data/sql_db/')
-parser.add_argument('-id', '--gnps_job_id', required = False, 
-                    help='The GNPS job ID of the meta-MN corresponding to sample_dir_path')
+# Loading the parameters from yaml file
 
-args = parser.parse_args()
-sample_dir_path = args.sample_dir_path
-sql_path = os.path.join(os.getcwd() + '/output_data/sql_db/' + args.sql_name)
-gnps_id = args.gnps_job_id
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+params_list = params_list_full['chemo-info-fetching']
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+sample_dir_path =os.path.normpath(params_list['sample_dir_path'])
+sql_path = os.path.join(os.getcwd() + '/output_data/sql_db/' + params_list['sql_name'])
+
 
 """ Functions """
 
