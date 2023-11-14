@@ -80,6 +80,7 @@ sirius:
 chemo-info-fetching:
   sample_dir_path: ../tests/data/output
   sql_name: structures_metadata.db
+  gnps_id: # GNPS id. Only fill if you have been launcging a global GNPS id job
 
 memo:
   sample_dir_path: ./tests/data/output # required=True, help='The path to the directory where samples folders to process are located'
