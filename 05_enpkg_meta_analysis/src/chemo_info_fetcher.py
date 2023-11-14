@@ -31,7 +31,7 @@ params_list = params_list_full['chemo-info-fetching']
 
 sample_dir_path =os.path.normpath(params_list['sample_dir_path'])
 sql_path = os.path.join(os.getcwd() + '/output_data/sql_db/' + params_list['sql_name'])
-
+gnps_id = params_list['gnps_id']
 
 """ Functions """
 
@@ -197,6 +197,8 @@ if gnps_id is not None:
         metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
     except FileNotFoundError:
         pass
+else :
+    print('No GNPS job found, skipping this stage.')
 
 # Add unique short IK from Sirius annotations + add NPC metadata
 print('Processing Sirius results')
@@ -243,7 +245,7 @@ for directory in tqdm(samples_dir):
 df_ik_meta = pd.DataFrame.from_dict(metadata_short_ik, orient='index')\
     .reset_index().rename(columns={'index':'short_inchikey'}).fillna('unknown')
 
-print('Getting WD id and formatting results')
+print('Getting WD identifiers and formatting results')
 
 if len(df_ik_meta) > 0:
     wd_all = get_all_ik(wd_url)

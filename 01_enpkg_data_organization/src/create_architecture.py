@@ -1,4 +1,3 @@
-"""Argument parser """
 import argparse
 import os
 import shutil
@@ -104,8 +103,8 @@ def organize_folder(
             file_path = os.path.normpath(os.path.join(sub_folder + "/" + file))
 
 
-            lcms_method_extension = path_lcms_method_filename.split(".", 1)[1]
-            lcms_processing_extension = path_lcms_processing_filename.split(".", 1)[1]
+            lcms_method_extension = lcms_method_filename.split(".", 1)[1]
+            lcms_processing_extension = lcms_processing_filename.split(".", 1)[1]
             destination_path_lcms_method_filename = os.path.join(
                 sub_folder,
                 f"{sample_id}_lcms_method_params_{polarity}.{lcms_method_extension}",
@@ -166,12 +165,20 @@ if __name__ == "__main__":
 
     # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
+    source_path=os.path.normpath(params_list['source_path'])
+    target_path=os.path.normpath(params_list['target_path'])
+    source_metadata_path=os.path.normpath(params_list['source_metadata_path'])
+    metadata_filename=params_list['sample_metadata_filename']
+    lcms_method_filename=params_list['lcms_method_params_filename']
+    lcms_processing_filename=params_list['lcms_processing_params_filename']
+    polarity=params_list['polarity']
+
     organize_folder(
-        source_path=os.path.normpath(params_list['source_path']),
-        target_path=os.path.normpath(params_list['target_path']),
-        source_metadata_path=params_list['source_metadata_path'],
-        metadata_filename=params_list['sample_metadata_filename'],
-        lcms_method_filename=params_list['lcms_method_params_filename'],
-        lcms_processing_filename=params_list['lcms_processing_params_filename'],
-        polarity=params_list['polarity']
+        source_path=source_path,
+        target_path=target_path,
+        source_metadata_path=source_metadata_path,
+        metadata_filename=metadata_filename,
+        lcms_method_filename=lcms_method_filename,
+        lcms_processing_filename=lcms_processing_filename,
+        polarity=polarity
     )
