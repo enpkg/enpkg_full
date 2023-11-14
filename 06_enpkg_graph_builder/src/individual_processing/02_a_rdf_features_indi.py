@@ -20,32 +20,15 @@ os.chdir(p)
 
 # Loading the parameters from yaml file
 
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-if not os.path.exists('config/params.yaml'):
-    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
-with open(r'config/params.yaml') as file:
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+params_list = params_list_full['graph-builder']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-
-# """ Argument parser """
-# parser = argparse.ArgumentParser(
-#     formatter_class=argparse.RawDescriptionHelpFormatter,
-#     description=textwrap.dedent('''\
-#         This script generate a RDF graph (.ttl format) from samples' individual feature-list files 
-#          --------------------------------
-#             Arguments:
-#             - Path to the directory where samples folders are located
-#             - Ionization mode to process
-#         '''))
-
-# parser.add_argument('-p', '--sample_dir_path', required=True,
-#                     help='The path to the directory where samples folders to process are located')
-# parser.add_argument('-ion', '--ionization_mode', required=True,
-#                     help='The ionization mode to process')
-
-# args = parser.parse_args()
 
 sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
 output_format = params_list['graph_format']

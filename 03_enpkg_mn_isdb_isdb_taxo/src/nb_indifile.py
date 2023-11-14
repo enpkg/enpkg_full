@@ -29,8 +29,10 @@ os.chdir(p)
 
 # you can copy the configs/default/default.yaml to configs/user/user.yaml
 
-with open (r'configs/user/user.yaml') as file:    
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+params_list = params_list_full['isdb']
 
 recompute = params_list['general_params']['recompute']
 ionization_mode = params_list['general_params']['ionization_mode']
