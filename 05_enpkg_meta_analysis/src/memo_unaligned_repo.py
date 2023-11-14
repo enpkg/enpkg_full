@@ -5,29 +5,37 @@ import datatable as dt
 import pandas as pd
 import numpy as np
 import textwrap
+from pathlib import Path
+import yaml
 
-""" Argument parser """
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        Compute MEMO matrix for a set of unaligned mgf files.
-        '''))
 
-parser.add_argument('-p', '--sample_dir_path', required=True, help='The path to the directory where samples folders to process are located')
-parser.add_argument('--ionization', required=True, help="ionization mode to use to build the memo_matrix: pos, neg or both", type= str)
-parser.add_argument('--min_relative_intensity', help="Minimal relative intensity to keep a peak max_relative_intensity, default 0.01", type= float, default= 0.01)
-parser.add_argument('--max_relative_intensity', help="Maximal relative intensity to keep a peak max_relative_intensity, default 1", type= float, default= 1.0)
-parser.add_argument('--min_peaks_required', help="Minimum number of peaks to keep a spectrum, default 10", type= int, default= 10)
-parser.add_argument('--losses_from', help="Minimal m/z value for losses losses_to (int): maximal m/z value for losses, default 10", type= int, default= 10)
-parser.add_argument('--losses_to', help="Maximal m/z value for losses losses_to (int): maximal m/z value for losses, default 200", type= int, default= 200)
-parser.add_argument('--n_decimals', help="Number of decimal when translating peaks/losses into words, default 2", type= int, default= 2)
-parser.add_argument('--filter_blanks', help="Remove blanks samples from the MEMO matrix", type= bool, default= False)
-parser.add_argument('--word_max_occ_blanks', help="Set --filter_blanks to True to use. If word is present in more than n blanks, word is removed from MEMO matrix, default -1 (all words kept)", type= int, default= -1)
-parser.add_argument('--output', required=True, help="Output name to use for the generated MEMO matrix", type= str)
+p = Path(__file__).parents[1]
+os.chdir(p)
 
-args = parser.parse_args()
-sample_dir_path = os.path.normpath(args.sample_dir_path)
-ionization = args.ionization
+
+
+# Loading the parameters from yaml file
+
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+params_list = params_list_full['memo']
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
+ionization = params_list['ionization']
+min_relative_intensity = params_list['min_relative_intensity']
+max_relative_intensity = params_list['max_relative_intensity']
+min_peaks_required = params_list['min_peaks_required']
+losses_from = params_list['losses_from']
+losses_to = params_list['losses_to']
+n_decimals = params_list['n_decimals']
+filter_blanks = params_list['filter_blanks']
+word_max_occ_blanks = params_list['word_max_occ_blanks']
+output = os.path.normpath(params_list['output'])
 
 pattern_to_match2 = None
 if ionization == 'pos':

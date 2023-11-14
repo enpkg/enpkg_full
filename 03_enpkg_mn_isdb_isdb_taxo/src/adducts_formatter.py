@@ -3,24 +3,26 @@ import argparse
 import textwrap
 from pathlib import Path
 import os
+import yaml
 from pathlib import PurePath
 
 p = Path(__file__).parents[1]
 os.chdir(p)
 
-""" Argument parser """
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-         This script creates a <sample>_taxo_metadata.tsv file with the WD ID of the samples species and its OTT taxonomy
-         --------------------------------
-            You should just enter the path to the directory where samples folders are located
-        '''))
-parser.add_argument('-p', '--db_metadata_path', required=True,
-                    help='The path to the database metadata')
 
-args = parser.parse_args()
-db_metadata_path = os.path.normpath(args.db_metadata_path)
+
+# Loading the parameters from yaml file
+
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+params_list = params_list_full['isdb']['adducts-formatter']
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+db_metadata_path = os.path.normpath(params_list['taxo_db_metadata_path'])
 
 if db_metadata_path.endswith('.csv.gz'):
     db_metadata = pd.read_csv(db_metadata_path, sep=',', compression='gzip', on_bad_lines='skip', low_memory=False)
