@@ -14,19 +14,22 @@ p = Path(__file__).parents[1]
 os.chdir(p)
 #from canopus import Canopus
 
-with open (r'configs/user/user.yml') as file:    
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-path_to_data = params_list['paths'][0]['path_to_data']
-path_to_sirius = params_list['paths'][1]['path_to_sirius']
+params_list = params_list_full['sirius']
 
-sirius_version = params_list['options'][0]['sirius_version']
-ionization = params_list['options'][1]['ionization']
-sirius_command_arg = params_list['options'][2]['sirius_command_arg']
-recompute = params_list['options'][3]['recompute']
-zip_output = params_list['options'][4]['zip_output']
-sirius_user_env = params_list['options'][5]['sirius_user_env']
-sirius_password_env = params_list['options'][6]['sirius_password_env']
+
+path_to_data = params_list['paths']['path_to_data']
+path_to_sirius = params_list['paths']['path_to_sirius']
+
+sirius_version = params_list['options']['sirius_version']
+ionization = params_list['options']['ionization']
+sirius_command_arg = params_list['options']['sirius_command_arg']
+recompute = params_list['options']['recompute']
+zip_output = params_list['options']['zip_output']
+sirius_user_env = params_list['options']['sirius_user_env']
+sirius_password_env = params_list['options']['sirius_password_env']
 
 output_suffix = 'WORKSPACE_SIRIUS'
 
