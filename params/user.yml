@@ -1,4 +1,9 @@
 # parameters
+data-download:
+  record_id: 10018590
+  record_name: enpkg_toy_dataset.zip
+  output_path: ../data/input/
+
 data-organization:
   source_path: ../tests/data/input/enpkg_toy_dataset/msdata/processed
   target_path: ../tests/data/output
