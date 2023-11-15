@@ -115,7 +115,7 @@ for directory in tqdm(samples_dir):
         params_list = {}  
             
     params_list.update({f'individual_mn_{ionization_mode}':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                        {'git_commit_link':f'https://github.com/enpkg/enpkg_graph_builder/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+                        {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
     
     with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
         yaml.dump(params_list, file)

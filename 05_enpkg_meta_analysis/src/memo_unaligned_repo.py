@@ -52,9 +52,10 @@ if (filter_blanks is False) & (word_max_occ_blanks != -1):
 i = 0        
 for (root, _, files) in os.walk(sample_dir_path, topdown=True):
     for file in files:
-        print(file)                
         if file.endswith(pattern_to_match1):
+            # print(file)
             i += 1
+
 print(f"Generating MEMO matrix from {i} input files.") 
             
 memo_unaligned = memo.MemoMatrix()
@@ -141,7 +142,8 @@ if not os.path.exists(PATH):
 
 datatable = dt.Frame(table1)
 datatable.to_csv(f"{PATH}/{output}.gz", compression="gzip")    
-params = pd.DataFrame.from_dict(vars(args).items()).rename(columns={0:'parameter', 1:'value'})
+# params = pd.DataFrame.from_dict(vars(args).items()).rename(columns={0:'parameter', 1:'value'})
+params = pd.DataFrame(list(params_list.items()), columns=['parameter', 'value'])
 included_samples_df = df = pd.DataFrame(index=[0], columns=['parameter', 'value'])
 included_samples_df.loc[0, 'parameter'] = 'included_samples'
 included_samples_df.loc[0, 'value'] = list(table1.filename)

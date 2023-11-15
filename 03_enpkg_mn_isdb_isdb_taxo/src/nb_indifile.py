@@ -65,7 +65,7 @@ taxo_weight = params_list['reweighting_params']['taxo_weight']
 chemo_weight = params_list['reweighting_params']['chemo_weight']
 
 params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                    {'git_commit_link':f'https://github.com/enpkg/enpkg_mn_isdb_taxo/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+                                    {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
 
 
 ###### START #####

@@ -28,11 +28,11 @@ conda activate enpkg_full
 # echo "Launching 08_test_chemo_info_fetcher.sh"
 # sh ./tests/08_test_chemo_info_fetcher.sh
 
-echo "Launching 09_test_memo.sh"
-sh ./tests/09_test_memo.sh
+# echo "Launching 09_test_memo.sh"
+# sh ./tests/09_test_memo.sh
 
-# echo "Launching 10_test_graph_builder.sh"
-# sh ./tests/10_test_graph_builder.sh
+echo "Launching 10_test_graph_builder.sh"
+sh ./tests/10_test_graph_builder.sh
 
 
 conda deactivate

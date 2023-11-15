@@ -78,7 +78,7 @@ def process_directory(directory):
             nm.bind(prefix, ns_kg)
 
             spectra_list = load_and_filter_from_mgf(mgf_path)
-            reference_documents = [SpectrumDocument(s, n_decimals=2) for s in spectra_list]
+            reference_documents = [SpectrumDocument(s, n_decimals=1) for s in spectra_list]
             list_peaks_losses = list(doc.words for doc in reference_documents)
             sample = rdflib.term.URIRef(kg_uri + metadata.sample_id[0])
             for spectrum, document in zip(spectra_list, list_peaks_losses):
@@ -122,7 +122,7 @@ def process_directory(directory):
                 params_list = {}  
                     
             params_list.update({f'features_spec2vec_{ionization_mode}':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                {'git_commit_link':f'https://github.com/enpkg/enpkg_graph_builder/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+                                {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
             
             with open(params_path, 'w', encoding='UTF-8') as file:
                 yaml.dump(params_list, file)
