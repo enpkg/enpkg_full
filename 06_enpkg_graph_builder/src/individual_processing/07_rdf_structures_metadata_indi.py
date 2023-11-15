@@ -26,11 +26,11 @@ params_list = params_list_full['graph-builder']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-output_format = params_list['graph_format']
-ionization_mode = params_list['ionization_mode']
+sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+output_format = params_list_full['graph-builder']['graph_format']
+ionization_mode = params_list_full['graph-builder']['ionization_mode']
 
-metadata_path = params_list['structures_db_path']
+metadata_path = params_list_full['graph-builder']['structures_db_path']
 
 greek_alphabet = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩωÎ²Iµ'
 latin_alphabet = 'AaBbGgDdEeZzHhJjIiKkLlMmNnXxOoPpRrSssTtUuFfQqYyWwI2Iu'
@@ -42,9 +42,9 @@ query = dat.execute("SELECT * From structures_metadata")
 cols = [column[0] for column in query.description]
 df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
 
-kg_uri = params_list['kg_uri']
+kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list['prefix']
+prefix = params_list_full['graph-builder']['prefix']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]

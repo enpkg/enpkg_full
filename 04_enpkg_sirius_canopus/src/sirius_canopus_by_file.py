@@ -20,16 +20,16 @@ with open (r'../params/user.yml') as file:
 params_list = params_list_full['sirius']
 
 
-path_to_data = params_list['paths']['path_to_data']
-path_to_sirius = params_list['paths']['path_to_sirius']
+path_to_data = params_list_full['sirius']['paths']['path_to_data']
+path_to_sirius = params_list_full['sirius']['paths']['path_to_sirius']
 
-sirius_version = params_list['options']['sirius_version']
-ionization = params_list['options']['ionization']
-sirius_command_arg = params_list['options']['sirius_command_arg']
-recompute = params_list['options']['recompute']
-zip_output = params_list['options']['zip_output']
-sirius_user_env = params_list['options']['sirius_user_env']
-sirius_password_env = params_list['options']['sirius_password_env']
+sirius_version = params_list_full['sirius']['options']['sirius_version']
+ionization = params_list_full['sirius']['options']['ionization']
+sirius_command_arg = params_list_full['sirius']['options']['sirius_command_arg']
+recompute = params_list_full['sirius']['options']['recompute']
+zip_output = params_list_full['sirius']['options']['zip_output']
+sirius_user_env = params_list_full['sirius']['options']['sirius_user_env']
+sirius_password_env = params_list_full['sirius']['options']['sirius_password_env']
 
 output_suffix = 'WORKSPACE_SIRIUS'
 

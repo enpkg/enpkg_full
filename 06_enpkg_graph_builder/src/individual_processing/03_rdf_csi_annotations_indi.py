@@ -31,9 +31,9 @@ params_list = params_list_full['graph-builder']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-output_format = params_list['graph_format']
-ionization_mode = params_list['ionization_mode']
+sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+output_format = params_list_full['graph-builder']['graph_format']
+ionization_mode = params_list_full['graph-builder']['ionization_mode']
 
 g = Graph()
 nm = g.namespace_manager
@@ -41,9 +41,9 @@ nm = g.namespace_manager
 with open(os.path.normpath('data/adducts_formatter.json')) as json_file:
     adducts_dic = json.load(json_file)
 
-kg_uri = params_list['kg_uri']
+kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list['prefix']
+prefix = params_list_full['graph-builder']['prefix']
 
 nm.bind(prefix, ns_kg)
 

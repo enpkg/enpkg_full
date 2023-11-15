@@ -26,26 +26,26 @@ params_list = params_list_full['graph-builder']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-output_format = params_list['graph_format']
+sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+output_format = params_list_full['graph-builder']['graph_format']
 
 
-WD = Namespace(params_list['wd_namespace'])
+WD = Namespace(params_list_full['graph-builder']['wd_namespace'])
 
 # Create enpkg namespace
-kg_uri = params_list['kg_uri']
+kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list['prefix']
+prefix = params_list_full['graph-builder']['prefix']
 
 # Create enpkgmodule namespace
-module_uri = params_list['module_uri']
+module_uri = params_list_full['graph-builder']['module_uri']
 ns_module = rdflib.Namespace(module_uri)
-prefix_module = params_list['prefix_module']
+prefix_module = params_list_full['graph-builder']['prefix_module']
 
-target_chembl_url = params_list['target_chembl_url']
+target_chembl_url = params_list_full['graph-builder']['target_chembl_url']
 
-source_taxon_header = params_list['source_taxon_header']
-source_id_header = params_list['source_id_header']
+source_taxon_header = params_list_full['graph-builder']['source_taxon_header']
+source_id_header = params_list_full['graph-builder']['source_id_header']
 
 
 
