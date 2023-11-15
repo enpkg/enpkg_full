@@ -74,7 +74,7 @@ for directory in tqdm(samples_dir):
     
     with open (sirius_param_path) as file:    
         params_list = yaml.load(file, Loader=yaml.FullLoader)
-    sirius_version = params_list['options'][0]['sirius_version']
+    sirius_version = params_list['options']['sirius_version']
     
     if sirius_version == 4:
         # Canopus NPC results integration for sirius 4

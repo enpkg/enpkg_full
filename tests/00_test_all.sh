@@ -1,12 +1,8 @@
 eval "$(conda shell.bash hook)"
 conda activate enpkg_full
 
-# cd ./tests/
-# python -m pytest
-# cd ..
-
-echo "Launching 01_0_test_data_download.sh"
-sh ./tests/01_0_test_data_download.sh
+# echo "Launching 01_0_test_data_download.sh"
+# sh ./tests/01_0_test_data_download.sh
 
 # echo "Launching 01_1_test_create_architecture.sh"
 # sh ./tests/01_1_test_create_architecture.sh
@@ -32,8 +28,8 @@ sh ./tests/01_0_test_data_download.sh
 # echo "Launching 08_test_chemo_info_fetcher.sh"
 # sh ./tests/08_test_chemo_info_fetcher.sh
 
-# echo "Launching 09_test_memo.sh"
-# sh ./tests/09_test_memo.sh
+echo "Launching 09_test_memo.sh"
+sh ./tests/09_test_memo.sh
 
 # echo "Launching 10_test_graph_builder.sh"
 # sh ./tests/10_test_graph_builder.sh
