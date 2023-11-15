@@ -25,8 +25,8 @@ params_list = params_list_full['massive-id-addition']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-massive_id = params_list['massive_id']
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+massive_id = params_list_full['massive-id-addition']['massive_id']
 
 
 # Check if format of MassIVE ID is correct:

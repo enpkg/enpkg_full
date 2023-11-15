@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-    sample_dir_path = os.path.normpath(params_list_full['taxo-info-fetching']['sample_dir_path'])
+    sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
     force_res = params_list_full['taxo-info-fetching']['recompute']
 
     params = {"git": [], "package_versions": [], "ott": []}

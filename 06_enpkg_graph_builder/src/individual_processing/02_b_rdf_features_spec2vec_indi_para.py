@@ -32,7 +32,7 @@ params_list = params_list_full['graph-builder']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 ionization_mode = params_list_full['graph-builder']['ionization_mode']
 output_format = params_list_full['graph-builder']['graph_format']
 

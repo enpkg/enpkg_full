@@ -1,24 +1,24 @@
 # parameters
+general:
+  raw_data_path: ../tests/data/input/
+  treated_data_path: ../tests/data/output
+  polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
+
 data-download:
   record_id: 10018590
   record_name: enpkg_toy_dataset.zip
-  output_path: ../tests/data/input/
 
 data-organization:
   source_path: ../tests/data/input/enpkg_toy_dataset/msdata/processed
-  target_path: ../tests/data/output
   source_metadata_path: ../tests/data/input/enpkg_toy_dataset/metadata
   sample_metadata_filename: metadata.tsv
   lcms_method_params_filename: lcms_method_params.txt
   lcms_processing_params_filename: lcms_processing_params.xml
-  polarity: pos
 
 massive-id-addition:
   massive_id: MSV000093199
-  sample_dir_path: ../tests/data/output
 
 taxo-info-fetching:
-  sample_dir_path: ../tests/data/output
   recompute: True
 
 isdb:
@@ -26,10 +26,8 @@ isdb:
     taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
   general_params:
     recompute: True  # Recompute for samples with results already done
-    ionization_mode: 'pos' # ionization mode to treat
   
   paths:
-    repository_path: '../tests/data/output' # Path where samples are located
     taxo_db_metadata_path: db_metadata/230106_frozen_metadata.csv.gz  # Path to your spectral library file
     spectral_db_pos_path: db_spectra/isdb_pos_cleaned.pkl # Path to the metadata of the spectral file in PI mode
     spectral_db_neg_path: db_spectra/isdb_neg.mgf # Path to the metadata of the spectral file in NI mode
@@ -61,7 +59,6 @@ isdb:
 
 sirius:
   paths:
-    path_to_data: '../tests/data/output' # Path to files to process
     path_to_sirius: '/prog/sirius/bin/sirius' #'/Applications/sirius.app/Contents/MacOS/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
   options:
     sirius_version: 5 # Sirius version: 4 or 5
@@ -83,13 +80,10 @@ sirius:
 
 
 chemo-info-fetching:
-  sample_dir_path: ../tests/data/output
   sql_name: structures_metadata.db
   gnps_id: # GNPS id. Only fill if you have been launcging a global GNPS id job
 
 memo:
-  sample_dir_path: ../tests/data/output # required=True, help='The path to the directory where samples folders to process are located'
-  ionization: pos # required=True, help="ionization mode to use to build the memo_matrix: pos, neg or both", type= str
   output: memo_matrix # required=True, help="Output name to use for the generated MEMO matrix", type= str
   min_relative_intensity: 0.01 # help="Minimal relative intensity to keep a peak max_relative_intensity, default 0.01", type= float, default= 0.01)
   max_relative_intensity: 1 # ', help="Maximal relative intensity to keep a peak max_relative_intensity, default 1", type= float, default= 1.0)
@@ -111,7 +105,6 @@ graph-builder:
 
   wd_namespace : http://www.wikidata.org/entity/
   graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
-  sample_dir_path : ../tests/data/output #/home/allardpm/ENPKG/data/pf1600_sub # #  # #
   graph_output_dir_path : ../tests/data/output/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
   structures_db_path : ../05_enpkg_meta_analysis/output_data/sql_db/structures_metadata.db #/home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../
   gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'

@@ -28,7 +28,7 @@ with open (r'../params/user.yml') as file:
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-sample_dir_path =os.path.normpath(params_list_full['chemo-info-fetching']['sample_dir_path'])
+sample_dir_path =os.path.normpath(params_list_full['general']['treated_data_path'])
 sql_path = os.path.join(os.getcwd() + '/output_data/sql_db/' + params_list_full['chemo-info-fetching']['sql_name'])
 gnps_id = params_list_full['chemo-info-fetching']['gnps_id']
 
