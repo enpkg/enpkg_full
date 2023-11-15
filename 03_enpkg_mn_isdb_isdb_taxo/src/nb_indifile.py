@@ -32,6 +32,7 @@ os.chdir(p)
 with open (r'../params/user.yml') as file:    
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
+params_list = params_list_full['isdb']
 
 recompute = params_list_full['isdb']['general_params']['recompute']
 ionization_mode = params_list_full['general']['polarity']
@@ -63,7 +64,7 @@ msms_weight = params_list_full['isdb']['reweighting_params']['msms_weight']
 taxo_weight = params_list_full['isdb']['reweighting_params']['taxo_weight']
 chemo_weight = params_list_full['isdb']['reweighting_params']['chemo_weight']
 
-params_list_full['isdb'].update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
                                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
 
 
