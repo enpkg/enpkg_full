@@ -1,7 +1,7 @@
 # parameters
 general:
-  raw_data_path: ../tests/data/input
-  treated_data_path: ../tests/data/output
+  raw_data_path: ../data/input
+  treated_data_path: ../data/output
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 data-download:
@@ -9,8 +9,8 @@ data-download:
   record_name: enpkg_toy_dataset.zip
 
 data-organization:
-  source_path: ../tests/data/input/enpkg_toy_dataset/msdata/processed
-  source_metadata_path: ../tests/data/input/enpkg_toy_dataset/metadata
+  source_path: ../data/input/enpkg_toy_dataset/msdata/processed
+  source_metadata_path: ../data/input/enpkg_toy_dataset/metadata
   sample_metadata_filename: metadata.tsv
   lcms_method_params_filename: lcms_method_params.txt
   lcms_processing_params_filename: lcms_processing_params.xml
@@ -118,5 +118,5 @@ graph-builder:
     n_decimals: 1 # number of decimals of m/z to use for spectral binning
 
   graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
-  graph_output_dir_path : ../tests/data/output/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
+  graph_output_dir_path : ../data/output/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
   compress_outputs : False 

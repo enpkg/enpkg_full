@@ -8,7 +8,7 @@ echo "Launching 01_1_workflow_create_architecture.sh"
 sh ./workflow/01_1_workflow_create_architecture.sh
 
 echo "Launching 02_massive_id.sh"
-sh ./workflows/02_workflow_massive_id.sh
+sh ./workflow/02_workflow_massive_id.sh
 
 echo "Launching 03_workflow_taxo_enhancer.sh"
 sh ./workflow/03_workflow_taxo_enhancer.sh
