@@ -68,7 +68,7 @@ if __name__ == "__main__":
     )
     params["git"].append(
         {
-            "git_commit_link": f"https://github.com/enpkg/enpkg_taxo_enhancer/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}"
+            "git_commit_link": f"https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}"
         }
     )
 

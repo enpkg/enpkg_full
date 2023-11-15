@@ -88,7 +88,7 @@ chemo-info-fetching:
   gnps_id: # GNPS id. Only fill if you have been launcging a global GNPS id job
 
 memo:
-  sample_dir_path: ./tests/data/output # required=True, help='The path to the directory where samples folders to process are located'
+  sample_dir_path: ../tests/data/output # required=True, help='The path to the directory where samples folders to process are located'
   ionization: pos # required=True, help="ionization mode to use to build the memo_matrix: pos, neg or both", type= str
   output: memo_matrix # required=True, help="Output name to use for the generated MEMO matrix", type= str
   min_relative_intensity: 0.01 # help="Minimal relative intensity to keep a peak max_relative_intensity, default 0.01", type= float, default= 0.01)

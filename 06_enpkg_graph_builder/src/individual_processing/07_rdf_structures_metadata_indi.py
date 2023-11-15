@@ -151,7 +151,7 @@ for directory in tqdm(samples_dir):
         params_list = {}  
             
     params_list.update({'structures_metadata':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                        {'git_commit_link':f'https://github.com/enpkg/enpkg_graph_builder/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
+                        {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
                         {'db_structures_metadata':metadata_path}]})
     
     with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
