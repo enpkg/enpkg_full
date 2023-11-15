@@ -23,17 +23,17 @@ params_list = params_list_full['memo']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-ionization = params_list['ionization']
-min_relative_intensity = params_list['min_relative_intensity']
-max_relative_intensity = params_list['max_relative_intensity']
-min_peaks_required = params_list['min_peaks_required']
-losses_from = params_list['losses_from']
-losses_to = params_list['losses_to']
-n_decimals = params_list['n_decimals']
-filter_blanks = params_list['filter_blanks']
-word_max_occ_blanks = params_list['word_max_occ_blanks']
-output = os.path.normpath(params_list['output'])
+sample_dir_path = os.path.normpath(params_list_full['memo']['sample_dir_path'])
+ionization = params_list_full['memo']['ionization']
+min_relative_intensity = params_list_full['memo']['min_relative_intensity']
+max_relative_intensity = params_list_full['memo']['max_relative_intensity']
+min_peaks_required = params_list_full['memo']['min_peaks_required']
+losses_from = params_list_full['memo']['losses_from']
+losses_to = params_list_full['memo']['losses_to']
+n_decimals = params_list_full['memo']['n_decimals']
+filter_blanks = params_list_full['memo']['filter_blanks']
+word_max_occ_blanks = params_list_full['memo']['word_max_occ_blanks']
+output = os.path.normpath(params_list_full['memo']['output'])
 
 pattern_to_match2 = None
 if ionization == 'pos':

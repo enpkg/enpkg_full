@@ -49,15 +49,12 @@ if __name__ == "__main__":
     with open (r'../params/user.yml') as file:    
         params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-    params_list = params_list_full['data-download']
-
     # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-  
 
     # First, we retrieve the data from Zenodo if we have not done so already.
     # Toy ENPKG dataset is at https://zenodo.org/records/10018590
-    retrieve_zenodo_data(record_id=params_list['record_id'],
-    record_name=params_list['record_name'],
-    output_path=os.path.normpath(params_list['output_path'])
+    retrieve_zenodo_data(record_id=params_list_full['data-download']['record_id'],
+    record_name=params_list_full['data-download']['record_name'],
+    output_path=os.path.normpath(params_list_full['data-download']['output_path'])
     )

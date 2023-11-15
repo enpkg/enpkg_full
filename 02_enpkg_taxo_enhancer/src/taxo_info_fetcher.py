@@ -54,12 +54,10 @@ if __name__ == "__main__":
     with open (r'../params/user.yml') as file:    
         params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-    params_list = params_list_full['taxo-info-fetching']
-
     # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-    sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-    force_res = params_list['recompute']
+    sample_dir_path = os.path.normpath(params_list_full['taxo-info-fetching']['sample_dir_path'])
+    force_res = params_list_full['taxo-info-fetching']['recompute']
 
     params = {"git": [], "package_versions": [], "ott": []}
 

@@ -30,21 +30,21 @@ params_list = params_list_full['graph-builder']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-output_format = params_list['graph_format']
+sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+output_format = params_list_full['graph-builder']['graph_format']
 
-ionization_mode = params_list['ionization_mode']
+ionization_mode = params_list_full['graph-builder']['ionization_mode']
 
 g = Graph()
 nm = g.namespace_manager
 
-kg_uri = params_list['kg_uri']
+kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list['prefix']
+prefix = params_list_full['graph-builder']['prefix']
 
-spectrum_dashboard_prefix = params_list['spectrum_dashboard_prefix']
-spectrum_png_prefix = params_list['spectrum_png_prefix']
-gnps_fast_search_prefix = params_list['gnps_fast_search_prefix']
+spectrum_dashboard_prefix = params_list_full['graph-builder']['spectrum_dashboard_prefix']
+spectrum_png_prefix = params_list_full['graph-builder']['spectrum_png_prefix']
+gnps_fast_search_prefix = params_list_full['graph-builder']['gnps_fast_search_prefix']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]

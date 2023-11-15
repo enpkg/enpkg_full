@@ -22,9 +22,9 @@ params_list = params_list_full['graph-builder']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-source_path = os.path.normpath(params_list['sample_dir_path'])
-target_path = os.path.normpath(params_list['graph_output_dir_path'])
-compress = params_list['compress_outputs']
+source_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+target_path = os.path.normpath(params_list_full['graph-builder']['graph_output_dir_path'])
+compress = params_list_full['graph-builder']['compress_outputs']
 
 os.makedirs(target_path, exist_ok=True)
 

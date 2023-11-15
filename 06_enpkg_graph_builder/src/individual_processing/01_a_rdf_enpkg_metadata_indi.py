@@ -29,21 +29,21 @@ params_list = params_list_full['graph-builder']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-output_format = params_list['graph_format']
-ionization_mode = params_list['ionization_mode']
+sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+output_format = params_list_full['graph-builder']['graph_format']
+ionization_mode = params_list_full['graph-builder']['ionization_mode']
 
 
-WD = Namespace(params_list['wd_namespace'])
-kg_uri = params_list['kg_uri']
+WD = Namespace(params_list_full['graph-builder']['wd_namespace'])
+kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list['prefix']
-gnps_dashboard_prefix = params_list['gnps_dashboard_prefix']
-gnps_tic_pic_prefix = params_list['gnps_tic_pic_prefix']
-massive_prefix = params_list['massive_prefix']
+prefix = params_list_full['graph-builder']['prefix']
+gnps_dashboard_prefix = params_list_full['graph-builder']['gnps_dashboard_prefix']
+gnps_tic_pic_prefix = params_list_full['graph-builder']['gnps_tic_pic_prefix']
+massive_prefix = params_list_full['graph-builder']['massive_prefix']
 
-source_taxon_header = params_list['source_taxon_header']
-source_id_header = params_list['source_id_header']
+source_taxon_header = params_list_full['graph-builder']['source_taxon_header']
+source_id_header = params_list_full['graph-builder']['source_id_header']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
