@@ -31,7 +31,7 @@ params_list = params_list_full['graph-builder']
 
 sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 output_format = params_list_full['graph-builder']['graph_format']
-ionization_mode = params_list_full['graph-builder']['ionization_mode']
+ionization_mode = params_list_full['general']['polarity']
 
 
 WD = Namespace(params_list_full['graph-builder']['wd_namespace'])

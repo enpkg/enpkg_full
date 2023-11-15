@@ -33,14 +33,14 @@ params_list = params_list_full['graph-builder']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
-ionization_mode = params_list_full['graph-builder']['ionization_mode']
+ionization_mode = params_list_full['general']['polarity']
 output_format = params_list_full['graph-builder']['graph_format']
 
 
 kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
-
+n_decimals = params_list_full['graph-builder']['peak_loss_params']['n_decimals']
 
 
 # Define function
@@ -78,7 +78,7 @@ def process_directory(directory):
             nm.bind(prefix, ns_kg)
 
             spectra_list = load_and_filter_from_mgf(mgf_path)
-            reference_documents = [SpectrumDocument(s, n_decimals=1) for s in spectra_list]
+            reference_documents = [SpectrumDocument(s, n_decimals=n_decimals) for s in spectra_list]
             list_peaks_losses = list(doc.words for doc in reference_documents)
             sample = rdflib.term.URIRef(kg_uri + metadata.sample_id[0])
             for spectrum, document in zip(spectra_list, list_peaks_losses):

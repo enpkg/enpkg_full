@@ -28,14 +28,14 @@ compress = params_list_full['graph-builder']['compress_outputs']
 
 os.makedirs(target_path, exist_ok=True)
 
-samples_dir = [directory for directory in os.listdir(source_path)]
+samples_dir = [directory for directory in os.listdir(sample_dir_path)]
 df_list = []
 for directory in tqdm(samples_dir):
-    if os.path.isdir(os.path.join(source_path, directory, "rdf")):
-        for file in [directory for directory in os.listdir(os.path.join(source_path, directory, "rdf"))]:
+    if os.path.isdir(os.path.join(sample_dir_path, directory, "rdf")):
+        for file in [directory for directory in os.listdir(os.path.join(sample_dir_path, directory, "rdf"))]:
             if 'merged_graph' in file:
                 file_name = file
-                src = os.path.join(source_path, directory, "rdf", file_name)
+                src = os.path.join(sample_dir_path, directory, "rdf", file_name)
     else:
         continue
     if os.path.isfile(src):
