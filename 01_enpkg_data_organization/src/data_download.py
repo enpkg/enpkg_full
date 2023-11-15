@@ -31,7 +31,7 @@ def retrieve_zenodo_data(record_id, record_name, output_path):
     paths = output_path+'/'+record_name)
     # ALSO EXTRACT ALL OF THE THINGS!
     extractor = AutoExtractor(delete_original_after_extraction=True)
-    paths = glob(f"{output_path}/**/*.zip", recursive=True)
+    paths = glob.glob(f"{output_path}/**/*.zip", recursive=True)
     extractor.extract(paths)
 
 
