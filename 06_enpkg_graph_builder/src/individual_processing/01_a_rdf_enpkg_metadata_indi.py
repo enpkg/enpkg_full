@@ -29,7 +29,7 @@ params_list = params_list_full['graph-builder']
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-sample_dir_path = os.path.normpath(params_list_full['graph-builder']['sample_dir_path'])
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 output_format = params_list_full['graph-builder']['graph_format']
 ionization_mode = params_list_full['graph-builder']['ionization_mode']
 
@@ -48,8 +48,8 @@ source_id_header = params_list_full['graph-builder']['source_id_header']
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 
-#For debugging only 
-directory = 'VGF151_E05'
+#For debugging only !!!
+# directory = 'VGF151_E05'
 
 for directory in tqdm(samples_dir):
     g = Graph()

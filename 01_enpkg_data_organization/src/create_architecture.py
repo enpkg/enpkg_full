@@ -164,12 +164,12 @@ if __name__ == "__main__":
     # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
     source_path=os.path.normpath(params_list_full['data-organization']['source_path'])
-    target_path=os.path.normpath(params_list_full['data-organization']['target_path'])
+    target_path=os.path.normpath(params_list_full['general']['treated_data_path'])
     source_metadata_path=os.path.normpath(params_list_full['data-organization']['source_metadata_path'])
     metadata_filename=params_list_full['data-organization']['sample_metadata_filename']
     lcms_method_filename=params_list_full['data-organization']['lcms_method_params_filename']
     lcms_processing_filename=params_list_full['data-organization']['lcms_processing_params_filename']
-    polarity=params_list_full['data-organization']['polarity']
+    polarity=params_list_full['general']['polarity']
 
     organize_folder(
         source_path=source_path,

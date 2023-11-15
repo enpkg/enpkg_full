@@ -34,9 +34,9 @@ with open (r'../params/user.yml') as file:
 
 
 recompute = params_list_full['isdb']['general_params']['recompute']
-ionization_mode = params_list_full['isdb']['general_params']['ionization_mode']
+ionization_mode = params_list_full['general']['polarity']
 
-repository_path = os.path.normpath(params_list_full['isdb']['paths']['repository_path'])
+repository_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 taxo_db_metadata_path = params_list_full['isdb']['paths']['taxo_db_metadata_path']
 spectral_db_pos_path = os.path.normpath(params_list_full['isdb']['paths']['spectral_db_pos_path'])
 spectral_db_neg_path = os.path.normpath(params_list_full['isdb']['paths']['spectral_db_neg_path'])

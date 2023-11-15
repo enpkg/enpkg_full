@@ -56,5 +56,5 @@ if __name__ == "__main__":
     # Toy ENPKG dataset is at https://zenodo.org/records/10018590
     retrieve_zenodo_data(record_id=params_list_full['data-download']['record_id'],
     record_name=params_list_full['data-download']['record_name'],
-    output_path=os.path.normpath(params_list_full['data-download']['output_path'])
+    output_path=os.path.normpath(params_list_full['general']['raw_data_path'])
     )

@@ -20,7 +20,7 @@ with open (r'../params/user.yml') as file:
 params_list = params_list_full['sirius']
 
 
-path_to_data = params_list_full['sirius']['paths']['path_to_data']
+path_to_data = params_list_full['general']['treated_data_path']
 path_to_sirius = params_list_full['sirius']['paths']['path_to_sirius']
 
 sirius_version = params_list_full['sirius']['options']['sirius_version']

@@ -23,8 +23,8 @@ params_list = params_list_full['memo']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-sample_dir_path = os.path.normpath(params_list_full['memo']['sample_dir_path'])
-ionization = params_list_full['memo']['ionization']
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+ionization = params_list_full['general']['polarity']
 min_relative_intensity = params_list_full['memo']['min_relative_intensity']
 max_relative_intensity = params_list_full['memo']['max_relative_intensity']
 min_peaks_required = params_list_full['memo']['min_peaks_required']
