@@ -1,5 +1,5 @@
-# eval "$(conda shell.bash hook)"
-# conda activate graph_builder
+eval "$(conda shell.bash hook)"
+conda activate graph_builder
 
 echo "Running workflow_01_a_rdf_enpkg_metadata_indi.sh"
 sh ./workflow/workflow_01_a_rdf_enpkg_metadata_indi.sh
@@ -34,4 +34,4 @@ sh ./workflow/workflow_08_rdf_merger.sh
 echo "Running workflow_09_rdf_exporter.sh"
 sh ./workflow/workflow_09_rdf_exporter.sh
 
-# conda deactivate
+conda deactivate

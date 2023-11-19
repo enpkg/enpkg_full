@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace with the path to the top-level directory you want to search in
-top_level_dir="/home/allardpm/git_repos/ENPKG/enpkg_full/tests/data/output"
+top_level_dir="/home/allardpm/ENPKG/data/MSV000085119_pos_treated"
 
 # Find directories containing "_WORKSPACE_SIRIUS" in their name
 find "$top_level_dir" -type d -name "*_WORKSPACE_SIRIUS*" | while read -r dir_path
@@ -12,7 +12,7 @@ do
     echo "Target directory for deletion: $dir_path"
     
     # Uncomment the line below to actually perform the deletion operation
-    rm -r "$dir_path"
-    echo "Deleted $dir_path"
+    # rm -r "$dir_path"
+    # echo "Deleted $dir_path"
   fi
 done
