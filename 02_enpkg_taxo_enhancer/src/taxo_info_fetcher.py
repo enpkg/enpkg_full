@@ -59,20 +59,15 @@ if __name__ == "__main__":
     sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
     force_res = params_list_full['taxo-info-fetching']['recompute']
 
-    params = {"git": [], "package_versions": [], "ott": []}
+    params = {"git": {}, "package_versions": {}, "ott": {}}
 
-    params["git"].append(
-        {"git_commit": git.Repo(search_parent_directories=True).head.object.hexsha}
-    )
-    params["git"].append(
-        {
-            "git_commit_link": f"https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}"
-        }
-    )
+    params["git"]["git_commit"] = git.Repo(search_parent_directories=True).head.object.hexsha
+    
+    params["git"]["git_commit_link"] = f"https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}"
 
-    params["package_versions"].append({"opentree": opentree.__version__})
+    params["package_versions"]["opentree"] = opentree.__version__
 
-    params["ott"].append(OT.about()["taxonomy_about"])
+    params["ott"]["taxonomy_about"] = OT.about()["taxonomy_about"]
 
     path = os.path.normpath(sample_dir_path)
     samples_dir = [directory for directory in os.listdir(path)]
