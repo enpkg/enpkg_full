@@ -49,7 +49,8 @@ ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
 nm.bind(prefix, ns_kg)
 
-
+# For debug purposes only !!!
+directory = 'VGF138_A02'
 
 for directory in tqdm(samples_dir):
     g = Graph()

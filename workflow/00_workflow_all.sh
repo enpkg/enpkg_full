@@ -10,8 +10,8 @@ conda activate enpkg_full
 # echo "Launching 02_massive_id.sh"
 # sh ./workflow/02_workflow_massive_id.sh
 
-# echo "Launching 03_workflow_taxo_enhancer.sh"
-# sh ./workflow/03_workflow_taxo_enhancer.sh
+echo "Launching 03_workflow_taxo_enhancer.sh"
+sh ./workflow/03_workflow_taxo_enhancer.sh
 
 # echo "Launching 04_workflow_dl_ressources.sh"
 # sh ./workflow/04_workflow_dl_ressources.sh
@@ -31,8 +31,8 @@ conda activate enpkg_full
 # echo "Launching 09_workflow_memo.sh"
 # sh ./workflow/09_workflow_memo.sh
 
-echo "Launching 10_workflow_graph_builder.sh"
-sh ./workflow/10_workflow_graph_builder.sh
+# echo "Launching 10_workflow_graph_builder.sh"
+# sh ./workflow/10_workflow_graph_builder.sh
 
 
 conda deactivate
