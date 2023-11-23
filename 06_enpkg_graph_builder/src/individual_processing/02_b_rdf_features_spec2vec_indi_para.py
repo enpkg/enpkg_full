@@ -121,8 +121,17 @@ def process_directory(directory):
             else:
                 params_list = {}  
                     
-            params_list.update({f'features_spec2vec_{ionization_mode}':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+            # params_list.update({f'features_spec2vec_{ionization_mode}':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+            #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+
+            # Retrieve the current Git commit hash
+            git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+            # Update params_list with version information in a dictionary format
+            params_list[f'features_spec2vec_{ionization_mode}'] = {
+                'git_commit': git_commit_hash,
+                'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
+                }
             
             with open(params_path, 'w', encoding='UTF-8') as file:
                 yaml.dump(params_list, file)
