@@ -75,7 +75,7 @@ def process_directory(directory):
         if not os.path.isfile(metadata_path):
             print(f"Skipping {directory}, missing files.")
             return f"Skipped {directory} due to missing files."
-            
+
         metadata = pd.read_csv(metadata_path, sep='\t')
         massive_id = metadata['massive_id'][0]
         # Iterate over the files and add their contents to the merged graph
@@ -122,8 +122,22 @@ def process_directory(directory):
             else:
                 params_list = {}  
                     
-            params_list.update({f'{directory}_merged_graph':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+            # params_list.update({f'{directory}_merged_graph':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+            #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+
+            # Retrieve the current Git commit hash
+            git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+            # Update params_list with version information in a dictionary format
+            params_list[f'{directory}_merged_graph'] = {
+                'git_commit': git_commit_hash,
+                'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
+                }
+
+            params_list['graph-builder'] = {}
+            # Update params_list with the graph-builder parameters
+            params_list['graph-builder'].update(params_list_full['graph-builder'])
+
 
             with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
                 yaml.dump(params_list, file)

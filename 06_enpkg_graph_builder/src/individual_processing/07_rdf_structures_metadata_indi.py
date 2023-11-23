@@ -150,9 +150,20 @@ for directory in tqdm(samples_dir):
     else:
         params_list = {}  
             
-    params_list.update({'structures_metadata':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                        {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
-                        {'db_structures_metadata':metadata_path}]})
+    # params_list.update({'structures_metadata':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+    #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
+    #                     {'db_structures_metadata':metadata_path}]})
+
+    # Retrieve the current Git commit hash
+    git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+    # Update params_list with version information in a dictionary format
+    params_list['structures_metadata'] = {
+        'git_commit': git_commit_hash,
+        'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}',
+        'db_structures_metadata': metadata_path,
+        }
+
     
     with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
         yaml.dump(params_list, file)
