@@ -4,19 +4,19 @@ general:
   treated_data_path: /home/allardpm/ENPKG/data/pf1600_reprocess
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
-data-download:
-  record_id: 10018590
-  record_name: enpkg_toy_dataset.zip
+# data-download:
+#   record_id: 10018590
+#   record_name: enpkg_toy_dataset.zip
 
-data-organization:
-  source_path: ../data/input/enpkg_toy_dataset/msdata/processed
-  source_metadata_path: ../data/input/enpkg_toy_dataset/metadata
-  sample_metadata_filename: metadata.tsv
-  lcms_method_params_filename: lcms_method_params.txt
-  lcms_processing_params_filename: lcms_processing_params.xml
+# data-organization:
+#   source_path: ../data/input/enpkg_toy_dataset/msdata/processed
+#   source_metadata_path: ../data/input/enpkg_toy_dataset/metadata
+#   sample_metadata_filename: metadata.tsv
+#   lcms_method_params_filename: lcms_method_params.txt
+#   lcms_processing_params_filename: lcms_processing_params.xml
 
-massive-id-addition:
-  massive_id: MSV000093199
+# massive-id-addition:
+#   massive_id: MSV000093199
 
 taxo-info-fetching:
   recompute: True
@@ -25,7 +25,7 @@ isdb:
   adducts-formatter:
     taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
   general_params:
-    recompute: True  # Recompute for samples with results already done
+    recompute: False  # Recompute for samples with results already done
   
   paths:
     taxo_db_metadata_path: db_metadata/230106_frozen_metadata.csv.gz  # Path to your spectral library file

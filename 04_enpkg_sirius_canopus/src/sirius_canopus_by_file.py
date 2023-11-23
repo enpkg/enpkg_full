@@ -36,13 +36,28 @@ output_suffix = 'WORKSPACE_SIRIUS'
 sirius_command = path_to_sirius + ' ' + sirius_command_arg
 sirius_login_command = path_to_sirius + ' ' + 'login' + ' ' + '--user-env=' + sirius_user_env + ' ' + '--password-env=' + sirius_password_env
 
-""" Parameters used """
+# """ Parameters used """
+# sirius_version_str = subprocess.check_output([path_to_sirius, "--version"]).decode().split('\n')
+# params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+#                                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
+#                                     {'SIRIUS':sirius_version_str[0]},
+#                                     {'SIRIUS lib':sirius_version_str[1]},
+#                                     {'CSI:FingerID lib':sirius_version_str[2]}]})
+
+# Capture the SIRIUS version information
 sirius_version_str = subprocess.check_output([path_to_sirius, "--version"]).decode().split('\n')
-params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                    {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
-                                    {'SIRIUS':sirius_version_str[0]},
-                                    {'SIRIUS lib':sirius_version_str[1]},
-                                    {'CSI:FingerID lib':sirius_version_str[2]}]})
+
+# Retrieve the current Git commit hash
+git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+# Update params_list with version information in a dictionary format
+params_list['version_info'] = {
+    'git_commit': git_commit_hash,
+    'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}',
+    'SIRIUS': sirius_version_str[0],
+    'SIRIUS lib': sirius_version_str[1],
+    'CSI:FingerID lib': sirius_version_str[2]
+}
 
 if sirius_version == 4:
     from canopus import Canopus
