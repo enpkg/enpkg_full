@@ -64,8 +64,14 @@ msms_weight = params_list_full['isdb']['reweighting_params']['msms_weight']
 taxo_weight = params_list_full['isdb']['reweighting_params']['taxo_weight']
 chemo_weight = params_list_full['isdb']['reweighting_params']['chemo_weight']
 
-params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                    {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+# Retrieve the current Git commit hash
+git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+# Update params_list with version information in a dictionary format
+params_list['version_info'] = {
+    'git_commit': git_commit_hash,
+    'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
+}
 
 
 ###### START #####
