@@ -17,6 +17,7 @@ from pathlib import Path
 from spec2vec import SpectrumDocument
 import yaml
 import git
+import sys
 
 p = Path(__file__).parents[2]
 os.chdir(p)
@@ -143,6 +144,7 @@ def process_directory(directory):
         error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
         print(error_message)
         return error_message
+        sys.exit(1)
 
 # The main portion of your script would then use a ProcessPoolExecutor
 # to process multiple directories in parallel.
