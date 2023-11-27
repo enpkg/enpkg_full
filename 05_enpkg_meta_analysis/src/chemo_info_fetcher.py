@@ -121,8 +121,10 @@ path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 
 # Check if sql DB of metadata already exist and load short IK if yes
+print('Connecting to SQL DB')
 if os.path.exists(sql_path):
     dat = sqlite3.connect(sql_path)
+    print(f'Connected to {sql_path}')
     query = dat.execute("SELECT * From structures_metadata")
     cols = [column[0] for column in query.description]
     df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
@@ -130,6 +132,7 @@ if os.path.exists(sql_path):
     print(f'{len(short_ik_in_db)} short IK in DB')
     dat.close()
 else:
+    print(f'No SQL DB found at {sql_path}')
     short_ik_in_db = []
     
 # First load all unique short IK from ISDB annotation as long as their metadata (smiles 2D, NPC classes)
