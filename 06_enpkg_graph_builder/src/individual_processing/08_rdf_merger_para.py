@@ -159,15 +159,14 @@ path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path) if not directory.startswith('.')]
 
 def main():
-
-    # Number of max workers (processes) can be adjusted to your machine's capability
     with ProcessPoolExecutor(max_workers=32) as executor:
-        # The map method can help maintain the order of results
         results = executor.map(process_directory, samples_dir)
+        for result in results:
+            if isinstance(result, str) and "Error processing" in result:
+                print("Stopping script due to an error in a worker process.")
+                executor.shutdown(wait=False)  # Stop all running workers
+                sys.exit(1)  # Exit the main script
 
-    # Output or further process your results
-    for result in results:
-        print(result)
 
 # Ensure running main function when the script is executed
 if __name__ == "__main__":

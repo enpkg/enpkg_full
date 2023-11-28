@@ -1,11 +1,11 @@
 eval "$(conda shell.bash hook)"
 conda activate graph_builder
 
-# echo "Running 01_a_rdf_enpkg_metadata_indi.py"
-# python ./06_enpkg_graph_builder/src/individual_processing/01_a_rdf_enpkg_metadata_indi.py
+# echo "Running 01_a_rdf_enpkg_metadata_indi_para.py"
+# python ./06_enpkg_graph_builder/src/individual_processing/01_a_rdf_enpkg_metadata_indi_para.py
 
-# echo "Running 01_b_rdf_enpkgmodule_metadata_indi.py"
-# python ./06_enpkg_graph_builder/src/individual_processing/01_b_rdf_enpkgmodule_metadata_indi.py
+echo "Running 01_b_rdf_enpkgmodule_metadata_indi_para.py"
+python ./06_enpkg_graph_builder/src/individual_processing/01_b_rdf_enpkgmodule_metadata_indi_para.py
 
 # echo "Running 02_a_rdf_features_indi_para.py"
 # python ./06_enpkg_graph_builder/src/individual_processing/02_a_rdf_features_indi_para.py
@@ -25,8 +25,8 @@ conda activate graph_builder
 # echo "Running 06_rdf_individual_mn_indi_para.py"
 # python ./06_enpkg_graph_builder/src/individual_processing/06_rdf_individual_mn_indi_para.py
 
-echo "Running 07_rdf_structures_metadata_indi_para.py"
-python ./06_enpkg_graph_builder/src/individual_processing/07_rdf_structures_metadata_indi_para.py
+# echo "Running 07_rdf_structures_metadata_indi_para.py"
+# python ./06_enpkg_graph_builder/src/individual_processing/07_rdf_structures_metadata_indi_para.py
 
 # echo "Running 08_rdf_merger_para.py"
 # python ./06_enpkg_graph_builder/src/individual_processing/08_rdf_merger_para.py
