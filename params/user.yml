@@ -1,22 +1,22 @@
 # parameters
 general:
-  raw_data_path: ../data/input
-  treated_data_path: /home/allardpm/ENPKG/data/pf1600/pf1600_reprocess
+  raw_data_path: /home/allardpm/ENPKG/data/MSV000086161/
+  treated_data_path: /home/allardpm/ENPKG/data/MSV000086161/enpkg_treated
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 # data-download:
-#   record_id: 10018590
-#   record_name: enpkg_toy_dataset.zip
+#   record_id: 10198219
+#   record_name: MSV000086161_pos.zip
 
-# data-organization:
-#   source_path: ../data/input/enpkg_toy_dataset/msdata/processed
-#   source_metadata_path: ../data/input/enpkg_toy_dataset/metadata
-#   sample_metadata_filename: metadata.tsv
-#   lcms_method_params_filename: lcms_method_params.txt
-#   lcms_processing_params_filename: lcms_processing_params.xml
+data-organization:
+  source_path: /home/allardpm/ENPKG/data/MSV000086161/MSV000086161_pos/MSV000086161_pos/msdata/processed
+  source_metadata_path: /home/allardpm/ENPKG/data/MSV000086161/MSV000086161_pos/MSV000086161_pos/metadata
+  sample_metadata_filename: MSV000086161_metadata.tsv
+  lcms_method_params_filename: lcms_method_params.txt
+  lcms_processing_params_filename: lcms_processing_params.xml
 
-# massive-id-addition:
-#   massive_id: MSV000093199
+massive-id-addition:
+  massive_id: MSV000093464
 
 taxo-info-fetching:
   recompute: True
@@ -25,7 +25,7 @@ isdb:
   adducts-formatter:
     taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
   general_params:
-    recompute: False  # Recompute for samples with results already done
+    recompute: True  # Recompute for samples with results already done
   
   paths:
     taxo_db_metadata_path: db_metadata/230106_frozen_metadata.csv.gz  # Path to your spectral library file
@@ -35,8 +35,8 @@ isdb:
     adducts_neg_path: data_loc/230106_frozen_metadata/230106_frozen_metadata_adducts_neg.tsv.gz # Path to the adducts file in neg mode
   
   spectral_match_params:
-    parent_mz_tol: 0.01 # the parent mass tolerance to use for spectral matching (in Da) (if cosine)
-    msms_mz_tol: 0.01 # the msms mass tolerance to use for spectral matching (in Da) (if cosine)
+    parent_mz_tol: 0.02 # the parent mass tolerance to use for spectral matching (in Da) (if cosine)
+    msms_mz_tol: 0.02 # the msms mass tolerance to use for spectral matching (in Da) (if cosine)
     min_score: 0.2 # the minimal cosine to use for spectral matching (if cosine)
     min_peaks: 6 # the minimal matching peaks number to use for spectral matching (if cosine)
   
@@ -80,7 +80,7 @@ sirius:
 
 chemo-info-fetching:
   sql_db_name: structures_metadata.db
-  sql_db_path: /home/allardpm/ENPKG/data/pf1600/structures_db/
+  sql_db_path: /home/allardpm/ENPKG/data/structures_db/
   gnps_id: # GNPS id. Only fill if you have been launching a global GNPS id job
 
 memo:
@@ -104,6 +104,7 @@ graph-builder:
   wd_namespace : http://www.wikidata.org/entity/
 
   structures_db_path : /home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../
+
   gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
   gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
   massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='
@@ -111,12 +112,12 @@ graph-builder:
   spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1='
   gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1='
 
-  source_taxon_header : organism_species #
-  source_id_header : sample_substance_name
+  source_taxon_header : source_taxon
+  source_id_header : source_id
 
   peak_loss_params:
     n_decimals: 2 # number of decimals of m/z to use for spectral binning
 
   graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
-  graph_output_dir_path : /home/allardpm/ENPKG/data/pf1600/pf1600_reprocess_annex/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
+  graph_output_dir_path : /home/allardpm/ENPKG/data/MSV000086161/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
   compress_outputs : False 
