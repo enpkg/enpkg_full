@@ -13,14 +13,14 @@ conda activate graph_builder
 # echo "Running 02_b_rdf_features_spec2vec_indi_para.py"
 # python ./06_enpkg_graph_builder/src/individual_processing/02_b_rdf_features_spec2vec_indi_para.py
 
-echo "Running 03_rdf_csi_annotations_indi_para.py"
-python ./06_enpkg_graph_builder/src/individual_processing/03_rdf_csi_annotations_indi_para.py
+# echo "Running 03_rdf_csi_annotations_indi_para.py"
+# python ./06_enpkg_graph_builder/src/individual_processing/03_rdf_csi_annotations_indi_para.py
 
-# echo "Running 04_rdf_canopus_indi.py"
-# python ./06_enpkg_graph_builder/src/individual_processing/04_rdf_canopus_indi.py
+# echo "Running 04_rdf_canopus_indi_para.py"
+# python ./06_enpkg_graph_builder/src/individual_processing/04_rdf_canopus_indi_para.py
 
-# echo "Running 05_rdf_isdb_annotations_indi.py"
-# python ./06_enpkg_graph_builder/src/individual_processing/05_rdf_isdb_annotations_indi.py
+echo "Running 05_rdf_isdb_annotations_indi_para.py"
+python ./06_enpkg_graph_builder/src/individual_processing/05_rdf_isdb_annotations_indi_para.py
 
 # echo "Running 06_rdf_individual_mn_indi_para.py"
 # python ./06_enpkg_graph_builder/src/individual_processing/06_rdf_individual_mn_indi_para.py
