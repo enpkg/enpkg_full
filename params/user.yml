@@ -103,7 +103,7 @@ graph-builder:
 
   wd_namespace : http://www.wikidata.org/entity/
 
-  structures_db_path : /home/allardpm/ENPKG/data/structures_db/pf1600/structures_metadata.db #../
+  structures_db_path : /home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../
   gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
   gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
   massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='

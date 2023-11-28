@@ -49,6 +49,7 @@ prefix = params_list_full['graph-builder']['prefix']
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 df_list = []
+
 for directory in tqdm(samples_dir):    
     
     paths = []
