@@ -219,11 +219,11 @@ df_list = []
 def main():
     with ProcessPoolExecutor(max_workers=32) as executor:
         results = executor.map(process_directory, samples_dir)
-        for result in results:
-            if isinstance(result, str) and "Error processing" in result:
-                print("Stopping script due to an error in a worker process.")
-                executor.shutdown(wait=False)  # Stop all running workers
-                sys.exit(1)  # Exit the main script
+        # for result in results:
+        #     if isinstance(result, str) and "Error processing" in result:
+        #         print("Stopping script due to an error in a worker process.")
+        #         executor.shutdown(wait=False)  # Stop all running workers
+        #         sys.exit(1)  # Exit the main script
 
 # Ensure running main function when the script is executed
 if __name__ == "__main__":
