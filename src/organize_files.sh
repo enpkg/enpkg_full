@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directory where your files are located
-SOURCE_DIR="/home/allardpm/ENPKG/data/pf1600_1decimal/standalone_graphs"
+SOURCE_DIR="/home/allardpm/ENPKG/data/pf1600/pf1600_reprocess_annex/standalone_graphs"
 
 # Change to the directory with the files
 cd "$SOURCE_DIR"

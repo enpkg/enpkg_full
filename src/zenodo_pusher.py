@@ -74,3 +74,14 @@ zenodo.update(SANDBOX_DEP_ID, paths)
 
 OOH_NA_NA_RECORD = '10156827'
 new_record = zenodo.get_latest_record(OOH_NA_NA_RECORD)
+
+
+import pystow
+
+
+apikey_sandbox=pystow.get_config("zenodo", "sandbox_api_token", raise_on_missing=True)
+# apikey=pystow.get_config("zenodo", "zenodo_api_token", raise_on_missing=True)
+
+
+
+
