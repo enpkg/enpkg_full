@@ -76,7 +76,7 @@ def process_directory(directory):
             g.add((sample, RDFS.label, rdflib.term.Literal(f"Sample {metadata.sample_id[0]}")))
             
             # Add GNPS Dashboard link for pos & neg: only if sample_filename_pos column exists and is not NaN and MassIVE id is present
-            if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'pos':
+            if set(['sample_filename_pos', 'massive_id']).issubset(metadata.columns):
                 if not pd.isna(metadata['sample_filename_pos'][0]):
                     sample_filename_pos = metadata['sample_filename_pos'][0]
                     massive_id = metadata['massive_id'][0]
@@ -102,7 +102,7 @@ def process_directory(directory):
                     g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), ns_kg.has_massive_license, rdflib.URIRef("https://creativecommons.org/publicdomain/zero/1.0/")))
                     g.add((rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0]), FOAF.depiction, rdflib.URIRef(gnps_tic_pic))) 
                     
-            if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns) and ionization_mode == 'neg':
+            if set(['sample_filename_neg', 'massive_id']).issubset(metadata.columns):
                 if not pd.isna(metadata['sample_filename_neg'][0]):
                     sample_filename_neg = metadata['sample_filename_neg'][0]
                     massive_id = metadata['massive_id'][0]    
