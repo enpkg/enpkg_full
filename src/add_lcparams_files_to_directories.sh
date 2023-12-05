@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Define the path to the directory containing all your directories
-PARENT_DIR="/home/allardpm/ENPKG/data/pf1600"
+PARENT_DIR="/home/allardpm/ENPKG/data/pf1600/pf1600_reprocess"
 
 # Define the content or the source path of the files you want to copy
-CONTENT_OF_TXT_FILE="/home/allardpm/git_repos/ENPKG/enpkg_full/tests/data/input/enpkg_toy_dataset/metadata/lcms_method_params.txt"
-CONTENT_OF_XML_FILE="/home/allardpm/git_repos/ENPKG/enpkg_full/tests/data/input/enpkg_toy_dataset/metadata/lcms_processing_params.xml"
+CONTENT_OF_TXT_FILE="/home/allardpm/ENPKG/data/pf1600/dump/lcms_method_params_neg.txt"
+CONTENT_OF_XML_FILE="/home/allardpm/ENPKG/data/pf1600/dump/lcms_processing_params_neg.xml"
 
 # Loop through all directories within the parent directory
 for DIR in ${PARENT_DIR}/*; do
@@ -14,8 +14,8 @@ for DIR in ${PARENT_DIR}/*; do
         BASE_NAME=$(basename ${DIR})
 
         # Construct the file names based on the directory name
-        NEW_TXT="${DIR}/pos/${BASE_NAME}_lcms_method_params_pos.txt"
-        NEW_XML="${DIR}/pos/${BASE_NAME}_lcms_processing_params_pos.xml"
+        NEW_TXT="${DIR}/neg/${BASE_NAME}_lcms_method_params_neg.txt"
+        NEW_XML="${DIR}/neg/${BASE_NAME}_lcms_processing_params_neg.xml"
 
         # Add content to the new files or copy content from a source file
         # echo "${CONTENT_OF_TXT_FILE}" > ${NEW_TXT}
