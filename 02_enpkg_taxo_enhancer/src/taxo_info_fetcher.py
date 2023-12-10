@@ -13,6 +13,7 @@ import opentree
 from opentree import OT
 
 
+
 def wd_taxo_fetcher_from_ott(url: str, ott_id: int):
     query = f"""
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -46,47 +47,27 @@ if __name__ == "__main__":
     os.chdir(p)
     url = "https://query.wikidata.org/sparql"
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent(
-            """\
-        This script creates a <sample>_taxo_metadata.tsv file with the WD ID of the samples taxon and its OTT taxonomy
-        --------------------------------
-            You should just enter the path to the directory where samples folders are located
-        """
-        ),
-    )
-    parser.add_argument(
-        "-p",
-        "--sample_dir_path",
-        required=True,
-        help="The path to the directory where samples folders to process are located",
-    )
-    parser.add_argument(
-        "-f",
-        "--force_research",
-        default=False,
-        action="store_true",
-        help="Reanalyze samples for which a result folder is already present",
-    )
-    args = parser.parse_args()
-    sample_dir_path = args.sample_dir_path
-    force_res = args.force_research
+    # Loading the parameters from yaml file
 
-    params = {"git": [], "package_versions": [], "ott": []}
+    if not os.path.exists('../params/user.yml'):
+        print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+    with open (r'../params/user.yml') as file:    
+        params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-    params["git"].append(
-        {"git_commit": git.Repo(search_parent_directories=True).head.object.hexsha}
-    )
-    params["git"].append(
-        {
-            "git_commit_link": f"https://github.com/enpkg/enpkg_taxo_enhancer/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}"
-        }
-    )
+    # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-    params["package_versions"].append({"opentree": opentree.__version__})
+    sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+    force_res = params_list_full['taxo-info-fetching']['recompute']
 
-    params["ott"].append(OT.about()["taxonomy_about"])
+    params = {"git": {}, "package_versions": {}, "ott": {}}
+
+    params["git"]["git_commit"] = git.Repo(search_parent_directories=True).head.object.hexsha
+    
+    params["git"]["git_commit_link"] = f"https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}"
+
+    params["package_versions"]["opentree"] = opentree.__version__
+
+    params["ott"]["taxonomy_about"] = OT.about()["taxonomy_about"]
 
     path = os.path.normpath(sample_dir_path)
     samples_dir = [directory for directory in os.listdir(path)]

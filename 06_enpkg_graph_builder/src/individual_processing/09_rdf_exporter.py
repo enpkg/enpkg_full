@@ -13,50 +13,29 @@ os.chdir(p)
 
 # Loading the parameters from yaml file
 
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-if not os.path.exists('config/params.yaml'):
-    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
-with open(r'config/params.yaml') as file:
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+params_list = params_list_full['graph-builder']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-
-# """ Argument parser """
-# parser = argparse.ArgumentParser(
-#     formatter_class=argparse.RawDescriptionHelpFormatter,
-#     description=textwrap.dedent('''\
-#         This script copy individual sample-specific RDF graphs(.ttl format) from the ENPKG file-architecture into a single specified folder.
-#          --------------------------------
-#             Arguments:
-#             - (--source/-s) Path to the directory where samples folders are located.
-#             - (--target/-t) Path to the directory where individual ttl files are copied.
-#             - (--compress/-c) Compress files to .gz while when copying.
-#         '''))
-
-# parser.add_argument('-s', '--source_path', required=True,
-#                     help='The path to the directory where samples folders to process are located')
-# parser.add_argument('-t', '--target_path', required=True,
-#                     help='The path to the directory into wich the .ttl files are copied')
-# parser.add_argument('-c', '--compress', action='store_true',
-#                     help='Compress files to .gz')
-
-# args = parser.parse_args()
-
-source_path = os.path.normpath(params_list['sample_dir_path'])
-target_path = os.path.normpath(params_list['graph_output_dir_path'])
-compress = params_list['compress_outputs']
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+target_path = os.path.normpath(params_list_full['graph-builder']['graph_output_dir_path'])
+compress = params_list_full['graph-builder']['compress_outputs']
 
 os.makedirs(target_path, exist_ok=True)
 
-samples_dir = [directory for directory in os.listdir(source_path)]
+samples_dir = [directory for directory in os.listdir(sample_dir_path)]
 df_list = []
 for directory in tqdm(samples_dir):
-    if os.path.isdir(os.path.join(source_path, directory, "rdf")):
-        for file in [directory for directory in os.listdir(os.path.join(source_path, directory, "rdf"))]:
+    if os.path.isdir(os.path.join(sample_dir_path, directory, "rdf")):
+        for file in [directory for directory in os.listdir(os.path.join(sample_dir_path, directory, "rdf"))]:
             if 'merged_graph' in file:
                 file_name = file
-                src = os.path.join(source_path, directory, "rdf", file_name)
+                src = os.path.join(sample_dir_path, directory, "rdf", file_name)
     else:
         continue
     if os.path.isfile(src):

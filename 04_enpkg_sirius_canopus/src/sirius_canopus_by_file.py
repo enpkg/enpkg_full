@@ -14,32 +14,52 @@ p = Path(__file__).parents[1]
 os.chdir(p)
 #from canopus import Canopus
 
-with open (r'configs/user/user.yml') as file:    
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-path_to_data = params_list['paths'][0]['path_to_data']
-path_to_sirius = params_list['paths'][1]['path_to_sirius']
+params_list = params_list_full['sirius']
 
-sirius_version = params_list['options'][0]['sirius_version']
-ionization = params_list['options'][1]['ionization']
-sirius_command_arg = params_list['options'][2]['sirius_command_arg']
-recompute = params_list['options'][3]['recompute']
-zip_output = params_list['options'][4]['zip_output']
-sirius_user_env = params_list['options'][5]['sirius_user_env']
-sirius_password_env = params_list['options'][6]['sirius_password_env']
+
+path_to_data = params_list_full['general']['treated_data_path']
+path_to_sirius = params_list_full['sirius']['paths']['path_to_sirius']
+
+sirius_version = params_list_full['sirius']['options']['sirius_version']
+ionization = params_list_full['sirius']['options']['ionization']
+sirius_command_arg = params_list_full['sirius']['options']['sirius_command_arg']
+recompute = params_list_full['sirius']['options']['recompute']
+zip_output = params_list_full['sirius']['options']['zip_output']
+sirius_user_env = params_list_full['sirius']['options']['sirius_user_env']
+sirius_password_env = params_list_full['sirius']['options']['sirius_password_env']
 
 output_suffix = 'WORKSPACE_SIRIUS'
 
 sirius_command = path_to_sirius + ' ' + sirius_command_arg
 sirius_login_command = path_to_sirius + ' ' + 'login' + ' ' + '--user-env=' + sirius_user_env + ' ' + '--password-env=' + sirius_password_env
 
-""" Parameters used """
+
+# """ Parameters used """
+# sirius_version_str = subprocess.check_output([path_to_sirius, "--version"]).decode().split('\n')
+# params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+#                                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
+#                                     {'SIRIUS':sirius_version_str[0]},
+#                                     {'SIRIUS lib':sirius_version_str[1]},
+#                                     {'CSI:FingerID lib':sirius_version_str[2]}]})
+
+# Capture the SIRIUS version information
 sirius_version_str = subprocess.check_output([path_to_sirius, "--version"]).decode().split('\n')
-params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                    {'git_commit_link':f'https://github.com/enpkg/enpkg_sirius_canopus/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
-                                    {'SIRIUS':sirius_version_str[0]},
-                                    {'SIRIUS lib':sirius_version_str[1]},
-                                    {'CSI:FingerID lib':sirius_version_str[2]}]})
+
+# Retrieve the current Git commit hash
+git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+# Update params_list with version information in a dictionary format
+params_list['version_info'] = {
+    'git_commit': git_commit_hash,
+    'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}',
+    'SIRIUS': sirius_version_str[0],
+    'SIRIUS lib': sirius_version_str[1],
+    'CSI:FingerID lib': sirius_version_str[2]
+}
+
 
 if sirius_version == 4:
     from canopus import Canopus

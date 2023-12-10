@@ -17,38 +17,20 @@ os.chdir(p)
 
 # Loading the parameters from yaml file
 
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-if not os.path.exists('config/params.yaml'):
-    print('No config/params.yaml: copy from config/template.yaml and modify according to your needs')
-with open(r'config/params.yaml') as file:
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+params_list = params_list_full['graph-builder']
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
-# """ Argument parser """
-# parser = argparse.ArgumentParser(
-#     formatter_class=argparse.RawDescriptionHelpFormatter,
-#     description=textwrap.dedent('''\
-#         This script generate a RDF graph (.ttl format) from chemical structures metadata
-#          --------------------------------
-#             Arguments:
-#             - Path to the directory where samples folders are located
-#             - Path to the SQL metadata DB with compounds' metadata
-#         '''))
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+output_format = params_list_full['graph-builder']['graph_format']
+ionization_mode = params_list_full['general']['polarity']
 
-# parser.add_argument('-p', '--sample_dir_path', required=True,
-#                     help='The path to the directory where samples folders to process are located')
-# parser.add_argument('-db', '--metadata_path', required=True,
-#                     help='The path to the structures metadata SQL DB')
-
-
-# args = parser.parse_args()
-
-sample_dir_path = os.path.normpath(params_list['sample_dir_path'])
-output_format = params_list['graph_format']
-ionization_mode = params_list['ionization_mode']
-
-metadata_path = params_list['structures_db_path']
+metadata_path = params_list_full['graph-builder']['structures_db_path']
 
 greek_alphabet = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩωÎ²Iµ'
 latin_alphabet = 'AaBbGgDdEeZzHhJjIiKkLlMmNnXxOoPpRrSssTtUuFfQqYyWwI2Iu'
@@ -60,13 +42,14 @@ query = dat.execute("SELECT * From structures_metadata")
 cols = [column[0] for column in query.description]
 df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
 
-kg_uri = params_list['kg_uri']
+kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list['prefix']
+prefix = params_list_full['graph-builder']['prefix']
 
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 df_list = []
+
 for directory in tqdm(samples_dir):    
     
     paths = []
@@ -168,9 +151,20 @@ for directory in tqdm(samples_dir):
     else:
         params_list = {}  
             
-    params_list.update({'structures_metadata':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                        {'git_commit_link':f'https://github.com/enpkg/enpkg_graph_builder/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
-                        {'db_structures_metadata':metadata_path}]})
+    # params_list.update({'structures_metadata':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+    #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
+    #                     {'db_structures_metadata':metadata_path}]})
+
+    # Retrieve the current Git commit hash
+    git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+    # Update params_list with version information in a dictionary format
+    params_list['structures_metadata'] = {
+        'git_commit': git_commit_hash,
+        'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}',
+        'db_structures_metadata': metadata_path,
+        }
+
     
     with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
         yaml.dump(params_list, file)

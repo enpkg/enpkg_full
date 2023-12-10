@@ -3,35 +3,31 @@ import argparse
 import os
 import re
 import textwrap
-
+import yaml
 import pandas as pd
+from pathlib import Path
 
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent(
-        """\
-        Add the MassIVE id of the repository where .mz(X)ML and features_ms2_pos/neg_.mgf data have been uploaded to the metadata file.
-        """
-    ),
-)
 
-parser.add_argument(
-    "--massive_id",
-    required=True,
-    help="The MassIVE id (format MSVXXXXXXXXX, ex. MSV000087728) of the repository where .mz(X)ML \
-                        and features_ms2_pos/neg_.mgf data have been uploaded",
-)
-parser.add_argument(
-    "-p",
-    "--sample_dir_path",
-    required=True,
-    help="The path to the directory where \
-                    samples folders corresponding to the MassIVE id are located",
-)
+os.chdir(os.getcwd())
 
-args = parser.parse_args()
-sample_dir_path = os.path.normpath(args.sample_dir_path)
-massive_id = os.path.normpath(args.massive_id)
+p = Path(__file__).parents[1]
+os.chdir(p)
+
+# Loading the parameters from yaml file
+
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+params_list = params_list_full['massive-id-addition']
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+massive_id = params_list_full['massive-id-addition']['massive_id']
+
 
 # Check if format of MassIVE ID is correct:
 if not bool(re.match("MSV\d\d\d\d\d\d\d\d\d$", massive_id)):
