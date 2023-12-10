@@ -12,7 +12,20 @@ mamba env create -f environment.yml
 
 Follow instructions at https://boecker-lab.github.io/docs.sirius.github.io/install/
 
+Run the `install_sirius.sh` script specifying the path choosed for the installation. For example, from the root of the repository:
+
+```bash
+bash install_sirius.sh /home/username/sirius
+```
+
 Once Sirius is installed, you will need to precise the path to the executable in [here](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/04_enpkg_sirius_canopus/configs/user/user.yml#L3)
+
+Setting up the environment variables. To login to Sirius, you will need to set up the following environment variables (SIRIUS_USERNAME and SIRIUS_PASSWORD). You can do so launching the following command:
+
+```bash
+bash setup_sirius_env.sh
+```
+
 
 ## Editing config files
 
@@ -37,3 +50,12 @@ sh tests/00_test_all.sh
 ```
 
 On the previous test dataset, this should take about 10 minutes to run.
+
+## Exploring the generated Knowledge Graph
+
+You can use GraphDB to explore the generated Knowledge Graph. To do so, you will need to install GraphDB (https://graphdb.ontotext.com/download/) and import the generated .ttl files.
+
+
+# Note
+
+This workflow is still under development. It is currently being ported to the EMIKG framework (https://github.com/earth-metabolome-initiative/emikg).

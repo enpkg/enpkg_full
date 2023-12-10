@@ -12,29 +12,31 @@ import argparse
 import textwrap
 from pathlib import Path
 from rdkit.Chem import AllChem
+import yaml
 
 p = Path(__file__).parents[1]
 os.chdir(p)
 
-""" Argument parser """
 
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent('''\
-        This script generates an SQL DB (structures_metadata.db) in the /output_data/sql_db/ with WD ID and NPClassfier taxonomy for annotated structures.
-        '''))
-parser.add_argument('-p', '--sample_dir_path', required=True,
-                    help='The path to the directory where samples folders to process are located')
-parser.add_argument('-sql', '--sql_name', default = 'structures_metadata.db',
-                    help='The name of a previsouly generated SQL DB (that will be updated with new structures). \
-                        If no SQL DB is available, will create new one /output_data/sql_db/')
-parser.add_argument('-id', '--gnps_job_id', required = False, 
-                    help='The GNPS job ID of the meta-MN corresponding to sample_dir_path')
+# Loading the parameters from yaml file
 
-args = parser.parse_args()
-sample_dir_path = args.sample_dir_path
-sql_path = args.sql_name
-gnps_id = args.gnps_job_id
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+sample_dir_path =os.path.normpath(params_list_full['general']['treated_data_path'])
+sql_db_name = params_list_full['chemo-info-fetching']['sql_db_name']
+sql_db_path = params_list_full['chemo-info-fetching']['sql_db_path']
+sql_path = os.path.join(sql_db_path + sql_db_name)
+
+gnps_id = params_list_full['chemo-info-fetching']['gnps_id']
+
+Path(sql_db_path).mkdir(parents=True, exist_ok=True)
+
 
 """ Functions """
 
@@ -111,8 +113,7 @@ def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npcla
                 processed_ik[sik]['npc_class'] = 'unknown'
     return  processed_ik
     
-sql_folder_path = os.path.join(os.getcwd() + '/output_data/sql_db/')
-Path(sql_folder_path).mkdir(parents=True, exist_ok=True)
+
 
 wd_url = 'https://query.wikidata.org/sparql'
 
@@ -120,8 +121,10 @@ path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 
 # Check if sql DB of metadata already exist and load short IK if yes
+print('Connecting to SQL DB')
 if os.path.exists(sql_path):
     dat = sqlite3.connect(sql_path)
+    print(f'Connected to {sql_path}')
     query = dat.execute("SELECT * From structures_metadata")
     cols = [column[0] for column in query.description]
     df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
@@ -129,6 +132,7 @@ if os.path.exists(sql_path):
     print(f'{len(short_ik_in_db)} short IK in DB')
     dat.close()
 else:
+    print(f'No SQL DB found at {sql_path}')
     short_ik_in_db = []
     
 # First load all unique short IK from ISDB annotation as long as their metadata (smiles 2D, NPC classes)
@@ -200,6 +204,8 @@ if gnps_id is not None:
         metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
     except FileNotFoundError:
         pass
+else :
+    print('No GNPS job found, skipping this stage.')
 
 # Add unique short IK from Sirius annotations + add NPC metadata
 print('Processing Sirius results')
@@ -246,7 +252,7 @@ for directory in tqdm(samples_dir):
 df_ik_meta = pd.DataFrame.from_dict(metadata_short_ik, orient='index')\
     .reset_index().rename(columns={'index':'short_inchikey'}).fillna('unknown')
 
-print('Getting WD id and formatting results')
+print('Getting WD identifiers and formatting results')
 
 if len(df_ik_meta) > 0:
     wd_all = get_all_ik(wd_url)

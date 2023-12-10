@@ -29,41 +29,49 @@ os.chdir(p)
 
 # you can copy the configs/default/default.yaml to configs/user/user.yaml
 
-with open (r'configs/user/user.yaml') as file:    
-    params_list = yaml.load(file, Loader=yaml.FullLoader)
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-recompute = params_list['general_params']['recompute']
-ionization_mode = params_list['general_params']['ionization_mode']
+params_list = params_list_full['isdb']
 
-repository_path = os.path.normpath(params_list['paths']['repository_path'])
-taxo_db_metadata_path = params_list['paths']['taxo_db_metadata_path']
-spectral_db_pos_path = os.path.normpath(params_list['paths']['spectral_db_pos_path'])
-spectral_db_neg_path = os.path.normpath(params_list['paths']['spectral_db_neg_path'])
-adducts_pos_path = os.path.normpath(params_list['paths']['adducts_pos_path'])
-adducts_neg_path = os.path.normpath(params_list['paths']['adducts_neg_path'])
+recompute = params_list_full['isdb']['general_params']['recompute']
+ionization_mode = params_list_full['general']['polarity']
 
-parent_mz_tol = params_list['spectral_match_params']['parent_mz_tol']
-msms_mz_tol = params_list['spectral_match_params']['msms_mz_tol']
-min_score = params_list['spectral_match_params']['min_score']
-min_peaks = params_list['spectral_match_params']['min_peaks']
+repository_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+taxo_db_metadata_path = params_list_full['isdb']['paths']['taxo_db_metadata_path']
+spectral_db_pos_path = os.path.normpath(params_list_full['isdb']['paths']['spectral_db_pos_path'])
+spectral_db_neg_path = os.path.normpath(params_list_full['isdb']['paths']['spectral_db_neg_path'])
+adducts_pos_path = os.path.normpath(params_list_full['isdb']['paths']['adducts_pos_path'])
+adducts_neg_path = os.path.normpath(params_list_full['isdb']['paths']['adducts_neg_path'])
 
-mn_msms_mz_tol = params_list['networking_params']['mn_msms_mz_tol']
-mn_score_cutoff = params_list['networking_params']['mn_score_cutoff']
-mn_max_links = params_list['networking_params']['mn_max_links']
-mn_top_n = params_list['networking_params']['mn_top_n']
+parent_mz_tol = params_list_full['isdb']['spectral_match_params']['parent_mz_tol']
+msms_mz_tol = params_list_full['isdb']['spectral_match_params']['msms_mz_tol']
+min_score = params_list_full['isdb']['spectral_match_params']['min_score']
+min_peaks = params_list_full['isdb']['spectral_match_params']['min_peaks']
 
-top_to_output= params_list['reweighting_params']['top_to_output']
-ppm_tol_ms1 = params_list['reweighting_params']['ppm_tol_ms1']
-use_post_taxo = params_list['reweighting_params']['use_post_taxo']
-top_N_chemical_consistency = params_list['reweighting_params']['top_N_chemical_consistency']
-min_score_taxo_ms1 = params_list['reweighting_params']['min_score_taxo_ms1']
-min_score_chemo_ms1 = params_list['reweighting_params']['min_score_chemo_ms1']
-msms_weight = params_list['reweighting_params']['msms_weight']
-taxo_weight = params_list['reweighting_params']['taxo_weight']
-chemo_weight = params_list['reweighting_params']['chemo_weight']
+mn_msms_mz_tol = params_list_full['isdb']['networking_params']['mn_msms_mz_tol']
+mn_score_cutoff = params_list_full['isdb']['networking_params']['mn_score_cutoff']
+mn_max_links = params_list_full['isdb']['networking_params']['mn_max_links']
+mn_top_n = params_list_full['isdb']['networking_params']['mn_top_n']
 
-params_list.update({'version_info':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-                                    {'git_commit_link':f'https://github.com/enpkg/enpkg_mn_isdb_taxo/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+top_to_output= params_list_full['isdb']['reweighting_params']['top_to_output']
+ppm_tol_ms1 = params_list_full['isdb']['reweighting_params']['ppm_tol_ms1']
+use_post_taxo = params_list_full['isdb']['reweighting_params']['use_post_taxo']
+top_N_chemical_consistency = params_list_full['isdb']['reweighting_params']['top_N_chemical_consistency']
+min_score_taxo_ms1 = params_list_full['isdb']['reweighting_params']['min_score_taxo_ms1']
+min_score_chemo_ms1 = params_list_full['isdb']['reweighting_params']['min_score_chemo_ms1']
+msms_weight = params_list_full['isdb']['reweighting_params']['msms_weight']
+taxo_weight = params_list_full['isdb']['reweighting_params']['taxo_weight']
+chemo_weight = params_list_full['isdb']['reweighting_params']['chemo_weight']
+
+# Retrieve the current Git commit hash
+git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+# Update params_list with version information in a dictionary format
+params_list['version_info'] = {
+    'git_commit': git_commit_hash,
+    'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
+}
 
 
 ###### START #####
