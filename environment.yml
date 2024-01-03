@@ -31,7 +31,7 @@ dependencies:
     - bokeh==2.4.3
     - chembl_webresource_client
     - compress_json
-    - datatable
+    - datatable==1.0.0
     - downloaders
     - GitPython==3.1.31
     - memo_ms
