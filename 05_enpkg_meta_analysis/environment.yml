@@ -18,7 +18,7 @@ dependencies:
   - scikit-bio
   - pip
   - pip :
-    - datatable
+    - datatable=1.0.0
     - chembl_webresource_client
     - memo_ms
 prefix: /opt/anaconda3/envs/meta_analysis
