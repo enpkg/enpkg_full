@@ -107,7 +107,8 @@ def process_directory(directory):
                     g.add((feature_id, RDF.type, ns_kg.LCMSFeature))
                     g.add((feature_id, RDFS.label, rdflib.term.Literal(f"lcms_feature {str(int(row['row ID']))} of LCMS feature list in {ionization_mode} ionization mode of {metadata.sample_id[0]}")))
                     g.add((feature_id, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
-                    g.add((feature_id, ns_kg.has_row_id, rdflib.term.Literal(row['row ID'], datatype=XSD.integer)))
+                    # We make sure that the row ID is an integer and not a float
+                    g.add((feature_id, ns_kg.has_row_id, rdflib.term.Literal(int(row['row ID']), datatype=XSD.integer)))
                     g.add((feature_id, ns_kg.has_parent_mass, rdflib.term.Literal(row['row m/z'], datatype=XSD.float)))
                     g.add((feature_id, ns_kg.has_retention_time, rdflib.term.Literal(row['row retention time'], datatype=XSD.float)))
                     g.add((feature_id, ns_kg.has_feature_area, rdflib.term.Literal(row[area_col], datatype=XSD.float)))
