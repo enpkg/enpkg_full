@@ -12,7 +12,7 @@ mamba env create -f environment.yml
 
 Follow instructions at https://boecker-lab.github.io/docs.sirius.github.io/install/
 
-Run the `install_sirius.sh` script specifying the path choosed for the installation. For example, from the root of the repository:
+Run the `install_sirius.sh` script specifying the path chosen for the installation. For example, from the root of the repository:
 
 ```bash
 bash install_sirius.sh /home/username/sirius
