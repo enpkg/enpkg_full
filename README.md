@@ -2,20 +2,27 @@
 The full enpkg workflow
 
 
-## Installing the required environment
+## Install the required environment
 
 ```bash
 mamba env create -f environment.yml
 ```
 
-## Installing Sirius locally
-
-Follow instructions at https://boecker-lab.github.io/docs.sirius.github.io/install/
-
-Run the `install_sirius.sh` script specifying the path chosen for the installation. For example, from the root of the repository:
+## Activate the environment
 
 ```bash
-bash install_sirius.sh /home/username/sirius
+conda activate enpkg_full
+```
+
+## Install Sirius locally
+
+
+Check details at https://boecker-lab.github.io/docs.sirius.github.io/install/
+
+To get the latest version for your platform, run the `install_sirius.sh` script specifying the path chosen for the installation. For example, from the root of the repository:
+
+```bash
+bash src/install_sirius.sh /home/username/sirius
 ```
 
 Once Sirius is installed, you will need to precise the path to the executable in [here](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/04_enpkg_sirius_canopus/configs/user/user.yml#L3)
@@ -23,7 +30,7 @@ Once Sirius is installed, you will need to precise the path to the executable in
 Setting up the environment variables. To login to Sirius, you will need to set up the following environment variables (SIRIUS_USERNAME and SIRIUS_PASSWORD). You can do so launching the following command:
 
 ```bash
-bash setup_sirius_env.sh
+bash src/setup_sirius_env.sh
 ```
 
 
@@ -46,7 +53,7 @@ As set up here, this will download a small test dataset (https://zenodo.org/reco
 From the root of the repository, run:
 
 ```bash
-sh tests/00_test_all.sh
+sh workflow/00_workflow_all.sh
 ```
 
 On the previous test dataset, this should take about 10 minutes to run.
