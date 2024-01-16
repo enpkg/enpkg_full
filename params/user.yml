@@ -1,29 +1,29 @@
 # parameters
 general:
-  raw_data_path: ../data/input
-  treated_data_path: ../data/output
+  raw_data_path: ../data/input # required=True, help="Path to the raw data (or input data) folder", type= str
+  treated_data_path: ../data/output/individual_analysis # required=True, help="Path to the treated data (or output data) folder", type= str
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 data-download:
-  record_id: 10018590
-  record_name: enpkg_toy_dataset.zip
+  record_id: 10018590 # required=False, help="Zenodod record id of the dataset to download", type= int
+  record_name: enpkg_toy_dataset.zip # required=False, help="Name of the dataset to download", type= str
 
 data-organization:
-  source_path: ../data/input/enpkg_toy_dataset/msdata/processed
-  source_metadata_path: ../data/input/enpkg_toy_dataset/metadata
-  sample_metadata_filename: metadata.tsv
-  lcms_method_params_filename: lcms_method_params.txt
-  lcms_processing_params_filename: lcms_processing_params.xml
+  source_path: ../data/input/enpkg_toy_dataset/msdata/processed # required=True, help="Path to the folder containing the mass spec data", type= str
+  source_metadata_path: ../data/input/enpkg_toy_dataset/metadata # required=True, help="Path to the folder containing the metadata", type= str
+  sample_metadata_filename: metadata.tsv # required=True, help="Name of the sample metadata file", type= str
+  lcms_method_params_filename: lcms_method_params.txt # required=True, help="Name of the LCMS method parameters file", type= str
+  lcms_processing_params_filename: lcms_processing_params.xml # required=True, help="Name of the LCMS processing parameters file", type= str
 
 massive-id-addition:
-  massive_id: MSV000093199
+  massive_id: MSV000087728 # required=True, help="MassIVE dataset id", type= str
 
 taxo-info-fetching:
-  recompute: True
+  recompute: True # required=False, help="Recompute taxonomical information for samples with results already done", type= bool, default= True)
 
 isdb:
   adducts-formatter:
-    taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
+    taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz # Path to your spectral library file
   general_params:
     recompute: True  # Recompute for samples with results already done
   
@@ -59,7 +59,7 @@ isdb:
 
 sirius:
   paths:
-    path_to_sirius: /Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
+    path_to_sirius: /Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
   options:
     sirius_version: 5 # Sirius version: 4 or 5
     ionization: 'pos' # Ionization mode to process: pos or neg
@@ -85,6 +85,7 @@ chemo-info-fetching:
 
 memo:
   output: memo_matrix # required=True, help="Output name to use for the generated MEMO matrix", type= str
+  output_path: ../data/output/memo_matrix # help="Output path to use for the generated MEMO matrix", type= str, default= '../data/output/memo_matrix')
   min_relative_intensity: 0.01 # help="Minimal relative intensity to keep a peak max_relative_intensity, default 0.01", type= float, default= 0.01)
   max_relative_intensity: 1 # ', help="Maximal relative intensity to keep a peak max_relative_intensity, default 1", type= float, default= 1.0)
   min_peaks_required: 10 # ', help="Minimum number of peaks to keep a spectrum, default 10", type= int, default= 10)
@@ -95,28 +96,28 @@ memo:
   word_max_occ_blanks: -1 # ', help="Set --filter_blanks to True to use. If word is present in more than n blanks, word is removed from MEMO matrix, default -1 (all words kept)", type= int, default= -1)
 
 graph-builder:
-  kg_uri : https://enpkg.commons-lab.org/kg/ #https://dbgi.vital-it.ch/
-  prefix : enpkg #dbgi #emi
-  module_uri : https://enpkg.commons-lab.org/module/
-  prefix_module : enpkgmodule
-  target_chembl_url : https://www.ebi.ac.uk/chembl/target_report_card/
+  kg_uri : https://enpkg.commons-lab.org/kg/ # required=True, help="URI of the knowledge graph", type= str E.g. https://dbgi.vital-it.ch/ 
+  prefix : enpkg # required=True, help="Prefix of the knowledge graph", type= str E.g. dbgi, emikg, enpkg
+  module_uri : https://enpkg.commons-lab.org/module/ # required=False, help="URI of the module", type= str 
+  prefix_module : enpkgmodule # required=False, help="Prefix of the module", type= str
+  target_chembl_url : https://www.ebi.ac.uk/chembl/target_report_card/ # required=False, help="URL of the target in ChEMBL", type= str
 
-  wd_namespace : http://www.wikidata.org/entity/
+  wd_namespace : http://www.wikidata.org/entity/ # required=True, help="Namespace of Wikidata", type= str
 
-  structures_db_path : ../sql_db/structures_metadata.db #/home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../
-  gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:'
-  gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:'
-  massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession='
-  spectrum_dashboard_prefix : 'https://metabolomics-usi.gnps2.org/dashinterface?usi1='
-  spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1='
-  gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1='
+  structures_db_path : ../sql_db/structures_metadata.db # required=True, help="Path to the structures SQL database", type= str /home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../
+  gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:' # required=True, help="Prefix of the GNPS dashboard", type= str
+  gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:' # required=True, help="Prefix of the GNPS TIC/PIC", type= str
+  massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=' # required=True, help="Prefix of the MassIVE dataset", type= str
+  spectrum_dashboard_prefix : 'https://metabolomics-usi.gnps2.org/dashinterface?usi1=' # required=True, help="Prefix of the spectrum dashboard", type= str
+  spectrum_png_prefix : 'https://metabolomics-usi.gnps2.org/png/?usi1=' # required=True, help="Prefix of the spectrum png", type= str
+  gnps_fast_search_prefix : 'https://fasst.gnps2.org/fastsearch/?usi1=' # required=True, help="Prefix of the GNPS fast search", type= str
 
-  source_taxon_header : source_taxon #organism_species #
-  source_id_header : source_id #sample_substance_name
+  source_taxon_header : source_taxon # required=True, help="Header of the source taxon", type= str e.g. #organism_species #
+  source_id_header : source_id # required=True, help="Header of the source id", type= str e.g. #sample_substance_name 
 
   peak_loss_params:
     n_decimals: 1 # number of decimals of m/z to use for spectral binning
 
-  graph_format : ttl # (default is .ttl format (ttl), but can be .nt (nt))
+  graph_format : ttl # required=True, help="Format of the graph", type= str (default is .ttl format (ttl), but can be .nt (nt))
   graph_output_dir_path : ../data/output/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
-  compress_outputs : False 
+  compress_outputs : False # required=False, help="Compress outputs", type= bool, default= False)
