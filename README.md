@@ -13,9 +13,25 @@ Interested in the science behind ENPKG? Check out our latest preprint (https://d
 
 ## 🌱 Getting Started
 
+### Clone the repository
+
+First, clone the repository to your local machine:
+
+```bash
+git clone https://github.com/your-repository/enpkg_full.git
+```
+
+Navigate to the newly created folder:
+
+```bash
+cd enpkg_full
+```
+
+
 ### Install the required environment
 
-Start your journey by setting up the required environment. It's a breeze (or not) with Mamba!
+Start your journey by setting up the required environment. It's a breeze (or not) with Mamba! See the [Mamba documentation](https://mamba.readthedocs.io/en/latest/) for more details.
+
 
 ```bash
 mamba env create -f environment.yml
