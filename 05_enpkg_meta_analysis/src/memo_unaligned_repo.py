@@ -34,6 +34,7 @@ n_decimals = params_list_full['memo']['n_decimals']
 filter_blanks = params_list_full['memo']['filter_blanks']
 word_max_occ_blanks = params_list_full['memo']['word_max_occ_blanks']
 output = os.path.normpath(params_list_full['memo']['output'])
+output_path = os.path.normpath(params_list_full['memo']['output_path'])
 
 pattern_to_match2 = None
 if ionization == 'pos':
@@ -136,7 +137,7 @@ if pattern_to_match2 is not None:
     table1 = table1.merge(table2, on = 'filename')
     
 # export
-PATH = os.path.normpath(sample_dir_path + '/003_memo_analysis/')
+PATH = os.path.normpath(output_path)
 if not os.path.exists(PATH):
     os.makedirs(PATH)
 
