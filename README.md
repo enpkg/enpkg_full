@@ -56,7 +56,7 @@ To get the latest version for your platform, run the `install_sirius.sh` script 
 bash src/install_sirius.sh /home/username/sirius
 ```
 
-Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#editing-config-files).
+Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#-editing-config-files).
 
 
 ## 🔐 Setting Up Environment Variables
