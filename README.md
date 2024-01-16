@@ -18,7 +18,7 @@ Interested in the science behind ENPKG? Check out our latest preprint (https://d
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-repository/enpkg_full.git
+git clone https://github.com/enpkg/enpkg_full.git
 ```
 
 Navigate to the newly created folder:
@@ -56,7 +56,7 @@ To get the latest version for your platform, run the `install_sirius.sh` script 
 bash src/install_sirius.sh /home/username/sirius
 ```
 
-Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#editing-config-files).
+Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#-editing-config-files).
 
 
 ## 🔐 Setting Up Environment Variables
