@@ -84,17 +84,33 @@ if [ ! -d "$output_location" ]; then
     mkdir -p "$output_location"
 fi
 
+
+# Extracting the directory name of the unzipped folder (assuming it's the only directory extracted)
+dir_name=$(unzip -qql "$filename" | head -n1 | tr -s ' ' | cut -d' ' -f5- | cut -d'/' -f1)
+
+# Check if the output location doesn't exist and create it
+if [ ! -d "$output_location" ]; then
+    mkdir -p "$output_location"
+fi
+
 # Move the Sirius directory to the desired output location
 install_dir="$output_location/$dir_name"
 mv "$dir_name" "$output_location"
 
 echo "Sirius has been moved to $install_dir."
 
+# Set the path to the Sirius executable based on the platform
+if [ "$platform" = "osx" ]; then
+    executable_path="$install_dir/Contents/MacOS/sirius"
+else
+    executable_path="$install_dir/sirius/bin"
+fi
+
 # Inform the user about the next steps, like how to add the directory to their PATH permanently
-echo "You might want to add $install_dir/sirius/bin to your PATH variable for easier access."
+echo "You might want to add $executable_path to your PATH variable for easier access."
 echo "You can do this by adding the following line to your ~/.bashrc or ~/.profile file:"
-echo "export PATH=\$PATH:$install_dir/sirius/bin"
+echo "export PATH=\$PATH:$executable_path"
 
 # Final message to guide the user on how to use Sirius
-echo "You can start Sirius by running 'sirius' from the $install_dir/sirius/bin directory."
+echo "You can start Sirius by running 'sirius' from the $executable_path directory."
 echo "For more information on how to use Sirius, please refer to the official documentation."
