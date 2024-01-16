@@ -56,8 +56,8 @@ def organize_folder(
 
     # List folder content
     df_metadata = pd.read_csv(path_metadata, sep="\t")
-    if not os.path.isdir(os.path.join(target_path, f"for_massive_upload_{polarity}")):
-        os.makedirs(os.path.join(target_path, f"for_massive_upload_{polarity}"))
+    if not os.path.isdir(os.path.join(target_path, f"../for_massive_upload_{polarity}")):
+        os.makedirs(os.path.join(target_path, f"../for_massive_upload_{polarity}"))
     for i, row in df_metadata.iterrows():
         sample_id = row["sample_id"]
         if polarity == "pos":
@@ -144,7 +144,7 @@ def organize_folder(
                 )
                 shutil.copy(
                     (sub_folder + "/" + f"{sample_id}_features_ms2_{polarity}.mgf"),
-                    os.path.join(target_path, f"for_massive_upload_{polarity}"),
+                    os.path.join(target_path, f"../for_massive_upload_{polarity}"),
                 )
 
 
