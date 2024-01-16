@@ -4,7 +4,7 @@
 # Welcome to the ENPKG Full Workflow!
 
 <p align="center">
- <img src="https://github.com/enpkg/enpkg_workflow/blob/main/logo/enpkg_logo_full.png" width="200">
+ <img src="https://github.com/enpkg/enpkg_workflow/blob/main/logo/enpkg_logo_full.png" width="400">
 </p>
 
 
