@@ -5,7 +5,7 @@ general:
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 data-download:
-  record_id: 10018590 # required=False, help="Zenodod record id of the dataset to download", type= int
+  record_id: 10018590 # required=False, help="Zenodo record id of the dataset to download", type= int
   record_name: enpkg_toy_dataset.zip # required=False, help="Name of the dataset to download", type= str
 
 data-organization:
