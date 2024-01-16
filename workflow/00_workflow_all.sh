@@ -1,6 +1,3 @@
-eval "$(conda shell.bash hook)"
-conda activate enpkg_full
-
 echo "Launching 01_0_workflow_data_download.sh"
 sh ./workflow/01_0_workflow_data_download.sh
 
@@ -34,7 +31,4 @@ sh ./workflow/09_workflow_memo.sh
 echo "Launching 10_workflow_graph_builder.sh"
 sh ./workflow/10_workflow_graph_builder.sh
 
-conda deactivate
-
 echo "Done !"
-

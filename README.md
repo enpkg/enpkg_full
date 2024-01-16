@@ -30,19 +30,38 @@ cd enpkg_full
 
 ### Install the required environment
 
-Start your journey by setting up the required environment. It's a breeze (or not) with Mamba! See the [Mamba documentation](https://mamba.readthedocs.io/en/latest/) for more details.
+We offer both `Mamba` or `Poetry` installation solutions, see below:
 
+#### Mamba
+
+Start your journey by setting up the required environment. It's a breeze (or not) with Mamba! See the [Mamba documentation](https://mamba.readthedocs.io/en/latest/) for more details.
 
 ```bash
 mamba env create -f environment.yml
 ```
 
+#### Poetry
+
+First, see the [Poetry documentation](https://python-poetry.org/docs/) for more details.
+
+```bash
+poetry install
+```
+
 ### Activate the environment
+
+#### Mamba
 
 Once the environment is ready, bring it to life with this simple command:
 
 ```bash
 conda activate enpkg_full
+```
+
+#### Poetry
+
+```bash
+poetry shell
 ```
 
 ## 🌐 Install Sirius Locally
