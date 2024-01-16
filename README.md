@@ -18,7 +18,7 @@ Interested in the science behind ENPKG? Check out our latest preprint (https://d
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-repository/enpkg_full.git
+git clone https://github.com/enpkg/enpkg_full.git
 ```
 
 Navigate to the newly created folder:
