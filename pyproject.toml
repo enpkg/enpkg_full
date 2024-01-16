@@ -4,7 +4,7 @@ version = "0.0.1"
 description = "ENPKG FULL"
 authors = ["Pierre-Marie Allard <pierre-marie.allard@unifr.ch>"]
 license = "LICENSE"
-packages = [{include = "*.py", from = ""}]
+packages = [{include = "*.py", from = "src/"}]
 readme = "README.md"
 homepage = "https://github.com/enpkg/enpkg_full"
 repository = "https://github.com/enpkg/enpkg_full"
