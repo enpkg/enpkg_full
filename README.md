@@ -36,19 +36,19 @@ bash src/setup_sirius_env.sh
 
 ## Editing config files
 
-You will need to edit the following files:
+You will need to edit the following parameters files:
 
-- ISDB parameters at [user.yaml](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/03_enpkg_mn_isdb_isdb_taxo/configs/user/user.yaml)
-- Sirius parameters at [user.yml](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/04_enpkg_sirius_canopus/configs/user/user.yml)
-- Knowledge Graph construction parameters at [params.yaml](https://github.com/enpkg/enpkg_full/blob/6064834e9dbec131c923c95e62dbf6eb208fc1ab/06_enpkg_graph_builder/config/params.yaml)
+- Parameters at [user.yaml](https://github.com/enpkg/enpkg_full/blob/c8e649290ee72f000c3385e7669b5da2215abad8/params/user.yml)
+
+All parameters are commented and should be self-explanatory.
 
 
-## Select the dataset to process
+### E.g. selection of the dataset to process
 
-You can enter the record_id and record_name of a Zenodo dataset on [line](https://github.com/enpkg/enpkg_full/blob/23203ce9f54dff7552244155df85134d16219a27/tests/test_data_organization.py#L8)
-As set up here, this will download a small test dataset (https://zenodo.org/records/10018590/).
+For example you can enter the record_id and record_name of a Zenodo dataset on [line](https://github.com/enpkg/enpkg_full/blob/c8e649290ee72f000c3385e7669b5da2215abad8/params/user.yml#L8)
+As it is set up here, this will download a small test dataset (https://zenodo.org/records/10018590/).
 
-## Testing the workflow
+## Launching the workflow
 
 From the root of the repository, run:
 
@@ -65,4 +65,4 @@ You can use GraphDB to explore the generated Knowledge Graph. To do so, you will
 
 # Note
 
-This workflow is still under development. It is currently being ported to the EMIKG framework (https://github.com/earth-metabolome-initiative/emikg).
+This workflow is currently being ported to the EMIKG framework (https://github.com/earth-metabolome-initiative/emikg).
