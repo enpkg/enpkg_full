@@ -1,3 +1,4 @@
+![release_badge](https://img.shields.io/github/v/release/enpkg/enpkg_full)
 ![license](https://img.shields.io/github/license/enpkg/enpkg_full)
 
 # Welcome to the ENPKG Full Workflow!
