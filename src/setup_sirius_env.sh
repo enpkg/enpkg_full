@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to set environment variables for Sirius
+# Script to set and save environment variables for Sirius
 
 # Prompt for the username and password if they are not provided as arguments
 if [ -z "$1" ]; then
@@ -16,15 +16,25 @@ else
     SIRIUS_PASSWORD=$2
 fi
 
-# Export the variables
+# Set the variables
 export SIRIUS_USERNAME=$SIRIUS_USERNAME
 export SIRIUS_PASSWORD=$SIRIUS_PASSWORD
+
+# Prompt the user to select a shell configuration file
+read -rp "Select the shell configuration file (bashrc, zshrc, etc.): " SHELL_CONFIG_FILE
+
+# Check if the user wants to save the variables permanently
+read -p "Do you want to save these variables permanently (y/n)? " SAVE_PERMANENTLY
+
+if [[ $SAVE_PERMANENTLY =~ ^[Yy]$ ]]; then
+    # Append the variable assignments to the selected shell configuration file
+    echo "export SIRIUS_USERNAME=\"$SIRIUS_USERNAME\"" >> "$HOME/.$SHELL_CONFIG_FILE"
+    echo "export SIRIUS_PASSWORD=\"$SIRIUS_PASSWORD\"" >> "$HOME/.$SHELL_CONFIG_FILE"
+    echo "Variables saved permanently to ~/.$SHELL_CONFIG_FILE."
+fi
 
 echo "Environment variables set for session."
 
 # To check the variables, you could use:
 # echo "Username: $SIRIUS_USERNAME"
 # echo "Password: $SIRIUS_PASSWORD"
-
-# To use 
-# ./setup_sirius_env.sh user@example.com mypassword
