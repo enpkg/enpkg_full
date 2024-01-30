@@ -28,5 +28,5 @@ python ./06_enpkg_graph_builder/src/individual_processing/07_rdf_structures_meta
 echo "Running 08_rdf_merger_para.py"
 python ./06_enpkg_graph_builder/src/individual_processing/08_rdf_merger_para.py
 
-echo "Running 09_rdf_exporter.py"
-python ./06_enpkg_graph_builder/src/individual_processing/09_rdf_exporter.py
+# echo "Running 09_rdf_exporter.py"
+# python ./06_enpkg_graph_builder/src/individual_processing/09_rdf_exporter.py
