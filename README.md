@@ -9,7 +9,7 @@
 
 
 🌟 We're delighted to have you explore our computational workflow. This guide will walk you through the installation, setup, and execution of the ENPKG full workflow.
-Interested in the science behind ENPKG? Check out our latest preprint (https://doi.org/10.26434/chemrxiv-2023-sljbt-v2) ! It's packed with insights and methodologies that power this workflow.
+Interested in the science behind ENPKG? Check out the paper (https://doi.org/10.1021/acscentsci.3c00800) ! It's packed with insights and methodologies that power this workflow.
 
 ## 🌱 Getting Started
 
@@ -131,7 +131,7 @@ Facing an Issue? Encountering a glitch or have a suggestion? Your input is cruci
 A Knowledge Graph, has been build on a collection of 1600 tropical plants extracts (https://doi.org/10.1093/gigascience/giac124). This KG also integrates data from a metabolomics study led over 337 medicinal plants of the Korean Pharmacopeia (https://doi.org/10.1038/s41597-022-01662-2). It can be explored following these links.
 
 - The ENPKG graph is available at the following address https://enpkg.commons-lab.org/graphdb/. No need for login !
-- The SPARQL research interface can be reached at https://enpkg.commons-lab.org/graphdb/sparql. Make sure to check the [preprint](https://doi.org/10.26434/chemrxiv-2023-sljbt-v2) for examples of queries.
+- The SPARQL research interface can be reached at https://enpkg.commons-lab.org/graphdb/sparql. Make sure to check the [paper](https://doi.org/10.1021/acscentsci.3c00800) for examples of queries.
 - The ENPKG vocabulary is described at https://enpkg.commons-lab.org/doc/index.html
 
 
@@ -154,7 +154,7 @@ This set of script represents a pipeline calling multiple tools. Please make sur
 [Rutz et al. 2016, Frontiers in Plant Science](https://www.frontiersin.org/articles/10.3389/fpls.2019.01329/full)  
 [Rutz et al. 2022, Elife](https://elifesciences.org/articles/70780)  
 
-To cite the ENPKG workflow, please use the following reference [Gaudry et al. 2023](https://doi.org/10.26434/chemrxiv-2023-sljbt-v2).
+To cite the ENPKG workflow, please use the following reference [Gaudry et al. 2023](https://doi.org/10.1021/acscentsci.3c00800).
 
 
 ## 📋 Note
