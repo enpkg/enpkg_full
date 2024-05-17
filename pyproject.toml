@@ -39,6 +39,7 @@ gitpython = "^3.1.41"
 memo-ms = "^0.1.4"
 opentree = "^1.0.1"
 userinput = "^1.0.22"
+lxml = "^5.2.2"
 
 
 [tool.poetry.dev-dependencies]
