@@ -1,23 +1,22 @@
 # parameters
 general:
-  raw_data_path: ../data/input # required=True, help="Path to the raw data (or input data) folder", type= str
-  treated_data_path: ../data/output/individual_analysis # required=True, help="Path to the treated data (or output data) folder", type= str
-  polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
+  raw_data_path: /media/data/emi_ms_files/subset_2024051715 # required=True, help="Path to the raw data (or input data) folder", type= str
+  treated_data_path: /media/data/emi_ms_files/subset_2024051715_treated # required=True, help="Path to the treated data (or output data) folder", type= str
+  polarity: both # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 data-download:
   record_id: 10018590 # required=False, help="Zenodo record id of the dataset to download", type= int
   record_name: enpkg_toy_dataset.zip # required=False, help="Name of the dataset to download", type= str
 
 data-organization:
-  source_path: ../data/input/enpkg_toy_dataset/msdata/processed # required=True, help="Path to the folder containing the mass spec data", type= str
-  source_metadata_path: ../data/input/enpkg_toy_dataset/metadata # required=True, help="Path to the folder containing the metadata", type= str
-  sample_metadata_filename: metadata.tsv # required=True, help="Name of the sample metadata file", type= str
+  source_path: /media/data/emi_ms_files/subset_2024051715 # required=True, help="Path to the folder containing the mass spec data", type= str
+  source_metadata_path: /media/data/emi_ms_files # required=True, help="Path to the folder containing the metadata", type= str
+  sample_metadata_filename: metadata_2024051715.tsv # required=True, help="Name of the sample metadata file", type= str
   lcms_method_params_filename: lcms_method_params.txt # required=True, help="Name of the LCMS method parameters file", type= str
   lcms_processing_params_filename: lcms_processing_params.xml # required=True, help="Name of the LCMS processing parameters file", type= str
 
 massive-id-addition:
   massive_id: MSV000087728 # required=True, help="MassIVE dataset id", type= str
-
 taxo-info-fetching:
   recompute: True # required=False, help="Recompute taxonomical information for samples with results already done", type= bool, default= True)
 
