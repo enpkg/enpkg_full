@@ -1,5 +1,4 @@
 from pyteomics import mzml
-from matchms import Spectrum
 
 def extract_injection_mode(mzml_file):
     injection_mode = None
