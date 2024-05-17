@@ -16,7 +16,7 @@ data-organization:
   lcms_processing_params_filename: lcms_processing_params.xml
 
 massive-id-addition:
-  massive_id: MSV000093199
+  massive_id: MSV0000931998888888888
 
 taxo-info-fetching:
   recompute: True
