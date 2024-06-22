@@ -1,17 +1,17 @@
 # parameters
 general:
-  raw_data_path: ../data/input
-  treated_data_path: ../data/output
+  raw_data_path: /home/allardpm/EMIKG/dbgi_batch_00001/input
+  treated_data_path: /home/allardpm/EMIKG/dbgi_batch_00001/output
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
-data-download:
-  record_id: 10018590
-  record_name: enpkg_toy_dataset.zip
+# data-download:
+#   record_id: 10018590
+#   record_name: enpkg_toy_dataset.zip
 
 data-organization:
-  source_path: ../data/input/dbgi_batch_00002/msdata/processed
-  source_metadata_path: ../data/input/dbgi_batch_00002/metadata
-  sample_metadata_filename: metadata_2024051715.tsv
+  source_path: /home/allardpm/EMIKG/dbgi_batch_00001/input
+  source_metadata_path: /home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated
+  sample_metadata_filename: dbgi_batch_00001_metadata.tsv
   lcms_method_params_filename: lcms_method_params.txt
   lcms_processing_params_filename: lcms_processing_params.xml
 
