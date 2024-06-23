@@ -15,9 +15,11 @@ def organize_folder(
     target_path: str,
     source_metadata_path: str,
     metadata_filename: str,
+    lcms_method_path: str,
     lcms_method_filename: str,
+    lcms_processing_path: str,
     lcms_processing_filename: str,
-    polarity: str,
+    # polarity: str,
 ):
     """Organize folder with unaligned feature list files and their aggregated metadata in individual folders.
 
@@ -31,24 +33,24 @@ def organize_folder(
         The path to the directory where metadata files are located
     metadata_filename : str
         The name of the metadata file to use (it has to be located in sample_dir_path)
+    lcms_method_path : str
+        The path to the directory where lcms method files are located
     lcms_method_filename : str
         The name of the metadata file to use (it has to be located in sample_dir_path)
+    lcms_processing_path : str
+        The path to the directory where lcms processing files are located
     lcms_processing_filename : str
         The name of the metadata file to use (it has to be located in sample_dir_path)
-    polarity : str
-        The polarity mode of LC-MS/MS analyses
-        It has to be one of ["pos", "neg"].
 
     Raises
     ------
-    ValueError
-        If polarity is not one of ["pos", "neg"].
+
     """
-    polarity = must_be_in_set(polarity, ["pos", "neg"], "polarity")
+    # polarity = must_be_in_set(polarity, ["pos", "neg"], "polarity")
     path_metadata = os.path.join(source_metadata_path, metadata_filename)
-    path_lcms_method_filename = os.path.join(source_metadata_path, lcms_method_filename)
+    path_lcms_method_filename = os.path.join(lcms_method_path, lcms_method_filename)
     path_lcms_processing_filename = os.path.join(
-        source_metadata_path, lcms_processing_filename
+        lcms_processing_path, lcms_processing_filename
     )
     # Create target path if does not exist
     if not os.path.isdir(target_path):
@@ -56,19 +58,18 @@ def organize_folder(
 
     # List folder content
     df_metadata = pd.read_csv(path_metadata, sep="\t")
-    if not os.path.isdir(os.path.join(target_path, f"../for_massive_upload_{polarity}")):
-        os.makedirs(os.path.join(target_path, f"../for_massive_upload_{polarity}"))
+    if not os.path.isdir(os.path.join(target_path, f"../for_massive_upload")):
+        os.makedirs(os.path.join(target_path, f"../for_massive_upload"))
     for i, row in df_metadata.iterrows():
         sample_id = row["sample_id"]
-        if polarity == "pos":
-            sample_filename = row["sample_filename_pos"]
-            sample_filename_woext = sample_filename.rsplit(".", 1)[0]
-        elif polarity == "neg":
-            sample_filename = row["sample_filename_neg"]
-            sample_filename_woext = sample_filename.rsplit(".", 1)[0]
+        sample_raw_sha = row["raw_sha"]
+        sample_converted_sha = row["converted_sha"]
+        sample_filename = row["sample_filename"]
+        sample_filename_woext = sample_filename.rsplit(".", 1)[0]
+
 
         # create sample's folder if if it does not exist yet
-        sample_folder = os.path.join(target_path, sample_id)
+        sample_folder = os.path.join(target_path, sample_converted_sha)
         if not os.path.isdir(sample_folder):
             os.makedirs(sample_folder)
 
@@ -76,13 +77,13 @@ def organize_folder(
         pd.DataFrame(
             df_metadata.iloc[i],
         ).transpose().to_csv(
-            os.path.join(target_path, sample_id, sample_id + "_metadata.tsv"),
+            os.path.join(target_path, sample_converted_sha, sample_converted_sha + "_metadata.tsv"),
             sep="\t",
             index=False,
         )
 
         # move and rename sample's files
-        sub_folder = os.path.normpath(os.path.join(sample_folder, polarity + "/"))
+        sub_folder = os.path.normpath(os.path.join(sample_folder + "/"))
         if not os.path.isdir(sub_folder):
             os.makedirs(sub_folder)
 
@@ -91,13 +92,13 @@ def organize_folder(
                 shutil.copy(os.path.join(source_path, file), sub_folder)
 
         if len(os.listdir(sub_folder)) == 0:
-            print(f"No matched file for sample {sample_id}")
+            print(f"No matched file for sample {sample_converted_sha}")
         elif len(os.listdir(sub_folder)) == 1:
-            print(f"1 matched file for sample {sample_id}")
+            print(f"1 matched file for sample {sample_converted_sha}")
         elif len(os.listdir(sub_folder)) == 2:
-            print(f"2 matched file for sample {sample_id}")
+            print(f"2 matched file for sample {sample_converted_sha}")
         elif len(os.listdir(sub_folder)) == 3:
-            print(f"3 matched file for sample {sample_id}")
+            print(f"3 matched file for sample {sample_converted_sha}")
 
         for file in os.listdir(sub_folder):
             file_path = os.path.normpath(os.path.join(sub_folder + "/" + file))
@@ -107,11 +108,11 @@ def organize_folder(
             lcms_processing_extension = lcms_processing_filename.split(".", 1)[1]
             destination_path_lcms_method_filename = os.path.join(
                 sub_folder,
-                f"{sample_id}_lcms_method_params_{polarity}.{lcms_method_extension}",
+                f"{sample_converted_sha}_lcms_method_params.{lcms_method_extension}",
             )
             destination_path_lcms_processing_filename = os.path.join(
                 sub_folder,
-                f"{sample_id}_lcms_processing_params_{polarity}.{lcms_processing_extension}",
+                f"{sample_converted_sha}_lcms_processing_params.{lcms_processing_extension}",
             )
             os.makedirs(os.path.dirname(destination_path_lcms_method_filename), exist_ok=True)
             os.makedirs(os.path.dirname(destination_path_lcms_processing_filename), exist_ok=True)
@@ -127,24 +128,24 @@ def organize_folder(
                 os.rename(
                     file_path,
                     os.path.join(
-                        sub_folder, f"{sample_id}_features_quant_{polarity}.csv"
+                        sub_folder, f"{sample_converted_sha}_features_quant.csv"
                     ),
                 )
             elif file.endswith("_sirius.mgf"):
                 os.rename(
                     file_path,
-                    os.path.join(sub_folder, f"{sample_id}_sirius_{polarity}.mgf"),
+                    os.path.join(sub_folder, f"{sample_converted_sha}_sirius.mgf"),
                 )
             elif file.endswith(".mgf"):
                 os.rename(
                     file_path,
                     os.path.join(
-                        sub_folder, f"{sample_id}_features_ms2_{polarity}.mgf"
+                        sub_folder, f"{sample_converted_sha}_features_ms2.mgf"
                     ),
                 )
                 shutil.copy(
-                    (sub_folder + "/" + f"{sample_id}_features_ms2_{polarity}.mgf"),
-                    os.path.join(target_path, f"../for_massive_upload_{polarity}"),
+                    (sub_folder + "/" + f"{sample_converted_sha}_features_ms2.mgf"),
+                    os.path.join(target_path, f"../for_massive_upload"),
                 )
 
 
@@ -167,16 +168,18 @@ if __name__ == "__main__":
     target_path=os.path.normpath(params_list_full['general']['treated_data_path'])
     source_metadata_path=os.path.normpath(params_list_full['data-organization']['source_metadata_path'])
     metadata_filename=params_list_full['data-organization']['sample_metadata_filename']
-    lcms_method_filename=params_list_full['data-organization']['lcms_method_params_filename']
-    lcms_processing_filename=params_list_full['data-organization']['lcms_processing_params_filename']
-    polarity=params_list_full['general']['polarity']
+    lcms_method_path=os.path.normpath(params_list_full['data-organization']['lcms_method_path'])
+    lcms_method_filename=params_list_full['data-organization']['lcms_method_filename']
+    lcms_processing_path=os.path.normpath(params_list_full['data-organization']['lcms_processing_path'])
+    lcms_processing_filename=params_list_full['data-organization']['lcms_processing_filename']
 
     organize_folder(
         source_path=source_path,
         target_path=target_path,
         source_metadata_path=source_metadata_path,
         metadata_filename=metadata_filename,
+        lcms_method_path=lcms_method_path,
         lcms_method_filename=lcms_method_filename,
-        lcms_processing_filename=lcms_processing_filename,
-        polarity=polarity
+        lcms_processing_path=lcms_processing_path,
+        lcms_processing_filename=lcms_processing_filename
     )

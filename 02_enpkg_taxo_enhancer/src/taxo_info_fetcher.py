@@ -103,13 +103,14 @@ if __name__ == "__main__":
             )
             if taxo_df["matched_name"][0] == "None":
                 print(f"No matched species for sample {directory}")
+                print(f"Input was " + metadata["source_taxon"][0])
                 no_match.append(directory)
                 continue
             wd_df = wd_taxo_fetcher_from_ott(url, taxo_df["ott_id"][0])
             path_taxo_df = os.path.join(
                 path_to_results_folders, directory + "_taxo_metadata.tsv"
             )
-            taxo_df.join(wd_df).to_csv(path_taxo_df, sep="\t")
+            taxo_df.join(wd_df).to_csv(path_taxo_df, sep="\t", index=False)
 
             with open(
                 os.path.join(path_to_results_folders, "params.yaml"), "w"

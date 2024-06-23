@@ -141,13 +141,21 @@ def taxa_lineage_appender(
         path = path_to_results_folders + project_name + "_taxon_info.json"
         jsondic = compress_json.load(path)
 
-        df_tax_lineage = json_normalize(
-            jsondic,
-            record_path=["lineage"],
-            meta=["ott_id", "unique_name"],
-            record_prefix="sub_",
-            errors="ignore",
-        )
+
+        # Check if lineage is non-empty before normalizing
+        if jsondic and 'lineage' in jsondic[0] and jsondic[0]['lineage']:
+            df_tax_lineage = json_normalize(
+                jsondic,
+                record_path=["lineage"],
+                meta=["ott_id", "unique_name"],
+                record_prefix="sub_",
+                errors="ignore",
+            )
+        else:
+            # Create an empty DataFrame with the expected columns
+            # This is to avoid errors when dealing with Life (ott_id = 805080)
+            df_tax_lineage = pd.DataFrame(columns=["sub_{}".format(col) for col in ['name', 'rank', 'source', 'ott_id']] + ['ott_id', 'unique_name'])
+
 
         # This keeps the last occurence of each ott_id / sub_rank grouping https://stackoverflow.com/a/41886945
         df_tax_lineage_filtered = df_tax_lineage.groupby(
