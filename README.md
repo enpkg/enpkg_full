@@ -102,6 +102,20 @@ All parameters are commented and should be self-explanatory.
 For example you can enter the record_id and record_name of a Zenodo dataset on [line](https://github.com/enpkg/enpkg_full/blob/c8e649290ee72f000c3385e7669b5da2215abad8/params/user.yml#L8).
 As it is set up here, this will download a small test dataset (https://doi.org/10.5281/zenodo.10018590).
 
+## Prepare the metadata
+
+First we extracts the sha from the .mzML files and create the metadata file. This is done by running the following command:
+
+```bash
+python extract_sha.py /home/allardpm/EMIKG/dbgi_batch_00001/raw /home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_sha.csv
+```
+
+Then we create the metadata file for the dataset. This is done by running the following command:
+
+```bash
+python merge_sha_metadata.py /home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_metadata.tsv /home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_sha.csv /home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_metadata_sha.tsv
+```
+
 ## 🚀 Launching the Workflow
 
 From the root of the repository, run:

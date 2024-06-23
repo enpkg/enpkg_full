@@ -40,6 +40,7 @@ memo-ms = "^0.1.4"
 opentree = "^1.0.1"
 userinput = "^1.0.22"
 lxml = "^5.2.2"
+taxonomical_utils = "^0.0.5"
 
 
 [tool.poetry.dev-dependencies]
