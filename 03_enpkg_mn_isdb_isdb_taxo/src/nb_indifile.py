@@ -102,10 +102,12 @@ for sample_dir in samples_dir[:]:
         continue
 
     # Check if MS/MS spectra are present 
-    if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2_' + '.mgf')):
+    if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2' + '.mgf')):
         pass
     else:
-        print(sample_dir + " has no MSMS data, it is removed from the processing list.")
+        test = os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2' + '.mgf')
+        print(sample_dir + "xo")
+        # print(sample_dir + " has no MSMS data, it is removed from the processing list.")
         samples_dir.remove(sample_dir)
         continue
 
@@ -161,7 +163,7 @@ for sample_dir in samples_dir:
     
     metadata_file_path = os.path.join(repository_path, sample_dir, sample_dir + '_metadata.tsv')
     metadata = pd.read_csv(metadata_file_path, sep='\t')   
-    spectra_file_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2_' + '.mgf')       
+    spectra_file_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2' + '.mgf')       
     feature_table_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_quant_' + '.csv')
     feature_table = pd.read_csv(feature_table_path, sep=',')
         
