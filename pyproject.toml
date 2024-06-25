@@ -11,7 +11,7 @@ repository = "https://github.com/enpkg/enpkg_full"
 documentation = "https://github.com/enpkg/enpkg_full"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.10,<3.12"
 ipykernel = "^6.28.0"
 ipython = "^8.10"
 matchms = "^0.20.0"
@@ -40,7 +40,8 @@ memo-ms = "^0.1.4"
 opentree = "^1.0.1"
 userinput = "^1.0.22"
 lxml = "^5.2.2"
-taxonomical_utils = "^0.0.5"
+taxonomical-utils = "^0.0.8"
+
 
 
 [tool.poetry.dev-dependencies]
