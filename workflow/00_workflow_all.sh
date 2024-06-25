@@ -7,17 +7,17 @@
 # echo "Launching 02_massive_id.sh"
 # sh ./workflow/02_workflow_massive_id.sh
 
-echo "Launching 03_workflow_taxo_enhancer.sh"
-sh ./workflow/03_workflow_taxo_enhancer.sh
+# echo "Launching 03_workflow_taxo_enhancer.sh"
+# sh ./workflow/03_workflow_taxo_enhancer.sh
 
-# echo "Launching 04_workflow_dl_ressources.sh"
-# sh ./workflow/04_workflow_dl_ressources.sh
+echo "Launching 04_workflow_dl_ressources.sh"
+sh ./workflow/04_workflow_dl_ressources.sh
 
-# echo "Launching 05_workflow_make_adducts.sh"
-# sh ./workflow/05_workflow_make_adducts.sh
+echo "Launching 05_workflow_make_adducts.sh"
+sh ./workflow/05_workflow_make_adducts.sh
 
-# echo "Launching 06_workflow_annotate_mn_isdb.sh"
-# sh ./workflow/06_workflow_annotate_mn_isdb.sh
+echo "Launching 06_workflow_annotate_mn_isdb.sh"
+sh ./workflow/06_workflow_annotate_mn_isdb.sh
 
 # echo "Launching 07_workflow_annotate_sirius.sh"
 # sh ./workflow/07_workflow_annotate_sirius.sh
