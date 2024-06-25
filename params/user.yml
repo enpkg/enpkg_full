@@ -2,7 +2,7 @@
 general:
   raw_data_path: /home/allardpm/EMIKG/dbgi_batch_00001/input
   treated_data_path: /home/allardpm/EMIKG/dbgi_batch_00001/output
-  # polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
+  polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 # data-download:
 #   record_id: 10018590
