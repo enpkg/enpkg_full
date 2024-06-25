@@ -5,9 +5,14 @@ import yaml
 import git
 import time
 import gc
+import resource
 from taxonomical_utils import merger, resolver, upper_taxa_lineage_appender, wikidata_fetcher
 import opentree
 from opentree import OT
+
+# Set file descriptor limit
+soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+resource.setrlimit(resource.RLIMIT_NOFILE, (min(soft + 1024, hard), hard))
 
 def process_sample(directory, path, force_res, params, url, no_match_path):
     metadata_path = os.path.join(path, directory, directory + "_metadata.tsv")
@@ -106,8 +111,13 @@ if __name__ == "__main__":
     samples_dir = [directory for directory in os.listdir(path)]
     no_match_path = os.path.join(params_list_full['data-organization']['source_metadata_path'], "no_match_samples.txt")
 
-    for directory in samples_dir:
-        process_sample(directory, path, force_res, params, url, no_match_path)
+    batch_size = 10  # Define a batch size to process samples in smaller batches
+    for i in range(0, len(samples_dir), batch_size):
+        batch = samples_dir[i:i+batch_size]
+        for directory in batch:
+            process_sample(directory, path, force_res, params, url, no_match_path)
+        # Force garbage collection after each batch
+        gc.collect()
 
     print(f"Done processing samples.")
     end_time = time.time()
