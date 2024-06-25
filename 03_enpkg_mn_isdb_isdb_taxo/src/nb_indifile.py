@@ -102,7 +102,7 @@ for sample_dir in samples_dir[:]:
         continue
 
     # Check if MS/MS spectra are present 
-    if os.path.isfile(os.path.join(repository_path,sample_dir, ionization_mode, sample_dir + '_features_ms2_' + ionization_mode + '.mgf')):
+    if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2_' + '.mgf')):
         pass
     else:
         print(sample_dir + " has no MSMS data, it is removed from the processing list.")
@@ -110,14 +110,14 @@ for sample_dir in samples_dir[:]:
         continue
 
     # Check if features intensity table is present
-    if os.path.isfile(os.path.join(repository_path,sample_dir, ionization_mode, sample_dir + '_features_quant_' + ionization_mode + '.csv')):
+    if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_quant_' + '.csv')):
         pass
     else:
         print(sample_dir + " has no feature intensity table, it is removed from the processing list.")
         samples_dir.remove(sample_dir)
         continue
     if recompute == False :
-        if os.path.isfile(os.path.join(repository_path, sample_dir, ionization_mode, 'isdb/config.yaml')):
+        if os.path.isfile(os.path.join(repository_path, sample_dir, 'isdb/config.yaml')):
             print(sample_dir + " has already been annotated through the ISDB, since the recompute option (user.yaml) is set to False it will be removed from the processing list.")
             samples_dir.remove(sample_dir)
     # else:
@@ -161,8 +161,8 @@ for sample_dir in samples_dir:
     
     metadata_file_path = os.path.join(repository_path, sample_dir, sample_dir + '_metadata.tsv')
     metadata = pd.read_csv(metadata_file_path, sep='\t')   
-    spectra_file_path = os.path.join(repository_path,sample_dir, ionization_mode, sample_dir + '_features_ms2_' + ionization_mode + '.mgf')       
-    feature_table_path = os.path.join(repository_path,sample_dir, ionization_mode, sample_dir + '_features_quant_' + ionization_mode + '.csv')
+    spectra_file_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2_' + '.mgf')       
+    feature_table_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_quant_' + '.csv')
     feature_table = pd.read_csv(feature_table_path, sep=',')
         
     try:
