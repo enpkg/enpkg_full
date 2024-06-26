@@ -17,7 +17,7 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
     cols_ref = ['organism_taxonomy_01domain', 'organism_taxonomy_02kingdom',  'organism_taxonomy_03phylum', 'organism_taxonomy_04class',
                 'organism_taxonomy_05order', 'organism_taxonomy_06family', 'organism_taxonomy_08genus', 'organism_taxonomy_09species']
 
-    cols_att = ['otl_domain', 'otl_organism_otol_kingdom', 'otl_organism_otol_phylum', 'otl_organism_otol_class',
+    cols_att = ['otl_organism_otol_domain', 'otl_organism_otol_kingdom', 'otl_organism_otol_phylum', 'otl_organism_otol_class',
                 'otl_organism_otol_order', 'otl_organism_otol_family', 'otl_organism_otol_genus', 'otl_organism_otol_species']
 
     cols_match = ['matched_domain', 'matched_kingdom', 'matched_phylum', 'matched_class',

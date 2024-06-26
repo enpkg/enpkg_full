@@ -21,7 +21,7 @@ massive-id-addition:
   massive_id: MSV000093199
 
 taxo-info-fetching:
-  recompute: False
+  recompute: True
 
 isdb:
   adducts-formatter:
