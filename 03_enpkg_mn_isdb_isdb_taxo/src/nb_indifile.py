@@ -295,7 +295,7 @@ for sample_dir in samples_dir:
             
         # If valid taxonomy is present for sample, proceed to taxonomical reweighting
         taxo_reweight = True
-        cols_att = ['otl_domain', 'otl_organism_otol_kingdom', 'otl_organism_otol_phylum', 'otl_organism_otol_class',
+        cols_att = ['otl_organism_otol_domain', 'otl_organism_otol_kingdom', 'otl_organism_otol_phylum', 'otl_organism_otol_class',
                 'otl_organism_otol_order', 'otl_organism_otol_family', 'otl_organism_otol_genus', 'otl_organism_otol_species']
         for col in cols_att:
             dt_isdb_results[col] = taxo_metadata[col][0]
