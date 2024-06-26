@@ -17,8 +17,8 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
     cols_ref = ['organism_taxonomy_01domain', 'organism_taxonomy_02kingdom',  'organism_taxonomy_03phylum', 'organism_taxonomy_04class',
                 'organism_taxonomy_05order', 'organism_taxonomy_06family', 'organism_taxonomy_08genus', 'organism_taxonomy_09species']
 
-    cols_att = ['query_otol_domain', 'query_otol_kingdom', 'query_otol_phylum', 'query_otol_class',
-                'query_otol_order', 'query_otol_family', 'query_otol_genus', 'query_otol_species']
+    cols_att = ['otl_domain', 'otl_organism_otol_kingdom', 'otl_organism_otol_phylum', 'otl_organism_otol_class',
+                'otl_organism_otol_order', 'otl_organism_otol_family', 'otl_organism_otol_genus', 'otl_organism_otol_species']
 
     cols_match = ['matched_domain', 'matched_kingdom', 'matched_phylum', 'matched_class',
                 'matched_order', 'matched_family', 'matched_genus', 'matched_species']
@@ -26,7 +26,8 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
     col_prev = None
 
     for col_ref, col_att, col_match in zip(cols_ref, cols_att, cols_match):
-        df[col_ref].fillna('Unknown', inplace=True)
+        # df[col_ref].fillna('Unknown', inplace=True)
+        df.fillna({col_ref: 'Unknown'}, inplace=True)
         df[col_ref] = df[col_ref].apply(lambda x: [x])
         df[col_att] = df[col_att].apply(lambda x: [x])
         df[col_match] = [list(set(a).intersection(set(b))) for a, b in zip(df[col_ref], df[col_att])] # Allows to compare 2 lists

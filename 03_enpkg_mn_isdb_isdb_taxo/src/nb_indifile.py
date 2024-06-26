@@ -105,14 +105,12 @@ for sample_dir in samples_dir[:]:
     if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2' + '.mgf')):
         pass
     else:
-        test = os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2' + '.mgf')
-        print(sample_dir + "xo")
-        # print(sample_dir + " has no MSMS data, it is removed from the processing list.")
+        print(sample_dir + " has no MSMS data, it is removed from the processing list.")
         samples_dir.remove(sample_dir)
         continue
 
     # Check if features intensity table is present
-    if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_quant_' + '.csv')):
+    if os.path.isfile(os.path.join(repository_path,sample_dir, sample_dir + '_features_quant' + '.csv')):
         pass
     else:
         print(sample_dir + " has no feature intensity table, it is removed from the processing list.")
@@ -164,7 +162,7 @@ for sample_dir in samples_dir:
     metadata_file_path = os.path.join(repository_path, sample_dir, sample_dir + '_metadata.tsv')
     metadata = pd.read_csv(metadata_file_path, sep='\t')   
     spectra_file_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_ms2' + '.mgf')       
-    feature_table_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_quant_' + '.csv')
+    feature_table_path = os.path.join(repository_path,sample_dir, sample_dir + '_features_quant' + '.csv')
     feature_table = pd.read_csv(feature_table_path, sep=',')
         
     try:
@@ -183,17 +181,17 @@ for sample_dir in samples_dir:
     Treating file: ''' + sample_dir
     )
 
-    isdb_results_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/{sample_dir}_isdb_{ionization_mode}.tsv')
-    mn_ci_ouput_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/molecular_network/{sample_dir}_mn_metadata_{ionization_mode}.tsv')
-    repond_table_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/{sample_dir}_isdb_reweighted_{ionization_mode}.tsv')
-    repond_table_flat_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/{sample_dir}_isdb_reweighted_flat_{ionization_mode}.tsv')
-    mn_graphml_ouput_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/molecular_network/{sample_dir}_mn_{ionization_mode}.graphml')
-    treemap_chemo_counted_results_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/{sample_dir}_treemap_chemo_counted_{ionization_mode}.html')
-    treemap_chemo_intensity_results_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/{sample_dir}_treemap_chemo_intensity_{ionization_mode}.html')
-    isdb_config_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/config.yaml')
-    mn_config_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/molecular_network/config.yaml')
-    isdb_folder_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/isdb/')
-    mn_folder_path = os.path.normpath(f'{repository_path}/{sample_dir}/{ionization_mode}/molecular_network/')
+    isdb_results_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/{sample_dir}_isdb.tsv')
+    mn_ci_ouput_path = os.path.normpath(f'{repository_path}/{sample_dir}/molecular_network/{sample_dir}_mn_metadata.tsv')
+    repond_table_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/{sample_dir}_isdb_reweighted.tsv')
+    repond_table_flat_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/{sample_dir}_isdb_reweighted_flat.tsv')
+    mn_graphml_ouput_path = os.path.normpath(f'{repository_path}/{sample_dir}/molecular_network/{sample_dir}_mn.graphml')
+    treemap_chemo_counted_results_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/{sample_dir}_treemap_chemo_counted.html')
+    treemap_chemo_intensity_results_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/{sample_dir}_treemap_chemo_intensity.html')
+    isdb_config_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/config.yaml')
+    mn_config_path = os.path.normpath(f'{repository_path}/{sample_dir}/molecular_network/config.yaml')
+    isdb_folder_path = os.path.normpath(f'{repository_path}/{sample_dir}/isdb/')
+    mn_folder_path = os.path.normpath(f'{repository_path}/{sample_dir}/molecular_network/')
     
     # Import query spectra
     spectra_query = list(load_from_mgf(spectra_file_path))
@@ -297,8 +295,8 @@ for sample_dir in samples_dir:
             
         # If valid taxonomy is present for sample, proceed to taxonomical reweighting
         taxo_reweight = True
-        cols_att = ['query_otol_domain', 'query_otol_kingdom', 'query_otol_phylum', 'query_otol_class',
-                'query_otol_order', 'query_otol_family', 'query_otol_genus', 'query_otol_species']
+        cols_att = ['otl_domain', 'otl_organism_otol_kingdom', 'otl_organism_otol_phylum', 'otl_organism_otol_class',
+                'otl_organism_otol_order', 'otl_organism_otol_family', 'otl_organism_otol_genus', 'otl_organism_otol_species']
         for col in cols_att:
             dt_isdb_results[col] = taxo_metadata[col][0]
         dt_isdb_results = taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1)
@@ -358,9 +356,9 @@ for sample_dir in samples_dir:
         feature_intensity_table_formatted = feature_intensity_table_formatter(feature_table)
         
         if taxo_metadata is not None:
-            organism_label = taxo_metadata['query_otol_species'][0]
+            organism_label = str(taxo_metadata['otl_organism_otol_species'][0])
         else:
-            organism_label = metadata['source_taxon'][0]
+            organism_label = str(metadata['source_taxon'][0])
             
         plotter_count(df_flat, sample_dir, organism_label, treemap_chemo_counted_results_path)
         plotter_intensity(df_flat, feature_intensity_table_formatted, sample_dir, organism_label, treemap_chemo_intensity_results_path)

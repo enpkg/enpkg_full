@@ -4066,13 +4066,13 @@ docs = ["ipykernel", "jupyter-client", "matplotlib", "nbconvert", "nbformat", "n
 
 [[package]]
 name = "taxonomical-utils"
-version = "0.0.8"
+version = "0.0.9"
 description = "A set of Python scripts to proceed to taxonomical resolution and retrieval of upper taxonomies."
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "taxonomical_utils-0.0.8-py3-none-any.whl", hash = "sha256:1a3a3f7d843c61057acb9f675ea3fdc6c6f8cc0547ce97547732134b4d4f8fcb"},
-    {file = "taxonomical_utils-0.0.8.tar.gz", hash = "sha256:2e6705be1dbacdf81e4ee8c42d4ad0eac13d72a1da3e7eff48d56b8e818dfa8a"},
+    {file = "taxonomical_utils-0.0.9-py3-none-any.whl", hash = "sha256:b93f17e5c47ddf4da6c3e6901702caa51c4be701f06c886b4302c0df5ad02b3c"},
+    {file = "taxonomical_utils-0.0.9.tar.gz", hash = "sha256:cd0f09c0805e7d47b434c124a98fe5fbd7d9e15766724b6e9c7cd082e0032b8b"},
 ]
 
 [package.dependencies]
@@ -4555,4 +4555,4 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "35bb840bb0bc68e264591675e508617e76eb3627b84a1f332e8c2cc5947d5964"
+content-hash = "35c3ea59216d6ffa899c5e0378e14fe5364851c19b9db6f2b4e29c70a79d891e"
