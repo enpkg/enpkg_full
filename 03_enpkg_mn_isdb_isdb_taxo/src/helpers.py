@@ -68,13 +68,15 @@ def annotation_table_formatter_taxo(input_df, min_score_taxo_ms1, min_score_chem
     for col in col_matched:
         input_df[col] = input_df[col].replace(
             'nan', np.NaN)
-        input_df['lowest_matched_taxon'].fillna(
-            input_df[col], inplace=True)
+        # input_df['lowest_matched_taxon'].fillna(
+        #     input_df[col], inplace=True)
+        input_df.fillna({'lowest_matched_taxon': input_df[col]}, inplace=True)
+
 
     annot_attr = ['rank_spec', 'score_input', 'libname', 'short_inchikey', 'structure_smiles_2D', 'structure_molecular_formula', 'adduct',
                     'structure_exact_mass', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass',
                     'structure_taxonomy_npclassifier_03class',
-                    'query_otol_species', 'lowest_matched_taxon', 'score_taxo', 'score_max_consistency', 'final_score', 'rank_final']
+                    'otl_organism_otol_species', 'lowest_matched_taxon', 'score_taxo', 'score_max_consistency', 'final_score', 'rank_final']
 
     comp_attr = ['component_id', 'structure_taxonomy_npclassifier_01pathway_consensus', 'freq_structure_taxonomy_npclassifier_01pathway',
                  'structure_taxonomy_npclassifier_02superclass_consensus',

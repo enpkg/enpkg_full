@@ -15,9 +15,10 @@ def feature_intensity_table_formatter(feature_intensity_table):
     # formatting the feature table 
     feature_intensity_table.rename(columns={'row ID': 'row_ID'}, inplace=True)
     feature_intensity_table.set_index('row_ID', inplace=True)
-    feature_intensity_table = feature_intensity_table.filter(regex='Peak area')
+    # We should better handle peak height/peak area
+    feature_intensity_table = feature_intensity_table.filter(regex='Peak height')
     feature_intensity_table.rename(columns={'precursor_mz': 'mz'}, inplace=True)
-    feature_intensity_table.columns = feature_intensity_table.columns.str.replace(' Peak area', '') 
+    feature_intensity_table.columns = feature_intensity_table.columns.str.replace(' Peak height', '') 
     feature_intensity_table.rename_axis("MS_filename", axis="columns", inplace = True)
     feature_intensity_table = feature_intensity_table.rename(columns= {feature_intensity_table.columns[0]:'intensity'} )
     return feature_intensity_table
