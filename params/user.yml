@@ -27,7 +27,7 @@ isdb:
   adducts-formatter:
     taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
   general_params:
-    recompute: True  # Recompute for samples with results already done
+    recompute: False  # Recompute for samples with results already done
   
   paths:
     taxo_db_metadata_path: db_metadata/230106_frozen_metadata.csv.gz  # Path to your spectral library file
