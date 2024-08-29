@@ -131,6 +131,4 @@ dmypy.json
 .pyre/
 .vscode
 .DS_Store
-tests/data
-data
 sql_db

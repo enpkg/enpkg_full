@@ -1,3 +1,0 @@
-pandas
-userinput
-downloaders>="1.0.18"
