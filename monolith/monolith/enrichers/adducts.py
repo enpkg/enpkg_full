@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Dict, List
+from monolith.data import Lotus
 from monolith.data.isdb_data_classes import ChemicalAdduct, AdductRecipe
 
 POSITIVE_RECIPES: List[AdductRecipe] = [
@@ -103,28 +104,22 @@ NEGATIVE_RECIPES: List[AdductRecipe] = [
 ]
 
 
-def positive_adducts_from_chemical(
-    exact_mass: float, inchikey: str
-) -> List[ChemicalAdduct]:
+def positive_adducts_from_chemical(lotus: Lotus) -> List[ChemicalAdduct]:
     """Return a list of positive adducts for a given chemical."""
     return [
         ChemicalAdduct(
-            exact_mass=exact_mass,
-            inchikey=inchikey,
+            lotus=lotus,
             recipe=positive_recipe,
         )
         for positive_recipe in POSITIVE_RECIPES
     ]
 
 
-def negative_adducts_from_chemical(
-    exact_mass: float, inchikey: str
-) -> List[ChemicalAdduct]:
+def negative_adducts_from_chemical(lotus: Lotus) -> List[ChemicalAdduct]:
     """Return a list of negative adducts for a given chemical."""
     return [
         ChemicalAdduct(
-            exact_mass=exact_mass,
-            inchikey=inchikey,
+            lotus=lotus,
             recipe=negative_recipe,
         )
         for negative_recipe in NEGATIVE_RECIPES

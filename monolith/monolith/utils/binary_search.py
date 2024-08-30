@@ -22,6 +22,7 @@ def binary_search_by_key(
     Returns:
         A tuple with a boolean indicating if the key was found and the index of the key.
     """
+    assert key is not None, "Key should not be None"
     if left is None:
         left = 0
     if right is None:
@@ -30,6 +31,10 @@ def binary_search_by_key(
     while left <= right:
         mid = left + (right - left) // 2
         mid_key = key_func(array[mid])
+
+        assert (
+            mid_key is not None
+        ), f"Key function for value {array[mid]} should not return None"
 
         if mid_key == key:
             return True, mid

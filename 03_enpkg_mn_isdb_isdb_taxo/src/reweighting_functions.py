@@ -59,7 +59,7 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
             list(set(a).intersection(set(b))) for a, b in zip(df[col_ref], df[col_att])
         ]  # Allows to compare 2 lists
         df[col_match] = df[col_match].apply(lambda y: np.nan if len(y) == 0 else y)
-        if col_prev != None:
+        if col_prev is not None:
             df[col_match].where(df[col_prev].notnull(), np.nan)
         col_prev = col_match
 
@@ -86,45 +86,6 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
         .apply(lambda x: x.sort_values(["rank_spec_taxo"], ascending=True))
         .reset_index(drop=True)
     )
-
-    print(
-        "Total number of annotations after filtering MS1 annotations not reweighted at the minimal taxonomical level: "
-        + str(len(df))
-    )
-
-    if len(df) != 0:
-        print(
-            "Number of annotations reweighted at the domain level: "
-            + str(df["matched_domain"].count())
-        )
-        print(
-            "Number of annotations reweighted at the kingdom level: "
-            + str(df["matched_kingdom"].count())
-        )
-        print(
-            "Number of annotations reweighted at the phylum level: "
-            + str(df["matched_phylum"].count())
-        )
-        print(
-            "Number of annotations reweighted at the class level: "
-            + str(df["matched_class"].count())
-        )
-        print(
-            "Number of annotations reweighted at the order level: "
-            + str(df["matched_order"].count())
-        )
-        print(
-            "Number of annotations reweighted at the family level: "
-            + str(df["matched_family"].count())
-        )
-        print(
-            "Number of annotations reweighted at the genus level: "
-            + str(df["matched_genus"].count())
-        )
-        print(
-            "Number of annotations reweighted at the species level: "
-            + str(df["matched_species"].count())
-        )
 
     return df
 
