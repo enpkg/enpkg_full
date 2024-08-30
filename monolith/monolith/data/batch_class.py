@@ -87,6 +87,25 @@ class Batch:
                 ]
             ]
 
+            # We rename the variable column '{sample_filename} Peak height' to 'Peak height'
+
+            feature_quantification_table.rename(
+                columns={f"{sample_filename} Peak height": "Peak height"}, inplace=True
+            )
+
+            assert feature_quantification_table.shape[0] == len(
+                tandem_mass_spectra
+            ), "The number of features and the number of spectra must be the same"
+
+            # We check that the row ID column is both dense and sorted.
+
+            assert feature_quantification_table[
+                "row ID"
+            ].is_monotonic_increasing, "The row ID column must be sorted"
+            assert feature_quantification_table[
+                "row ID"
+            ].is_unique, "The row ID column must be unique"
+
             analysis = Analysis(
                 metadata=row,
                 tandem_mass_spectra=tandem_mass_spectra,

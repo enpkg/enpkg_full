@@ -13,14 +13,15 @@ An Analysis object contains the following data:
 """
 
 from typing import List, Tuple, Dict, Optional
+from matchms.importing import load_from_mgf
 import pandas as pd
 import matchms
 import networkx as nx
-from matchms.importing import load_from_mgf
 from monolith.data.isdb_data_classes import AnnotatedSpectra
 
 
 class Analysis:
+    """Data class for the analysis of the data."""
 
     def __init__(
         self,
@@ -54,7 +55,15 @@ class Analysis:
         self._metadata = metadata
         self._tandem_mass_spectra = tandem_mass_spectra
         self._annotated_tandem_mass_spectra: List[AnnotatedSpectra] = [
-            AnnotatedSpectra(spectrum) for spectrum in tandem_mass_spectra
+            AnnotatedSpectra(
+                spectrum,
+                mass_over_charge=row["row m/z"],
+                retention_time=row["row retention time"],
+                intensity=row["Peak height"],
+            )
+            for (spectrum, (_, row)) in zip(
+                tandem_mass_spectra, features_quantification_table.iterrows()
+            )
         ]
         self._ott_matches: List[Dict] = []
         self._upper_taxon: List[Dict] = []

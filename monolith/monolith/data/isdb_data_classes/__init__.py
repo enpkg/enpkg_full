@@ -3,7 +3,8 @@
 from monolith.data.isdb_data_classes.isdb_configuration_class import ISDBEnricherConfig
 from monolith.data.isdb_data_classes.annotated_spectra_class import (
     AnnotatedSpectra,
-    ChemicalAnnotation,
+    MS2ChemicalAnnotation,
 )
+from monolith.data.isdb_data_classes.adduct_class import ChemicalAdduct, AdductRecipe
 
-__all__ = ["ISDBEnricherConfig", "AnnotatedSpectra", "ChemicalAnnotation"]
+__all__ = ["ISDBEnricherConfig", "AnnotatedSpectra", "MS2ChemicalAnnotation", "ChemicalAdduct", "AdductRecipe"]

@@ -5,6 +5,7 @@ from monolith.pipeline.default_pipeline import DefaultPipeline
 from monolith.data.analysis_class import Analysis
 from monolith.data.batch_class import Batch
 
+
 class TestDefaultPipeline:
     @classmethod
     def setup_class(cls):
