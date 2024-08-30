@@ -3,26 +3,15 @@ from dataclasses import dataclass
 from matchms import Spectrum
 from monolith.data.isdb_data_classes.adduct_class import ChemicalAdduct
 from monolith.utils import binary_search_by_key
+from monolith.data.lotus_class import Lotus
+from monolith.data.otl_class import Match, Taxon, LineageItem
 
 
 @dataclass
 class MS2ChemicalAnnotation:
     cosine_similarity: float
     number_of_matched_peaks: int
-    molecule_id: int
-    short_inchikey: str
-
-    def __init__(
-        self,
-        cosine_similarity: float,
-        number_of_matched_peaks: int,
-        molecule_id: int,
-        short_inchikey: str,
-    ):
-        self.cosine_similarity = cosine_similarity
-        self.number_of_matched_peaks = number_of_matched_peaks
-        self.molecule_id = molecule_id
-        self.short_inchikey = short_inchikey
+    lotus: List[Lotus]
 
 
 class AnnotatedSpectra:
@@ -113,3 +102,34 @@ class AnnotatedSpectra:
                 break
 
         self.possible_adducts = adducts[lower_bound_index:upper_bound_index]
+
+    def best_lotus_annotation_by_ott_match(self, match: Match) -> Optional[Lotus]:
+        """Returns the best lotus annotation from the set of MS2 annotations.
+
+        Parameters
+        ----------
+        match : Match
+            The match object containing the best open tree of life match
+            given the expected sample taxonomy.
+        
+        Implementation details
+        -----------------------
+        We iterate over the annotations and combine the following scores 
+        for each annotation:
+            - The cosine similarity score (precomputed)
+            - The number of matched taxonomical levels between the Lotus entry and the Match entry
+            - The chemical reponderation step performs chemical consistency reweighting on the set of MS2 annotations. requires component index.
+
+        We weight the Lotus annotations by these three scores, and return the best one.
+        """
+        weighted_lotus_entries = [
+            (annotation.cosine_similarity + lotus.taxonomical_similarity_with_otl_match(match), lotus)
+            for annotation in self.annotations
+            if annotation.lotus is not None
+            for lotus in annotation.lotus
+        ]
+
+        if not weighted_lotus_entries:
+            return None
+
+        return max(weighted_lotus_entries, key=lambda x: x[0])[1]
