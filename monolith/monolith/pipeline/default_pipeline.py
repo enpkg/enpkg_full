@@ -12,13 +12,11 @@ from monolith.data import ISDBEnricherConfig
 from monolith.enrichers.taxa_enricher import TaxaEnricher
 from monolith.enrichers.isdb_enricher import ISDBEnricher
 
+
 class DefaultPipeline(Pipeline):
     """Default pipeline for ENPKG analysis."""
-    
-    def __init__(
-        self,
-        config: str = "config.yaml"
-    ):
+
+    def __init__(self, config: str = "config.yaml"):
         """Initializes the pipeline with a list of enrichers."""
 
         with open(config, "r", encoding="utf-8") as file:
@@ -27,23 +25,26 @@ class DefaultPipeline(Pipeline):
         self.enrichers: List[Type[Enricher]] = [
             # Add enrichers here
             TaxaEnricher(),
-            ISDBEnricher(configuration)
+            ISDBEnricher(configuration),
         ]
-        
+
     def process(self, batch: Batch) -> Batch:
         """Processes the batch of analyses."""
         assert isinstance(batch, Batch)
 
         for enricher in tqdm(
-            self.enrichers, desc="Processing", unit="enricher",
-            leave=False, dynamic_ncols=True
+            self.enrichers,
+            desc="Processing",
+            unit="enricher",
+            leave=False,
+            dynamic_ncols=True,
         ):
             for analysis in tqdm(
                 batch.analyses,
                 desc=enricher.name(),
                 unit="analysis",
                 leave=False,
-                dynamic_ncols=True
+                dynamic_ncols=True,
             ):
                 enricher.enrich(analysis)
 

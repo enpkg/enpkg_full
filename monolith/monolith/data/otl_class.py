@@ -21,6 +21,7 @@ class Taxon:
         unique_name (str): A unique name for the taxon.
         lineage (List[LineageItem]): A list representing the lineage hierarchy for the taxon.
     """
+
     flags: List[str]
     is_suppressed: bool
     is_suppressed_from_synth: bool
@@ -35,12 +36,16 @@ class Taxon:
 
     def set_wikidata(self, wikidata: WikidataOTTQuery) -> None:
         """Sets the Wikidata information for the taxon."""
-        assert isinstance(wikidata, WikidataOTTQuery), "wikidata must be an instance of WikidataOTTQuery"
-        assert wikidata.ott == self.ott_id, f"OTT ID mismatch between taxon ({self.ott_id}) and Wikidata information ({wikidata.ott})"
+        assert isinstance(
+            wikidata, WikidataOTTQuery
+        ), "wikidata must be an instance of WikidataOTTQuery"
+        assert (
+            wikidata.ott == self.ott_id
+        ), f"OTT ID mismatch between taxon ({self.ott_id}) and Wikidata information ({wikidata.ott})"
         self.wikidata = wikidata
 
     @staticmethod
-    def from_dict(data: Dict[str, Any]) -> 'Taxon':
+    def from_dict(data: Dict[str, Any]) -> "Taxon":
         """
         Creates an instance of Taxon from a dictionary.
 
@@ -70,18 +75,18 @@ class Taxon:
             raise ValueError("Missing required field in Taxon data") from e
 
 
-
 @dataclass
 class LineageItem:
-    """ Data class representing a lineage item. """
+    """Data class representing a lineage item."""
+
     flags: List[str]
     is_suppressed: bool
     is_suppressed_from_synth: bool
     taxa: List[Taxon]
 
     @staticmethod
-    def from_dict(data: Dict[str, Any]) -> 'LineageItem':
-        """ Creates an instance of LineageItem from a dictionary.
+    def from_dict(data: Dict[str, Any]) -> "LineageItem":
+        """Creates an instance of LineageItem from a dictionary.
 
         Args:
             data (Dict[str, Any]): A dictionary containing lineage item data.
@@ -98,10 +103,11 @@ class LineageItem:
                 flags=data.get("flags", []),
                 is_suppressed=data["is_suppressed"],
                 is_suppressed_from_synth=data["is_suppressed_from_synth"],
-                taxa=[Taxon.from_dict(taxon_data) for taxon_data in data["lineage"]]
+                taxa=[Taxon.from_dict(taxon_data) for taxon_data in data["lineage"]],
             )
         except KeyError as e:
             raise ValueError("Missing required field in LineageItem data") from e
+
 
 @dataclass
 class Match:
@@ -117,6 +123,7 @@ class Match:
         search_string (str): The original search string.
         taxon (Taxon): The taxon associated with the match.
     """
+
     is_approximate_match: bool
     is_synonym: bool
     matched_name: str
@@ -140,7 +147,7 @@ class Match:
         self.lineage = lineage
 
     @staticmethod
-    def from_dict(data: Dict[str, Any]) -> 'Match':
+    def from_dict(data: Dict[str, Any]) -> "Match":
         """
         Creates an instance of Match from a dictionary.
 
@@ -162,7 +169,7 @@ class Match:
                 nomenclature_code=data["nomenclature_code"],
                 score=data["score"],
                 search_string=data["search_string"],
-                taxon=Taxon.from_dict(taxon_data)
+                taxon=Taxon.from_dict(taxon_data),
             )
         except KeyError as e:
             raise ValueError("Missing required field in Match data") from e

@@ -29,18 +29,32 @@ class Analysis:
         features_quantification_table: pd.DataFrame,
     ):
         assert isinstance(metadata, pd.Series), "metadata must be a pd.Series object"
-        assert "sample_filename" in metadata, "sample_filename is a required field in the metadata"
-        assert "source_taxon" in metadata, "source_taxon is a required field in the metadata"
-        assert "sample_type" in metadata, "sample_type is a required field in the metadata"
-        assert metadata.sample_type in ["sample", "blank"], "sample_type must be either 'sample' or 'blank'"
-        assert isinstance(tandem_mass_spectra, list), "tandem_mass_spectra must be a list"
-        assert all([isinstance(spectrum, matchms.Spectrum) for spectrum in tandem_mass_spectra]), "tandem_mass_spectra must be a list of matchms.Spectrum objects"
-        assert isinstance(features_quantification_table, pd.DataFrame), "features_quantification_table must be a pd.DataFrame object"
+        assert (
+            "sample_filename" in metadata
+        ), "sample_filename is a required field in the metadata"
+        assert (
+            "source_taxon" in metadata
+        ), "source_taxon is a required field in the metadata"
+        assert (
+            "sample_type" in metadata
+        ), "sample_type is a required field in the metadata"
+        assert metadata.sample_type in [
+            "sample",
+            "blank",
+        ], "sample_type must be either 'sample' or 'blank'"
+        assert isinstance(
+            tandem_mass_spectra, list
+        ), "tandem_mass_spectra must be a list"
+        assert all(
+            [isinstance(spectrum, matchms.Spectrum) for spectrum in tandem_mass_spectra]
+        ), "tandem_mass_spectra must be a list of matchms.Spectrum objects"
+        assert isinstance(
+            features_quantification_table, pd.DataFrame
+        ), "features_quantification_table must be a pd.DataFrame object"
         self._metadata = metadata
         self._tandem_mass_spectra = tandem_mass_spectra
         self._annotated_tandem_mass_spectra: List[AnnotatedSpectra] = [
-            AnnotatedSpectra(spectrum)
-            for spectrum in tandem_mass_spectra
+            AnnotatedSpectra(spectrum) for spectrum in tandem_mass_spectra
         ]
         self._ott_matches: List[Dict] = []
         self._upper_taxon: List[Dict] = []
@@ -58,7 +72,12 @@ class Analysis:
     def normalized_source_taxon(self):
         if not self.is_source_taxon_defined():
             raise ValueError("The source taxon is not defined.")
-        return self.raw_source_taxon.lower().replace(" sp. ", " ").replace(" x ", " ").strip()
+        return (
+            self.raw_source_taxon.lower()
+            .replace(" sp. ", " ")
+            .replace(" x ", " ")
+            .strip()
+        )
 
     @property
     def number_of_spectra(self):
@@ -72,9 +91,18 @@ class Analysis:
     def annotated_tandem_mass_spectra(self):
         return self._annotated_tandem_mass_spectra
 
+    @property
+    def number_of_spectra_with_at_least_one_annotation(self):
+        return sum(
+            int(spectrum.is_annotated())
+            for spectrum in self._annotated_tandem_mass_spectra
+        )
+
     def set_molecular_network(self, molecular_network: nx.Graph):
         """Sets the molecular network of the analysis."""
-        assert isinstance(molecular_network, nx.Graph), "molecular_network must be a nx.Graph object"
+        assert isinstance(
+            molecular_network, nx.Graph
+        ), "molecular_network must be a nx.Graph object"
         self._molecular_network = molecular_network
 
     @property
@@ -87,7 +115,12 @@ class Analysis:
 
     def is_source_taxon_defined(self) -> bool:
         """Returns whether the source taxon is defined."""
-        return pd.notna(self.raw_source_taxon) and self.raw_source_taxon not in ("nd", "nan", "", None)
+        return pd.notna(self.raw_source_taxon) and self.raw_source_taxon not in (
+            "nd",
+            "nan",
+            "",
+            None,
+        )
 
     @property
     def sample_type(self):
@@ -108,6 +141,3 @@ class Analysis:
     def extend_upper_taxon(self, upper_taxon: List[Dict]):
         """Extends the upper taxon of the analysis."""
         self._upper_taxon.extend(upper_taxon)
-
-
-    

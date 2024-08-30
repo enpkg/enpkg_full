@@ -11,7 +11,7 @@ from monolith.data.wikidata_ott_query_class import WikidataOTTQuery
 
 class TaxaEnricher(Enricher):
     """Enricher that adds taxa information to the analysis."""
-    
+
     WIKIDATA_ENDPOINT: str = "https://query.wikidata.org/sparql"
     WIKIDATA_QUERY_TEMPLATE: str = """
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -22,7 +22,6 @@ class TaxaEnricher(Enricher):
         VALUES ?ott {{'{ott_id}'}}
     }}
     """
-    
 
     def __init__(self):
         """Initializes the enricher."""
@@ -30,7 +29,7 @@ class TaxaEnricher(Enricher):
     def name(self) -> str:
         """Returns the name of the enricher."""
         return "Taxonomical Enricher"
-    
+
     def enrich(self, analysis: Analysis) -> Analysis:
         """Adds taxa information to the analysis."""
 
@@ -45,18 +44,19 @@ class TaxaEnricher(Enricher):
             [f"{genus} {species}"],
             context_name=None,
             do_approximate_matching=True,
-            include_suppressed=False
+            include_suppressed=False,
         ).response_dict
 
         assert "results" in ott_match, "No results in the OTT match"
 
         ott_match_results = ott_match["results"][0]
 
-        assert "matches" in ott_match_results, f"No matches in the OTT match results searching for '{genus} {species}'"
+        assert (
+            "matches" in ott_match_results
+        ), f"No matches in the OTT match results searching for '{genus} {species}'"
 
         matches: List[Match] = [
-            Match.from_dict(match)
-            for match in ott_match_results["matches"]
+            Match.from_dict(match) for match in ott_match_results["matches"]
         ]
 
         if len(matches) == 0:
@@ -67,13 +67,22 @@ class TaxaEnricher(Enricher):
         # We retrieve the upper taxon information for each match
         for match in matches:
             match.set_lineage(
-                LineageItem.from_dict(OT.taxon_info(match.ott_id, include_lineage=True).response_dict)
+                LineageItem.from_dict(
+                    OT.taxon_info(match.ott_id, include_lineage=True).response_dict
+                )
             )
 
-       # Fetch Wikidata information for each match
-        
+        # Fetch Wikidata information for each match
+
         for match in matches:
-            r = requests.get(self.WIKIDATA_ENDPOINT, params={"format": "json", "query": self.WIKIDATA_QUERY_TEMPLATE.format(ott_id=match.ott_id)}, timeout=10)
+            r = requests.get(
+                self.WIKIDATA_ENDPOINT,
+                params={
+                    "format": "json",
+                    "query": self.WIKIDATA_QUERY_TEMPLATE.format(ott_id=match.ott_id),
+                },
+                timeout=10,
+            )
 
             if r.status_code != 200:
                 continue
