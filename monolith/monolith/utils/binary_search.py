@@ -1,4 +1,5 @@
 """Submodule providing a binary search by key function."""
+
 from typing import Any, Callable, List, Optional, Tuple
 
 

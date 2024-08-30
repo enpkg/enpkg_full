@@ -2,6 +2,7 @@
 
 A chemical adducts is a molecules form by the combination of the analyte and a given ions. For example [M+H]+ is the adduct formed by the analyte and a proton. This data class is used to represent the adducts in the MS1 annotation process.
 """
+
 from typing import Dict, List
 from dataclasses import dataclass
 
@@ -26,16 +27,18 @@ ADDUCT_MASSES: Dict[str, float] = {
     "tfa": 113.99286,
 }
 
+
 @dataclass
 class AdductRecipe:
     """Dataclass representing an adduct recipe.
-    
+
     Attributes:
         ingredients: Dict[str, int] - A dictionary of adducts and their counts.
         charge: int - The charge of the adduct.
         multimer_factor: int - The factor by which the adduct mass should be multiplied.
         positive: bool - Whether the adduct is positive or negative.
     """
+
     ingredients: Dict[str, int]
     charge: int
     positive: bool
@@ -45,7 +48,7 @@ class AdductRecipe:
 @dataclass
 class ChemicalAdduct:
     """Data class representing a chemical adduct.
-    
+
     Attributes:
     -----------
     inchikey: str, the InChIKey of the molecule. For example BSYNRYMUTXBXSQ-UHFFFAOYSA-N
@@ -55,6 +58,7 @@ class ChemicalAdduct:
     polarity: str, the polarity of the adduct. For example positive
     charge: int, the charge of the adduct. For example 1
     """
+
     inchikey: str
     exact_mass: float
     recipe: AdductRecipe
@@ -63,7 +67,7 @@ class ChemicalAdduct:
     def short_inchikey(self) -> str:
         """Return the first 14 characters of the inchikey."""
         return self.inchikey[:14]
-    
+
     @property
     def positive(self) -> bool:
         """Return whether the adduct is positive or negative."""

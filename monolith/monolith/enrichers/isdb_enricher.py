@@ -32,7 +32,7 @@ from matchms.logging_functions import set_matchms_logger_level
 import networkx as nx
 from monolith.enrichers.adducts import (
     positive_adducts_from_chemical,
-    negative_adducts_from_chemical
+    negative_adducts_from_chemical,
 )
 from monolith.data.isdb_data_classes import ChemicalAdduct
 
@@ -79,7 +79,9 @@ class ISDBEnricher(Enricher):
                     exact_mass=chemical["structure_exact_mass"],
                     inchikey=chemical["structure_inchi"],
                 )
-            ] if polarity else [
+            ]
+            if polarity
+            else [
                 adduct
                 for _, chemical in self._taxo_db_metadata.iterrows()
                 for adduct in negative_adducts_from_chemical(
@@ -94,7 +96,7 @@ class ISDBEnricher(Enricher):
         # via binary search.
 
         self._adducts = sorted(self._adducts, key=lambda x: x.exact_mass)
-    
+
     def name(self) -> str:
         """Returns the name of the enricher."""
         return "ISDB Enricher"
@@ -184,5 +186,5 @@ class ISDBEnricher(Enricher):
                 self._adducts,
                 tolerance=self.configuration.spectral_match_params.parent_mz_tol,
             )
-        
+
         return analysis
