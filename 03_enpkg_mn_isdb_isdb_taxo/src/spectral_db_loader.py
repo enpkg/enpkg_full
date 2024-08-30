@@ -13,17 +13,22 @@ def load_spectral_db(path_to_db):
 
     Returns:
         list: List of matchms spectra object
-    """    
-    
-    print('''
+    """
+
+    print(
+        """
     Cleaning the spectral database metadata fields
-    ''')  
+    """
+    )
     spectrums_db = list(load_from_mgf(path_to_db))
     spectrums_db = [default_filters(s) for s in spectrums_db]
-    print(f'''
+    print(
+        f"""
     A total of {len(spectrums_db)} clean spectra were found in the spectral library
-    ''')
+    """
+    )
     return spectrums_db
+
 
 def load_clean_spectral_db(path_to_db):
     """Loads metadata from a .mgf spectral database
@@ -33,28 +38,31 @@ def load_clean_spectral_db(path_to_db):
 
     Returns:
         list: List of matchms spectra object
-    """    
-    
-    print('''
+    """
+
+    print(
+        """
     Loading the spectral database
-    ''')  
+    """
+    )
 
     # Below the loading of external db is modified to accommodate multiple spectral db as input
-    
-    if type(path_to_db) is str and '.mgf' in path_to_db : 
+
+    if type(path_to_db) is str and ".mgf" in path_to_db:
         spectrums_db = list(load_from_mgf(db_file_path))
-    if type(path_to_db) is str and '.pkl' in path_to_db :
-        with open(path_to_db, 'rb') as f:
+    if type(path_to_db) is str and ".pkl" in path_to_db:
+        with open(path_to_db, "rb") as f:
             spectrums_db = pickle.load(f)
     elif type(path_to_db) is list:
         spectrums_db = []
         for n in path_to_db:
             spectrums_db.extend(list(load_from_mgf(n)))
 
-
-    print(f'''
+    print(
+        f"""
     A total of {len(spectrums_db)} clean spectra were found in the spectral library
-    ''')
+    """
+    )
     return spectrums_db
 
 
@@ -67,13 +75,17 @@ def save_spectral_db(spectrums_db, output_path):
 
     Returns:
         list: List of matchms spectra object
-    """    
-    
-    print('''
+    """
+
+    print(
+        """
     Saving the spectral database
-    ''')  
+    """
+    )
     save_as_mgf(spectrums_db, output_path)
 
-    print(f'''
+    print(
+        f"""
     A total of {len(spectrums_db)} clean spectra were found in the spectral library and saved as {output_path}
-    ''')
+    """
+    )

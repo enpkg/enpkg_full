@@ -51,8 +51,6 @@ class Paths:
     taxo_db_metadata_path: str
     spectral_db_pos_path: str
     spectral_db_neg_path: str
-    adducts_pos_path: str
-    adducts_neg_path: str
 
     @staticmethod
     def from_dict(data: Dict[str, Any]) -> "Paths":
@@ -61,8 +59,6 @@ class Paths:
             taxo_db_metadata_path=data["taxo_db_metadata_path"],
             spectral_db_pos_path=data["spectral_db_pos_path"],
             spectral_db_neg_path=data["spectral_db_neg_path"],
-            adducts_pos_path=data["adducts_pos_path"],
-            adducts_neg_path=data["adducts_neg_path"],
         )
 
 

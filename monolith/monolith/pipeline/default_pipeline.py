@@ -20,12 +20,17 @@ class DefaultPipeline(Pipeline):
         """Initializes the pipeline with a list of enrichers."""
 
         with open(config, "r", encoding="utf-8") as file:
-            configuration = ISDBEnricherConfig.from_dict(yaml.safe_load(file)["isdb"])
+            global_configuration = yaml.safe_load(file)
+
+        isdb_configuration = ISDBEnricherConfig.from_dict(global_configuration["isdb"])
 
         self.enrichers: List[Type[Enricher]] = [
             # Add enrichers here
             TaxaEnricher(),
-            ISDBEnricher(configuration),
+            ISDBEnricher(
+                isdb_configuration,
+                polarity=global_configuration["general"]["polarity"] == "pos"
+            ),
         ]
 
     def process(self, batch: Batch) -> Batch:

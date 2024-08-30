@@ -9,7 +9,7 @@ import pandas as pd
 from tqdm.auto import tqdm, trange
 from tqdm.contrib import tzip
 from monolith.data import ISDBEnricherConfig
-from monolith.data.isdb_data_classes import ChemicalAnnotation, AnnotatedSpectra
+from monolith.data.isdb_data_classes import MS2ChemicalAnnotation, AnnotatedSpectra
 from monolith.data.analysis_class import Analysis
 from monolith.enrichers.enricher import Enricher
 from downloaders import BaseDownloader
@@ -30,6 +30,11 @@ from matchms import calculate_scores
 from matchms.similarity import CosineGreedy
 from matchms.logging_functions import set_matchms_logger_level
 import networkx as nx
+from monolith.enrichers.adducts import (
+    positive_adducts_from_chemical,
+    negative_adducts_from_chemical
+)
+from monolith.data.isdb_data_classes import ChemicalAdduct
 
 
 def peak_processing(spectrum: Spectrum) -> Spectrum:
@@ -43,9 +48,13 @@ def peak_processing(spectrum: Spectrum) -> Spectrum:
 class ISDBEnricher(Enricher):
     """Enricher that adds ISDB information to the analysis."""
 
-    def __init__(self, configuration: ISDBEnricherConfig):
+    def __init__(self, configuration: ISDBEnricherConfig, polarity: bool):
         """Initializes the enricher."""
+        assert isinstance(configuration, ISDBEnricherConfig)
+        assert isinstance(polarity, bool)
+
         self.configuration = configuration
+        self.polarity = polarity
         downloader = BaseDownloader()
         downloader.download(
             self.configuration.urls.taxo_db_metadata_url,
@@ -62,6 +71,30 @@ class ISDBEnricher(Enricher):
         with open("downloads/spectral_db_pos.pkl", "rb") as file:
             self._spectral_db_pos = pickle.load(file)
 
+        self._adducts: List[ChemicalAdduct] = (
+            [
+                adduct
+                for _, chemical in self._taxo_db_metadata.iterrows()
+                for adduct in positive_adducts_from_chemical(
+                    exact_mass=chemical["structure_exact_mass"],
+                    inchikey=chemical["structure_inchi"],
+                )
+            ] if polarity else [
+                adduct
+                for _, chemical in self._taxo_db_metadata.iterrows()
+                for adduct in negative_adducts_from_chemical(
+                    exact_mass=chemical["structure_exact_mass"],
+                    inchikey=chemical["structure_inchi"],
+                )
+            ]
+        )
+
+        # We sort the adducts by the 'exact_mass' key so that when
+        # we match the precursor mass with the adducts, we can do so
+        # via binary search.
+
+        self._adducts = sorted(self._adducts, key=lambda x: x.exact_mass)
+    
     def name(self) -> str:
         """Returns the name of the enricher."""
         return "ISDB Enricher"
@@ -131,7 +164,7 @@ class ISDBEnricher(Enricher):
                         > self.configuration.spectral_match_params.min_peaks
                     ):
                         spectra_chunk[x].add_annotation(
-                            ChemicalAnnotation(
+                            MS2ChemicalAnnotation(
                                 cosine_similarity=msms_score,
                                 number_of_matched_peaks=n_matches,
                                 molecule_id=y + 1,
@@ -140,3 +173,16 @@ class ISDBEnricher(Enricher):
                                 ),
                             )
                         )
+
+        for spectrum in tqdm(
+            analysis.annotated_tandem_mass_spectra,
+            leave=False,
+            desc="Filtering precursor adducts",
+            dynamic_ncols=True,
+        ):
+            spectrum.set_filtered_adducts_from_list(
+                self._adducts,
+                tolerance=self.configuration.spectral_match_params.parent_mz_tol,
+            )
+        
+        return analysis
