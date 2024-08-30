@@ -4,6 +4,7 @@ from matchms import Spectrum
 from monolith.data.isdb_data_classes.adduct_class import ChemicalAdduct
 from monolith.utils import binary_search_by_key
 
+
 @dataclass
 class MS2ChemicalAnnotation:
     cosine_similarity: float
@@ -65,14 +66,12 @@ class AnnotatedSpectra:
     def is_annotated(self):
         """Returns whether the spectrum has at least one annotation."""
         return bool(self.annotations)
-    
+
     def set_filtered_adducts_from_list(
-        self,
-        adducts: List[ChemicalAdduct],
-        tolerance: float
+        self, adducts: List[ChemicalAdduct], tolerance: float
     ):
         """Add a list of adducts to the spectrum.
-        
+
         Parameters
         ----------
         adducts : List[ChemicalAdduct]
@@ -94,12 +93,12 @@ class AnnotatedSpectra:
         assert isinstance(adducts, list), "Adducts must be a list."
         lower_bound = self.precursor_mz - self.precursor_mz * tolerance
         upper_bound = self.precursor_mz + self.precursor_mz * tolerance
-        
+
         # Find the lower bound by exploring the sorted adducts via binary search
         (_, lower_bound_index) = binary_search_by_key(
-            key = lower_bound,
-            array= adducts,
-            key_func= lambda adduct: adduct.exact_mass,
+            key=lower_bound,
+            array=adducts,
+            key_func=lambda adduct: adduct.exact_mass,
         )
 
         # Find the upper bound by linear search starting from the identified lower
@@ -109,8 +108,8 @@ class AnnotatedSpectra:
 
         while upper_bound > adducts[upper_bound_index].exact_mass:
             upper_bound_index += 1
-            
+
             if upper_bound_index == len(adducts):
                 break
-        
+
         self.possible_adducts = adducts[lower_bound_index:upper_bound_index]

@@ -29,7 +29,7 @@ class DefaultPipeline(Pipeline):
             TaxaEnricher(),
             ISDBEnricher(
                 isdb_configuration,
-                polarity=global_configuration["general"]["polarity"] == "pos"
+                polarity=global_configuration["general"]["polarity"] == "pos",
             ),
         ]
 

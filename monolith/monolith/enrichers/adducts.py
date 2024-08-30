@@ -1,4 +1,5 @@
 """Submodule providing adducts for all provided Lotus reference chemicals."""
+
 from dataclasses import dataclass
 from typing import Dict, List
 from monolith.data.isdb_data_classes import ChemicalAdduct, AdductRecipe
@@ -35,15 +36,36 @@ POSITIVE_RECIPES: List[AdductRecipe] = [
     AdductRecipe(ingredients={"proton": -1, "potassium": 2}, charge=1, positive=True),
     AdductRecipe(ingredients={"proton": 1, "dmso": 1}, charge=1, positive=True),
     AdductRecipe(ingredients={"proton": 1, "acetonitrile": 2}, charge=1, positive=True),
-    AdductRecipe(ingredients={"magnesium": 1}, charge=2, multimer_factor=2, positive=True),
-    AdductRecipe(ingredients={"calcium": 1}, charge=2, multimer_factor=2, positive=True),
+    AdductRecipe(
+        ingredients={"magnesium": 1}, charge=2, multimer_factor=2, positive=True
+    ),
+    AdductRecipe(
+        ingredients={"calcium": 1}, charge=2, multimer_factor=2, positive=True
+    ),
     AdductRecipe(ingredients={"iron": 1}, charge=2, multimer_factor=2, positive=True),
     AdductRecipe(ingredients={"proton": 1}, charge=1, multimer_factor=2, positive=True),
-    AdductRecipe(ingredients={"proton": 1, "ammonium": 1}, charge=1, multimer_factor=2, positive=True),
+    AdductRecipe(
+        ingredients={"proton": 1, "ammonium": 1},
+        charge=1,
+        multimer_factor=2,
+        positive=True,
+    ),
     AdductRecipe(ingredients={"sodium": 1}, charge=1, multimer_factor=2, positive=True),
-    AdductRecipe(ingredients={"potassium": 1}, charge=1, multimer_factor=2, positive=True),
-    AdductRecipe(ingredients={"proton": 1, "acetonitrile": 1}, charge=1, multimer_factor=2, positive=True),
-    AdductRecipe(ingredients={"acetonitrile": 1, "sodium": 1}, charge=1, multimer_factor=2, positive=True),
+    AdductRecipe(
+        ingredients={"potassium": 1}, charge=1, multimer_factor=2, positive=True
+    ),
+    AdductRecipe(
+        ingredients={"proton": 1, "acetonitrile": 1},
+        charge=1,
+        multimer_factor=2,
+        positive=True,
+    ),
+    AdductRecipe(
+        ingredients={"acetonitrile": 1, "sodium": 1},
+        charge=1,
+        multimer_factor=2,
+        positive=True,
+    ),
 ]
 
 NEGATIVE_RECIPES: List[AdductRecipe] = [
@@ -55,18 +77,34 @@ NEGATIVE_RECIPES: List[AdductRecipe] = [
     AdductRecipe(ingredients={"proton": -2, "potassium": 1}, charge=1, positive=False),
     AdductRecipe(ingredients={"proton": -1, "formic": 1}, charge=1, positive=False),
     AdductRecipe(ingredients={"proton": -1, "acetic": 1}, charge=1, positive=False),
-    AdductRecipe(ingredients={"proton": -2, "sodium": 1, "formic": 1}, charge=1, positive=False),
+    AdductRecipe(
+        ingredients={"proton": -2, "sodium": 1, "formic": 1}, charge=1, positive=False
+    ),
     AdductRecipe(ingredients={"bromine": 1}, charge=1, positive=False),
     AdductRecipe(ingredients={"proton": -1, "tfa": 1}, charge=1, positive=False),
-    AdductRecipe(ingredients={"proton": -1}, charge=1, multimer_factor=2, positive=False),
-    AdductRecipe(ingredients={"proton": -1, "formic": 1}, charge=1, multimer_factor=2, positive=False),
-    AdductRecipe(ingredients={"proton": -1, "acetic": 1}, charge=1, multimer_factor=2, positive=False),
-    AdductRecipe(ingredients={"proton": -1}, charge=1, multimer_factor=3, positive=False),
+    AdductRecipe(
+        ingredients={"proton": -1}, charge=1, multimer_factor=2, positive=False
+    ),
+    AdductRecipe(
+        ingredients={"proton": -1, "formic": 1},
+        charge=1,
+        multimer_factor=2,
+        positive=False,
+    ),
+    AdductRecipe(
+        ingredients={"proton": -1, "acetic": 1},
+        charge=1,
+        multimer_factor=2,
+        positive=False,
+    ),
+    AdductRecipe(
+        ingredients={"proton": -1}, charge=1, multimer_factor=3, positive=False
+    ),
 ]
 
+
 def positive_adducts_from_chemical(
-    exact_mass: float,
-    inchikey: str
+    exact_mass: float, inchikey: str
 ) -> List[ChemicalAdduct]:
     """Return a list of positive adducts for a given chemical."""
     return [
@@ -78,9 +116,9 @@ def positive_adducts_from_chemical(
         for positive_recipe in POSITIVE_RECIPES
     ]
 
+
 def negative_adducts_from_chemical(
-    exact_mass: float,
-    inchikey: str
+    exact_mass: float, inchikey: str
 ) -> List[ChemicalAdduct]:
     """Return a list of negative adducts for a given chemical."""
     return [
