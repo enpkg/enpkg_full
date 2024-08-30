@@ -13,6 +13,7 @@ def test_batch_sample():
     )
     assert batch.number_of_analyses == 1
 
+
 def test_batch_blank():
     """Test the batch dataclass for blank samples."""
     batch = Batch(

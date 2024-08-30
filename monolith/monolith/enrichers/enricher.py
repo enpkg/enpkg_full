@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from monolith.data.analysis_class import Analysis
 
+
 class Enricher(ABC):
     """Interface for enrichers."""
 

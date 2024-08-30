@@ -12,7 +12,7 @@ class WikidataOTTQuery:
     img: str
 
     @staticmethod
-    def from_dict(data: dict) -> 'WikidataOTTQuery':
+    def from_dict(data: dict) -> "WikidataOTTQuery":
         """Creates an instance of WikidataOTTQuery from a dictionary.
 
         Args:
@@ -26,5 +26,5 @@ class WikidataOTTQuery:
         return WikidataOTTQuery(
             ott=int(data["ott"]["value"]),
             wd=data["wd"]["value"],
-            img=data["img"]["value"] if "img" in data else None
+            img=data["img"]["value"] if "img" in data else None,
         )
