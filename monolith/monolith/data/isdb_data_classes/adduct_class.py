@@ -5,6 +5,7 @@ A chemical adducts is a molecules form by the combination of the analyte and a g
 
 from typing import Dict, List
 from dataclasses import dataclass
+from monolith.data.lotus_class import Lotus
 
 ADDUCT_MASSES: Dict[str, float] = {
     "proton": 1.00728,
@@ -59,14 +60,18 @@ class ChemicalAdduct:
     charge: int, the charge of the adduct. For example 1
     """
 
-    inchikey: str
-    exact_mass: float
+    lotus: Lotus
     recipe: AdductRecipe
 
     @property
     def short_inchikey(self) -> str:
         """Return the first 14 characters of the inchikey."""
-        return self.inchikey[:14]
+        return self.lotus.short_inchikey
+
+    @property
+    def exact_mass(self) -> float:
+        """Return the exact mass of the molecule."""
+        return self.lotus.structure_exact_mass
 
     @property
     def positive(self) -> bool:

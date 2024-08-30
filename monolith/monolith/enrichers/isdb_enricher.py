@@ -10,6 +10,7 @@ from tqdm.auto import tqdm, trange
 from tqdm.contrib import tzip
 from monolith.data import ISDBEnricherConfig
 from monolith.data.isdb_data_classes import MS2ChemicalAnnotation, AnnotatedSpectra
+from monolith.data import Lotus
 from monolith.data.analysis_class import Analysis
 from monolith.enrichers.enricher import Enricher
 from downloaders import BaseDownloader
@@ -35,6 +36,7 @@ from monolith.enrichers.adducts import (
     negative_adducts_from_chemical,
 )
 from monolith.data.isdb_data_classes import ChemicalAdduct
+from monolith.utils import binary_search_by_key
 
 
 def peak_processing(spectrum: Spectrum) -> Spectrum:
@@ -60,34 +62,87 @@ class ISDBEnricher(Enricher):
             self.configuration.urls.taxo_db_metadata_url,
             "downloads/taxo_db_metadata.csv.gz",
         )
-        self._taxo_db_metadata = pd.read_csv(
-            "downloads/taxo_db_metadata.csv", low_memory=False
-        )
+        self._lotus: List[Lotus] = [
+            Lotus.from_pandas_series(row)
+            for _, row in pd.read_csv(
+                "downloads/taxo_db_metadata.csv", low_memory=False
+            ).iterrows()
+        ]
+
+        # We sort lotus by the short inchikey so that we can do binary search
+        # of the spectral db inchikeys and align the two databases.
+        self._lotus = sorted(self._lotus, key=lambda x: x.short_inchikey)
 
         downloader.download(
             self.configuration.urls.spectral_db_pos_url, "downloads/spectral_db_pos.pkl"
         )
 
         with open("downloads/spectral_db_pos.pkl", "rb") as file:
-            self._spectral_db_pos = pickle.load(file)
+            self._spectral_db_pos: List[Spectrum] = pickle.load(file)
+
+        assert isinstance(self._spectral_db_pos, list)
+        assert all(
+            isinstance(spectrum, Spectrum) for spectrum in self._spectral_db_pos[:10]
+        )
+        assert all(
+            spectrum.get("compound_name") is not None
+            for spectrum in self._spectral_db_pos[:10]
+        )
+
+        # For each entry in the spectral database, we search for the Lotus entries with the
+        # same short inchikey and add them as a list to the spectrum object metadata.
+        # Since the Lotus entries are sorted by short inchikey, we can do binary search of
+        # the spectrum short inchikeys and assign the slice of the Lotus entries with the same
+        # short inchikey to the spectrum object.
+
+        for spectrum in tqdm(
+            self._spectral_db_pos,
+            desc="Adding Lotus entries to spectral database",
+            dynamic_ncols=True,
+            leave=False,
+        ):
+            spectrum_short_inchikey = spectrum.get("compound_name")
+            (found, smallest_idx) = binary_search_by_key(
+                key=spectrum_short_inchikey,
+                array=self._lotus,
+                key_func=lambda x: x.short_inchikey,
+            )
+
+            if not found:
+                continue
+
+            # Since we may have landed exactly in the middle of an array of short inchikeys
+            # with the same value, we need to identify the smallest index of the slice of
+            # short inchikeys with the same value.
+
+            while (
+                smallest_idx > 0
+                and self._lotus[smallest_idx - 1].short_inchikey
+                == spectrum_short_inchikey
+            ):
+                smallest_idx -= 1
+
+            largest_idx = smallest_idx
+
+            while (
+                largest_idx < len(self._lotus)
+                and self._lotus[largest_idx].short_inchikey == spectrum_short_inchikey
+            ):
+                largest_idx += 1
+
+            spectrum.set("lotus_entries", self._lotus[smallest_idx:largest_idx])
 
         self._adducts: List[ChemicalAdduct] = (
             [
                 adduct
-                for _, chemical in self._taxo_db_metadata.iterrows()
-                for adduct in positive_adducts_from_chemical(
-                    exact_mass=chemical["structure_exact_mass"],
-                    inchikey=chemical["structure_inchi"],
-                )
+                for lotus in self._lotus
+                for adduct in positive_adducts_from_chemical(lotus)
             ]
             if polarity
             else [
                 adduct
-                for _, chemical in self._taxo_db_metadata.iterrows()
-                for adduct in negative_adducts_from_chemical(
-                    exact_mass=chemical["structure_exact_mass"],
-                    inchikey=chemical["structure_inchi"],
-                )
+                for lotus in self._lotus
+                for adduct in negative_adducts_from_chemical(lotus)
             ]
         )
 

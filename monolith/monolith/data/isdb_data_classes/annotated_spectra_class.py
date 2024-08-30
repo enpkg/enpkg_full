@@ -46,7 +46,7 @@ class AnnotatedSpectra:
         self.retention_time = retention_time
         self.intensity = intensity
         self.component_id: Optional[int] = None
-        self.annotations = []
+        self.annotations: List[MS2ChemicalAnnotation] = []
         self.possible_adducts: List[ChemicalAdduct] = []
 
     @property
