@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 import pandas as pd
+from monolith.data.otl_class import Match
 
 
 @dataclass
@@ -34,16 +35,16 @@ class Lotus:
     organism_taxonomy_gbifid: int
     organism_taxonomy_ncbiid: int
     organism_taxonomy_ottid: int
-    organism_taxonomy_01domain: str
-    organism_taxonomy_02kingdom: str
-    organism_taxonomy_03phylum: str
-    organism_taxonomy_04class: str
-    organism_taxonomy_05order: str
-    organism_taxonomy_06family: str
-    organism_taxonomy_07tribe: str
-    organism_taxonomy_08genus: str
-    organism_taxonomy_09species: str
-    organism_taxonomy_10varietas: str
+    domain: str
+    kingdom: str
+    phylum: str
+    klass: str
+    order: str
+    family: str
+    tribe: str
+    genus: str
+    species: str
+    varietas: str
     reference_wikidata: str
     reference_doi: str
     manual_validation: bool
@@ -96,16 +97,16 @@ class Lotus:
             organism_taxonomy_gbifid=series["organism_taxonomy_gbifid"],
             organism_taxonomy_ncbiid=series["organism_taxonomy_ncbiid"],
             organism_taxonomy_ottid=series["organism_taxonomy_ottid"],
-            organism_taxonomy_01domain=series["organism_taxonomy_01domain"],
-            organism_taxonomy_02kingdom=series["organism_taxonomy_02kingdom"],
-            organism_taxonomy_03phylum=series["organism_taxonomy_03phylum"],
-            organism_taxonomy_04class=series["organism_taxonomy_04class"],
-            organism_taxonomy_05order=series["organism_taxonomy_05order"],
-            organism_taxonomy_06family=series["organism_taxonomy_06family"],
-            organism_taxonomy_07tribe=series["organism_taxonomy_07tribe"],
-            organism_taxonomy_08genus=series["organism_taxonomy_08genus"],
-            organism_taxonomy_09species=series["organism_taxonomy_09species"],
-            organism_taxonomy_10varietas=series["organism_taxonomy_10varietas"],
+            domain=series["organism_taxonomy_01domain"],
+            kingdom=series["organism_taxonomy_02kingdom"],
+            phylum=series["organism_taxonomy_03phylum"],
+            klass=series["organism_taxonomy_04class"],
+            order=series["organism_taxonomy_05order"],
+            family=series["organism_taxonomy_06family"],
+            tribe=series["organism_taxonomy_07tribe"],
+            genus=series["organism_taxonomy_08genus"],
+            species=series["organism_taxonomy_09species"],
+            varietas=series["organism_taxonomy_10varietas"],
             reference_wikidata=series["reference_wikidata"],
             reference_doi=series["reference_doi"],
             manual_validation=series["manual_validation"],
@@ -115,3 +116,39 @@ class Lotus:
     def short_inchikey(self) -> str:
         """Return the first 14 characters of the InChIKey."""
         return self.structure_inchikey[:14]
+
+    def taxonomical_similarity_with_otl_match(self, match: Match) -> int:
+        """Calculate the taxonomical similarity with an OTL match.
+        
+        Implementative details
+        ----------------------
+        The taxonomical similarity is calculated as the number of shared taxonomic ranks
+        between the LOTUS organism and the OTL match organism. The ranks are ordered from
+        domain to species, and the similarity is calculated as the number of ranks that
+        are the same between the two organisms.
+        """
+        if self.species == match.species:
+            return 8
+
+        if self.genus == match.genus:
+            return 7
+
+        if self.family == match.family:
+            return 6
+
+        if self.order == match.order:
+            return 5
+
+        if self.klass == match.klass:
+            return 4
+
+        if self.phylum == match.phylum:
+            return 3
+
+        if self.kingdom == match.kingdom:
+            return 2
+
+        if self.domain == match.domain:
+            return 1
+
+        return 0

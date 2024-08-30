@@ -12,13 +12,14 @@ An Analysis object contains the following data:
 - metadata: pd.Series, the metadata Series of the analysis
 """
 
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Iterable
 from matchms.importing import load_from_mgf
 import pandas as pd
 import matchms
 import networkx as nx
 from monolith.data.isdb_data_classes import AnnotatedSpectra
-
+from monolith.data.otl_class import Match
+from monolith.data.lotus_class import Lotus
 
 class Analysis:
     """Data class for the analysis of the data."""
@@ -65,8 +66,7 @@ class Analysis:
                 tandem_mass_spectra, features_quantification_table.iterrows()
             )
         ]
-        self._ott_matches: List[Dict] = []
-        self._upper_taxon: List[Dict] = []
+        self._ott_matches: List[Match] = []
         self._molecular_network: Optional[nx.Graph] = None
 
     @property
@@ -134,19 +134,26 @@ class Analysis:
     @property
     def sample_type(self):
         return self._metadata["sample_type"]
-
-    def add_ott_match(self, ott_match: Dict):
-        """Adds an OTT match to the analysis."""
-        self._ott_matches.append(ott_match)
-
-    def add_upper_taxon(self, upper_taxon: Dict):
-        """Adds an upper taxon to the analysis."""
-        self._upper_taxon.append(upper_taxon)
-
-    def extend_ott_matches(self, ott_match: List[Dict]):
+    
+    def extend_ott_matches(self, ott_match: List[Match]):
         """Extends the OTT match of the analysis."""
         self._ott_matches.extend(ott_match)
+    
+    @property
+    def best_ott_match(self) -> Match:
+        """Returns the best OTT match of the analysis."""
+        # TODO! UPDATE THIS SOMEHOW! Fo rexample by removing synonyms or taking only accepted names.
+        return self._ott_matches[0]
 
-    def extend_upper_taxon(self, upper_taxon: List[Dict]):
-        """Extends the upper taxon of the analysis."""
-        self._upper_taxon.extend(upper_taxon)
+    @property
+    def best_lotus_annotation_per_spectra(self) -> Iterable[Lotus]:
+        """Returns the best LOTUS annotation per spectra."""
+        for spectrum in self.annotated_tandem_mass_spectra:
+            if not spectrum.is_annotated():
+                continue
+            best_annotation = spectrum.best_lotus_annotation_by_ott_match(self.best_ott_match)
+            
+            if best_annotation is None:
+                continue
+
+            yield best_annotation

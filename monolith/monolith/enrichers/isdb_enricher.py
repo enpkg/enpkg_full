@@ -224,10 +224,7 @@ class ISDBEnricher(Enricher):
                             MS2ChemicalAnnotation(
                                 cosine_similarity=msms_score,
                                 number_of_matched_peaks=n_matches,
-                                molecule_id=y + 1,
-                                short_inchikey=self._spectral_db_pos[y].get(
-                                    "compound_name"
-                                ),
+                                lotus=self._spectral_db_pos[y].get("lotus_entries"),
                             )
                         )
 

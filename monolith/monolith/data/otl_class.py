@@ -131,7 +131,58 @@ class Match:
     score: float
     search_string: str
     taxon: Taxon
-    lineage: Optional[List[LineageItem]] = None
+    lineage: Optional[LineageItem] = None
+
+    def _taxonomical_rank(self, rank: str) -> Optional[str]:
+        """Returns the taxonomical rank of the taxon."""
+        assert self.lineage is not None, "Lineage is not set for the match"
+
+        for taxon in self.lineage.taxa:
+            if taxon.rank == rank:
+                return taxon.name
+
+        return None
+        
+    @property
+    def domain(self) -> Optional[str]:
+        """Returns the lineage entry containing the domain."""
+        return self._taxonomical_rank("domain")
+    
+    @property
+    def kingdom(self) -> Optional[str]:
+        """Returns the lineage entry containing the kingdom."""
+        return self._taxonomical_rank("kingdom")
+
+    @property
+    def phylum(self) -> Optional[str]:
+        """Returns the lineage entry containing the phylum."""
+        return self._taxonomical_rank("phylum")
+
+    @property
+    def klass(self) -> Optional[str]:
+        """Returns the lineage entry containing the class."""
+        return self._taxonomical_rank("class")
+
+    @property
+    def order(self) -> Optional[str]:
+        """Returns the lineage entry containing the order."""
+        return self._taxonomical_rank("order")
+    
+    @property
+    def family(self) -> Optional[str]:
+        """Returns the lineage entry containing the family."""
+        return self._taxonomical_rank("family")
+
+    @property
+    def genus(self) -> Optional[str]:
+        """Returns the lineage entry containing the genus."""
+        return self._taxonomical_rank("genus")
+    
+    @property
+    def species(self) -> Optional[str]:
+        """Returns the lineage entry containing the species."""
+        return self._taxonomical_rank("species")
+    
 
     @property
     def ott_id(self) -> int:

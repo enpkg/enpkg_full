@@ -29,6 +29,12 @@ class TestDefaultPipeline:
             assert len(analysis.annotated_tandem_mass_spectra) == 678
             assert analysis.number_of_spectra_with_at_least_one_annotation == 191
 
+            best_lotus_per_spectrum = list(analysis.best_lotus_annotation_per_spectra)
+
+            print(best_lotus_per_spectrum)
+
+            assert len(best_lotus_per_spectrum) == 191
+
     def test_default_pipeline_blank(self):
         """Test run for the default pipeline with a blank."""
         batch = Batch(
