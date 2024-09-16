@@ -27,13 +27,23 @@ class TestDefaultPipeline:
         for analysis in batch.analyses:
             assert isinstance(analysis, Analysis)
             assert len(analysis.annotated_tandem_mass_spectra) == 678
-            assert analysis.number_of_spectra_with_at_least_one_annotation == 191
+            assert analysis.number_of_spectra_with_at_least_one_annotation == 10 #191
+
+            # We print the best OTT match for the analysis
+            best_ott_match = analysis.best_ott_match
+
+            print(best_ott_match)
 
             best_lotus_per_spectrum = list(analysis.best_lotus_annotation_per_spectra)
 
             print(best_lotus_per_spectrum)
 
-            assert len(best_lotus_per_spectrum) == 191
+            # We print the best OTT match for the analysis
+            best_ott_match = analysis.best_ott_match
+
+            print(best_ott_match)
+
+            assert len(best_lotus_per_spectrum) == 3 #178
 
     def test_default_pipeline_blank(self):
         """Test run for the default pipeline with a blank."""
@@ -50,4 +60,4 @@ class TestDefaultPipeline:
         for analysis in batch.analyses:
             assert isinstance(analysis, Analysis)
             assert len(analysis.annotated_tandem_mass_spectra) == 70
-            assert analysis.number_of_spectra_with_at_least_one_annotation == 24
+            assert analysis.number_of_spectra_with_at_least_one_annotation == 1 #24

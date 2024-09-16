@@ -1,5 +1,7 @@
 """Submodule providing the default pipeline for ENPKG analysis."""
 
+from time import time
+import logging
 from tqdm.auto import tqdm
 from monolith.pipeline.pipeline import Pipeline
 from monolith.enrichers.enricher import Enricher
@@ -8,6 +10,7 @@ from monolith.data.batch_class import Batch
 from typing import List, Type
 import yaml
 from monolith.data import ISDBEnricherConfig
+
 
 from monolith.enrichers.taxa_enricher import TaxaEnricher
 from monolith.enrichers.isdb_enricher import ISDBEnricher
@@ -18,6 +21,8 @@ class DefaultPipeline(Pipeline):
 
     def __init__(self, config: str = "config.yaml"):
         """Initializes the pipeline with a list of enrichers."""
+
+        logging.basicConfig(filename='myapp.log', level=logging.INFO)
 
         with open(config, "r", encoding="utf-8") as file:
             global_configuration = yaml.safe_load(file)
@@ -44,6 +49,7 @@ class DefaultPipeline(Pipeline):
             leave=False,
             dynamic_ncols=True,
         ):
+            start = time()
             for analysis in tqdm(
                 batch.analyses,
                 desc=enricher.name(),
@@ -52,5 +58,6 @@ class DefaultPipeline(Pipeline):
                 dynamic_ncols=True,
             ):
                 enricher.enrich(analysis)
+            logging.info(f"Enricher {enricher.name()} took {time() - start:.2f} seconds")
 
         return batch
