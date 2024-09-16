@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 import pandas as pd
 from monolith.data.otl_class import Match
+from typing import List, Any
 
 
 @dataclass
@@ -50,67 +51,79 @@ class Lotus:
     manual_validation: bool
 
     @staticmethod
-    def from_pandas_series(series: pd.Series) -> "Lotus":
+    def setup_lotus_columns(columns: List[str]) :
+        """Set up the columns of the LOTUS DataFrame."""
+
+        Lotus._columns = {
+            column: i for i, column in enumerate(columns)
+        }
+
+    @staticmethod
+    def from_pandas_series(series: List[Any]) -> "Lotus":
         """Create a Lotus object from a pandas Series."""
         return Lotus(
-            structure_wikidata=series["structure_wikidata"],
-            structure_inchikey=series["structure_inchikey"],
-            structure_inchi=series["structure_inchi"],
-            structure_smiles=series["structure_smiles"],
-            structure_molecular_formula=series["structure_molecular_formula"],
-            structure_exact_mass=series["structure_exact_mass"],
-            structure_xlogp=series["structure_xlogp"],
-            structure_smiles_2d=series["structure_smiles_2D"],
-            structure_cid=series["structure_cid"],
-            structure_name_iupac=series["structure_nameIupac"],
-            structure_name_traditional=series["structure_nameTraditional"],
-            structure_stereocenters_total=series["structure_stereocenters_total"],
-            structure_stereocenters_unspecified=series[
+            structure_wikidata=series[Lotus._columns["structure_wikidata"]],
+            structure_inchikey=series[Lotus._columns["structure_inchikey"]],
+            structure_inchi=series[Lotus._columns["structure_inchi"]],
+            structure_smiles=series[Lotus._columns["structure_smiles"]],
+            structure_molecular_formula=series[Lotus._columns["structure_molecular_formula"]],
+            structure_exact_mass=series[Lotus._columns["structure_exact_mass"]],
+            structure_xlogp=series[Lotus._columns["structure_xlogp"]],
+            structure_smiles_2d=series[Lotus._columns["structure_smiles_2D"]],
+            structure_cid=series[Lotus._columns["structure_cid"]],
+            structure_name_iupac=series[Lotus._columns["structure_nameIupac"]],
+            structure_name_traditional=series[Lotus._columns["structure_nameTraditional"]],
+            structure_stereocenters_total=series[Lotus._columns["structure_stereocenters_total"]],
+            structure_stereocenters_unspecified=series[Lotus._columns[
                 "structure_stereocenters_unspecified"
-            ],
-            structure_taxonomy_npclassifier_01pathway=series[
+            ]],
+            structure_taxonomy_npclassifier_01pathway=series[Lotus._columns[
                 "structure_taxonomy_npclassifier_01pathway"
-            ],
-            structure_taxonomy_npclassifier_02superclass=series[
+            ]],
+            structure_taxonomy_npclassifier_02superclass=series[Lotus._columns[
                 "structure_taxonomy_npclassifier_02superclass"
-            ],
-            structure_taxonomy_npclassifier_03class=series[
+            ]],
+            structure_taxonomy_npclassifier_03class=series[Lotus._columns[
                 "structure_taxonomy_npclassifier_03class"
-            ],
-            structure_taxonomy_classyfire_chemontid=series[
+            ]],
+            structure_taxonomy_classyfire_chemontid=series[Lotus._columns[
                 "structure_taxonomy_classyfire_chemontid"
-            ],
-            structure_taxonomy_classyfire_01kingdom=series[
+            ]],
+            structure_taxonomy_classyfire_01kingdom=series[Lotus._columns[
                 "structure_taxonomy_classyfire_01kingdom"
-            ],
-            structure_taxonomy_classyfire_02superclass=series[
+            ]],
+            structure_taxonomy_classyfire_02superclass=series[Lotus._columns[
                 "structure_taxonomy_classyfire_02superclass"
-            ],
-            structure_taxonomy_classyfire_03class=series[
+            ]],
+            structure_taxonomy_classyfire_03class=series[Lotus._columns[
                 "structure_taxonomy_classyfire_03class"
-            ],
-            structure_taxonomy_classyfire_04directparent=series[
+            ]],
+            structure_taxonomy_classyfire_04directparent=series[Lotus._columns[
                 "structure_taxonomy_classyfire_04directparent"
-            ],
-            organism_wikidata=series["organism_wikidata"],
-            organism_name=series["organism_name"],
-            organism_taxonomy_gbifid=series["organism_taxonomy_gbifid"],
-            organism_taxonomy_ncbiid=series["organism_taxonomy_ncbiid"],
-            organism_taxonomy_ottid=series["organism_taxonomy_ottid"],
-            domain=series["organism_taxonomy_01domain"],
-            kingdom=series["organism_taxonomy_02kingdom"],
-            phylum=series["organism_taxonomy_03phylum"],
-            klass=series["organism_taxonomy_04class"],
-            order=series["organism_taxonomy_05order"],
-            family=series["organism_taxonomy_06family"],
-            tribe=series["organism_taxonomy_07tribe"],
-            genus=series["organism_taxonomy_08genus"],
-            species=series["organism_taxonomy_09species"],
-            varietas=series["organism_taxonomy_10varietas"],
-            reference_wikidata=series["reference_wikidata"],
-            reference_doi=series["reference_doi"],
-            manual_validation=series["manual_validation"],
+            ]],
+            organism_wikidata=series[Lotus._columns["organism_wikidata"]],
+            organism_name=series[Lotus._columns["organism_name"]],
+            organism_taxonomy_gbifid=series[Lotus._columns["organism_taxonomy_gbifid"]],
+            organism_taxonomy_ncbiid=series[Lotus._columns["organism_taxonomy_ncbiid"]],
+            organism_taxonomy_ottid=series[Lotus._columns["organism_taxonomy_ottid"]],
+            domain=series[Lotus._columns["organism_taxonomy_01domain"]],
+            kingdom=series[Lotus._columns["organism_taxonomy_02kingdom"]],
+            phylum=series[Lotus._columns["organism_taxonomy_03phylum"]],
+            klass=series[Lotus._columns["organism_taxonomy_04class"]],
+            order=series[Lotus._columns["organism_taxonomy_05order"]],
+            family=series[Lotus._columns["organism_taxonomy_06family"]],
+            tribe=series[Lotus._columns["organism_taxonomy_07tribe"]],
+            genus=series[Lotus._columns["organism_taxonomy_08genus"]],
+            species=series[Lotus._columns["organism_taxonomy_09species"]],
+            varietas=series[Lotus._columns["organism_taxonomy_10varietas"]],
+            reference_wikidata=series[Lotus._columns["reference_wikidata"]],
+            reference_doi=series[Lotus._columns["reference_doi"]],
+            manual_validation=series[Lotus._columns["manual_validation"]],
         )
+
+
+
+    
 
     @property
     def short_inchikey(self) -> str:

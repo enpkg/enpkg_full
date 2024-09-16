@@ -1,5 +1,7 @@
 """Submodule for the ISDB enricher."""
 
+from time import time
+import logging
 from typing import Dict, List
 from opentree import OT
 import requests
@@ -39,6 +41,9 @@ from monolith.data.isdb_data_classes import ChemicalAdduct
 from monolith.utils import binary_search_by_key
 
 
+logger = logging.getLogger("pipeline_logger")
+
+
 def peak_processing(spectrum: Spectrum) -> Spectrum:
     spectrum = default_filters(spectrum)
     spectrum = normalize_intensities(spectrum)
@@ -62,12 +67,17 @@ class ISDBEnricher(Enricher):
             self.configuration.urls.taxo_db_metadata_url,
             "downloads/taxo_db_metadata.csv.gz",
         )
+        logger.info("Converting taxo_db_metadata into a list of Lotus objects")
+        start = time()
+        lotus_metadata: pd.DataFrame = pd.read_csv(
+                "downloads/taxo_db_metadata.csv", low_memory=False
+            )
+        Lotus.setup_lotus_columns(lotus_metadata.columns)
         self._lotus: List[Lotus] = [
             Lotus.from_pandas_series(row)
-            for _, row in pd.read_csv(
-                "downloads/taxo_db_metadata.csv", low_memory=False
-            ).iterrows()
+            for row in lotus_metadata.values
         ]
+        logger.info(f"Conversion took {time() - start:.2f} seconds")
 
         # We sort lotus by the short inchikey so that we can do binary search
         # of the spectral db inchikeys and align the two databases.
