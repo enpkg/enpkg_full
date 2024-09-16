@@ -1,5 +1,11 @@
 """Test suite for the default pipeline."""
 
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+
 import pytest
 from monolith.pipeline.default_pipeline import DefaultPipeline
 from monolith.data.analysis_class import Analysis
