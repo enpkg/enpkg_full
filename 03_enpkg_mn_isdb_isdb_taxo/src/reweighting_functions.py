@@ -93,10 +93,7 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
 def chemical_reponderator(
     clusterinfo_summary_file,
     dt_isdb_results,
-    top_N_chemical_consistency,
-    msms_weight,
-    taxo_weight,
-    chemo_weight,
+    top_N_chemical_consistency
 ):
     """Perform chemical consistency reweighting on a list of candidates annotations
 

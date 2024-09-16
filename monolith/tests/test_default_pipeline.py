@@ -38,16 +38,16 @@ class TestDefaultPipeline:
             # We print the best OTT match for the analysis
             best_ott_match = analysis.best_ott_match
 
-            print(best_ott_match)
+            # print(best_ott_match)
 
             best_lotus_per_spectrum = list(analysis.best_lotus_annotation_per_spectra)
 
-            print(best_lotus_per_spectrum)
+            # print(best_lotus_per_spectrum)
 
             # We print the best OTT match for the analysis
             best_ott_match = analysis.best_ott_match
 
-            print(best_ott_match)
+            # print(best_ott_match)
 
             assert len(best_lotus_per_spectrum) == 3 #178
 
