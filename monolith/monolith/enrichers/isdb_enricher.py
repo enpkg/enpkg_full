@@ -73,11 +73,11 @@ class ISDBEnricher(Enricher):
         # of the spectral db inchikeys and align the two databases.
         self._lotus = sorted(self._lotus, key=lambda x: x.short_inchikey)
 
-        downloader.download(
-            self.configuration.urls.spectral_db_pos_url, "downloads/spectral_db_pos.pkl"
-        )
+        # downloader.download(
+        #     self.configuration.urls.spectral_db_pos_url, "downloads/spectral_db_pos.pkl"
+        # )
 
-        with open("downloads/spectral_db_pos.pkl", "rb") as file:
+        with open("downloads/first_1000_spectra.pkl", "rb") as file:
             self._spectral_db_pos: List[Spectrum] = pickle.load(file)
 
         assert isinstance(self._spectral_db_pos, list)
@@ -88,6 +88,15 @@ class ISDBEnricher(Enricher):
             spectrum.get("compound_name") is not None
             for spectrum in self._spectral_db_pos[:10]
         )
+
+        # # Save the first 1000 spectra to a new .pkl file. For the sake of time and for testing purpose only.
+        # first_1000_spectra = self._spectral_db_pos[:1000]
+
+        # with open("downloads/first_1000_spectra.pkl", "wb") as output_file:
+        #     pickle.dump(first_1000_spectra, output_file)
+
+        # print("First 1000 spectra saved to downloads/first_1000_spectra.pkl")
+
 
         # For each entry in the spectral database, we search for the Lotus entries with the
         # same short inchikey and add them as a list to the spectrum object metadata.
