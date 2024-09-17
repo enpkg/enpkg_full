@@ -51,12 +51,10 @@ class Lotus:
     manual_validation: bool
 
     @staticmethod
-    def setup_lotus_columns(columns: List[str]) :
+    def setup_lotus_columns(columns: List[str]):
         """Set up the columns of the LOTUS DataFrame."""
 
-        Lotus._columns = {
-            column: i for i, column in enumerate(columns)
-        }
+        Lotus._columns = {column: i for i, column in enumerate(columns)}
 
     @staticmethod
     def from_pandas_series(series: List[Any]) -> "Lotus":
@@ -66,41 +64,47 @@ class Lotus:
             structure_inchikey=series[Lotus._columns["structure_inchikey"]],
             structure_inchi=series[Lotus._columns["structure_inchi"]],
             structure_smiles=series[Lotus._columns["structure_smiles"]],
-            structure_molecular_formula=series[Lotus._columns["structure_molecular_formula"]],
+            structure_molecular_formula=series[
+                Lotus._columns["structure_molecular_formula"]
+            ],
             structure_exact_mass=series[Lotus._columns["structure_exact_mass"]],
             structure_xlogp=series[Lotus._columns["structure_xlogp"]],
             structure_smiles_2d=series[Lotus._columns["structure_smiles_2D"]],
             structure_cid=series[Lotus._columns["structure_cid"]],
             structure_name_iupac=series[Lotus._columns["structure_nameIupac"]],
-            structure_name_traditional=series[Lotus._columns["structure_nameTraditional"]],
-            structure_stereocenters_total=series[Lotus._columns["structure_stereocenters_total"]],
-            structure_stereocenters_unspecified=series[Lotus._columns[
-                "structure_stereocenters_unspecified"
-            ]],
-            structure_taxonomy_npclassifier_01pathway=series[Lotus._columns[
-                "structure_taxonomy_npclassifier_01pathway"
-            ]],
-            structure_taxonomy_npclassifier_02superclass=series[Lotus._columns[
-                "structure_taxonomy_npclassifier_02superclass"
-            ]],
-            structure_taxonomy_npclassifier_03class=series[Lotus._columns[
-                "structure_taxonomy_npclassifier_03class"
-            ]],
-            structure_taxonomy_classyfire_chemontid=series[Lotus._columns[
-                "structure_taxonomy_classyfire_chemontid"
-            ]],
-            structure_taxonomy_classyfire_01kingdom=series[Lotus._columns[
-                "structure_taxonomy_classyfire_01kingdom"
-            ]],
-            structure_taxonomy_classyfire_02superclass=series[Lotus._columns[
-                "structure_taxonomy_classyfire_02superclass"
-            ]],
-            structure_taxonomy_classyfire_03class=series[Lotus._columns[
-                "structure_taxonomy_classyfire_03class"
-            ]],
-            structure_taxonomy_classyfire_04directparent=series[Lotus._columns[
-                "structure_taxonomy_classyfire_04directparent"
-            ]],
+            structure_name_traditional=series[
+                Lotus._columns["structure_nameTraditional"]
+            ],
+            structure_stereocenters_total=series[
+                Lotus._columns["structure_stereocenters_total"]
+            ],
+            structure_stereocenters_unspecified=series[
+                Lotus._columns["structure_stereocenters_unspecified"]
+            ],
+            structure_taxonomy_npclassifier_01pathway=series[
+                Lotus._columns["structure_taxonomy_npclassifier_01pathway"]
+            ],
+            structure_taxonomy_npclassifier_02superclass=series[
+                Lotus._columns["structure_taxonomy_npclassifier_02superclass"]
+            ],
+            structure_taxonomy_npclassifier_03class=series[
+                Lotus._columns["structure_taxonomy_npclassifier_03class"]
+            ],
+            structure_taxonomy_classyfire_chemontid=series[
+                Lotus._columns["structure_taxonomy_classyfire_chemontid"]
+            ],
+            structure_taxonomy_classyfire_01kingdom=series[
+                Lotus._columns["structure_taxonomy_classyfire_01kingdom"]
+            ],
+            structure_taxonomy_classyfire_02superclass=series[
+                Lotus._columns["structure_taxonomy_classyfire_02superclass"]
+            ],
+            structure_taxonomy_classyfire_03class=series[
+                Lotus._columns["structure_taxonomy_classyfire_03class"]
+            ],
+            structure_taxonomy_classyfire_04directparent=series[
+                Lotus._columns["structure_taxonomy_classyfire_04directparent"]
+            ],
             organism_wikidata=series[Lotus._columns["organism_wikidata"]],
             organism_name=series[Lotus._columns["organism_name"]],
             organism_taxonomy_gbifid=series[Lotus._columns["organism_taxonomy_gbifid"]],
@@ -121,10 +125,6 @@ class Lotus:
             manual_validation=series[Lotus._columns["manual_validation"]],
         )
 
-
-
-    
-
     @property
     def short_inchikey(self) -> str:
         """Return the first 14 characters of the InChIKey."""
@@ -132,7 +132,7 @@ class Lotus:
 
     def taxonomical_similarity_with_otl_match(self, match: Match) -> int:
         """Calculate the taxonomical similarity with an OTL match.
-        
+
         Implementative details
         ----------------------
         The taxonomical similarity is calculated as the number of shared taxonomic ranks

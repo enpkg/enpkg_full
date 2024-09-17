@@ -11,7 +11,7 @@ from monolith.enrichers.enricher import Enricher
 
 class Pipeline(ABC):
     """Interface for pipelines."""
-    
+
     logger: Logger
 
     def __init__(self):

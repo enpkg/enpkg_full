@@ -142,12 +142,12 @@ class Match:
                 return taxon.name
 
         return None
-        
+
     @property
     def domain(self) -> Optional[str]:
         """Returns the lineage entry containing the domain."""
         return self._taxonomical_rank("domain")
-    
+
     @property
     def kingdom(self) -> Optional[str]:
         """Returns the lineage entry containing the kingdom."""
@@ -167,7 +167,7 @@ class Match:
     def order(self) -> Optional[str]:
         """Returns the lineage entry containing the order."""
         return self._taxonomical_rank("order")
-    
+
     @property
     def family(self) -> Optional[str]:
         """Returns the lineage entry containing the family."""
@@ -177,12 +177,11 @@ class Match:
     def genus(self) -> Optional[str]:
         """Returns the lineage entry containing the genus."""
         return self._taxonomical_rank("genus")
-    
+
     @property
     def species(self) -> Optional[str]:
         """Returns the lineage entry containing the species."""
         return self._taxonomical_rank("species")
-    
 
     @property
     def ott_id(self) -> int:
