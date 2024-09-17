@@ -21,6 +21,7 @@ from monolith.data.isdb_data_classes import AnnotatedSpectra
 from monolith.data.otl_class import Match
 from monolith.data.lotus_class import Lotus
 
+
 class Analysis:
     """Data class for the analysis of the data."""
 
@@ -134,11 +135,11 @@ class Analysis:
     @property
     def sample_type(self):
         return self._metadata["sample_type"]
-    
+
     def extend_ott_matches(self, ott_match: List[Match]):
         """Extends the OTT match of the analysis."""
         self._ott_matches.extend(ott_match)
-    
+
     @property
     def best_ott_match(self) -> Match:
         """Returns the best OTT match of the analysis."""
@@ -151,8 +152,10 @@ class Analysis:
         for spectrum in self.annotated_tandem_mass_spectra:
             if not spectrum.is_annotated():
                 continue
-            best_annotation = spectrum.best_lotus_annotation_by_ott_match(self.best_ott_match)
-            
+            best_annotation = spectrum.best_lotus_annotation_by_ott_match(
+                self.best_ott_match
+            )
+
             if best_annotation is None:
                 continue
 

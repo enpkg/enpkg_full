@@ -1,7 +1,6 @@
 """Submodule providing the default pipeline for ENPKG analysis."""
 
 from time import time
-import logging
 from typing import List, Type
 import yaml
 from monolith.data import ISDBEnricherConfig
@@ -9,9 +8,6 @@ from monolith.pipeline.pipeline import Pipeline
 from monolith.enrichers.enricher import Enricher
 from monolith.enrichers.taxa_enricher import TaxaEnricher
 from monolith.enrichers.isdb_enricher import ISDBEnricher
-
-
-logger = logging.getLogger("pipeline_logger")
 
 
 class DefaultPipeline(Pipeline):
@@ -37,6 +33,7 @@ class DefaultPipeline(Pipeline):
         isdb_enricher = ISDBEnricher(
             isdb_configuration,
             polarity=global_configuration["general"]["polarity"] == "pos",
+            logger=self.logger,
         )
         self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
 

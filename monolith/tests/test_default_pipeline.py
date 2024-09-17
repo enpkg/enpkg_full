@@ -1,6 +1,5 @@
 """Test suite for the default pipeline."""
 
-
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -33,7 +32,7 @@ class TestDefaultPipeline:
         for analysis in batch.analyses:
             assert isinstance(analysis, Analysis)
             assert len(analysis.annotated_tandem_mass_spectra) == 678
-            assert analysis.number_of_spectra_with_at_least_one_annotation == 10 #191
+            assert analysis.number_of_spectra_with_at_least_one_annotation == 191
 
             # We print the best OTT match for the analysis
             best_ott_match = analysis.best_ott_match
@@ -49,7 +48,7 @@ class TestDefaultPipeline:
 
             # print(best_ott_match)
 
-            assert len(best_lotus_per_spectrum) == 3 #178
+            assert len(best_lotus_per_spectrum) == 3  # 178
 
     def test_default_pipeline_blank(self):
         """Test run for the default pipeline with a blank."""
@@ -66,4 +65,4 @@ class TestDefaultPipeline:
         for analysis in batch.analyses:
             assert isinstance(analysis, Analysis)
             assert len(analysis.annotated_tandem_mass_spectra) == 70
-            assert analysis.number_of_spectra_with_at_least_one_annotation == 1 #24
+            assert analysis.number_of_spectra_with_at_least_one_annotation == 1  # 24

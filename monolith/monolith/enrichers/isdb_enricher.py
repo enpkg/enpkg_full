@@ -1,25 +1,14 @@
 """Submodule for the ISDB enricher."""
 
 from time import time
-import logging
-from typing import Dict, List
-from opentree import OT
-import requests
-import yaml
+from typing import List
 import pickle
+from logging import Logger
 import pandas as pd
 from tqdm.auto import tqdm, trange
 from tqdm.contrib import tzip
-from monolith.data import ISDBEnricherConfig
-from monolith.data.isdb_data_classes import MS2ChemicalAnnotation, AnnotatedSpectra
-from monolith.data import Lotus
-from monolith.data.analysis_class import Analysis
-from monolith.enrichers.enricher import Enricher
 from downloaders import BaseDownloader
 
-import os
-import numpy as np
-import pandas as pd
 from matchms import calculate_scores
 from matchms.similarity import ModifiedCosine
 from matchms.networking import SimilarityNetwork
@@ -29,22 +18,28 @@ from matchms.filtering import select_by_intensity
 from matchms.filtering import select_by_mz
 from matchms import Spectrum
 from matchms.similarity import PrecursorMzMatch
-from matchms import calculate_scores
 from matchms.similarity import CosineGreedy
-from matchms.logging_functions import set_matchms_logger_level
-import networkx as nx
+from monolith.enrichers.enricher import Enricher
+from monolith.data import Analysis
 from monolith.enrichers.adducts import (
     positive_adducts_from_chemical,
     negative_adducts_from_chemical,
 )
+from monolith.data import ISDBEnricherConfig
+from monolith.data.isdb_data_classes import MS2ChemicalAnnotation
+from monolith.data import Lotus
 from monolith.data.isdb_data_classes import ChemicalAdduct
 from monolith.utils import binary_search_by_key
 
 
-logger = logging.getLogger("pipeline_logger")
-
-
 def peak_processing(spectrum: Spectrum) -> Spectrum:
+    """Applies peak processing to the spectrum.
+
+    Parameters
+    ----------
+    spectrum : Spectrum
+        The spectrum to process.
+    """
     spectrum = default_filters(spectrum)
     spectrum = normalize_intensities(spectrum)
     spectrum = select_by_intensity(spectrum, intensity_from=0.01)
@@ -55,7 +50,9 @@ def peak_processing(spectrum: Spectrum) -> Spectrum:
 class ISDBEnricher(Enricher):
     """Enricher that adds ISDB information to the analysis."""
 
-    def __init__(self, configuration: ISDBEnricherConfig, polarity: bool):
+    def __init__(
+        self, configuration: ISDBEnricherConfig, polarity: bool, logger: Logger
+    ):
         """Initializes the enricher."""
         assert isinstance(configuration, ISDBEnricherConfig)
         assert isinstance(polarity, bool)
@@ -67,28 +64,51 @@ class ISDBEnricher(Enricher):
             self.configuration.urls.taxo_db_metadata_url,
             "downloads/taxo_db_metadata.csv.gz",
         )
-        logger.info("Converting taxo_db_metadata into a list of Lotus objects")
+        logger.info("Loading Taxonomical Database metadata")
         start = time()
         lotus_metadata: pd.DataFrame = pd.read_csv(
-                "downloads/taxo_db_metadata.csv", low_memory=False
-            )
+            "downloads/taxo_db_metadata.csv", low_memory=False
+        )
+        logger.info(
+            "Loaded %d Taxonomical Database metadata entries in %.2f seconds",
+            len(lotus_metadata),
+            time() - start,
+        )
+        start = time()
+        logger.info(
+            "Converting Taxonomical Database metadata DataFrame to Lotus objects"
+        )
         Lotus.setup_lotus_columns(lotus_metadata.columns)
         self._lotus: List[Lotus] = [
-            Lotus.from_pandas_series(row)
-            for row in lotus_metadata.values
+            Lotus.from_pandas_series(row) for row in lotus_metadata.values
         ]
-        logger.info(f"Conversion took {time() - start:.2f} seconds")
+        logger.info(
+            "Converted Taxonomical Database metadata DataFrame to Lotus objects in %.2f seconds",
+            time() - start,
+        )
 
+        logger.info("Sorting Lotus entries by short inchikey")
+        start = time()
         # We sort lotus by the short inchikey so that we can do binary search
         # of the spectral db inchikeys and align the two databases.
         self._lotus = sorted(self._lotus, key=lambda x: x.short_inchikey)
+        logger.info(
+            "Sorted Lotus entries by short inchikey in %.2f seconds", time() - start
+        )
 
-        # downloader.download(
-        #     self.configuration.urls.spectral_db_pos_url, "downloads/spectral_db_pos.pkl"
-        # )
+        downloader.download(
+            self.configuration.urls.spectral_db_pos_url, "downloads/spectral_db_pos.pkl"
+        )
 
-        with open("downloads/first_1000_spectra.pkl", "rb") as file:
+        logger.info("Loading positive spectral database")
+        start = time()
+        with open("downloads/spectral_db_pos.pkl", "rb") as file:
             self._spectral_db_pos: List[Spectrum] = pickle.load(file)
+        logger.info(
+            "Loaded %d positive spectral database entries in %.2f seconds",
+            len(self._spectral_db_pos),
+            time() - start,
+        )
 
         assert isinstance(self._spectral_db_pos, list)
         assert all(
@@ -99,20 +119,13 @@ class ISDBEnricher(Enricher):
             for spectrum in self._spectral_db_pos[:10]
         )
 
-        # # Save the first 1000 spectra to a new .pkl file. For the sake of time and for testing purpose only.
-        # first_1000_spectra = self._spectral_db_pos[:1000]
-
-        # with open("downloads/first_1000_spectra.pkl", "wb") as output_file:
-        #     pickle.dump(first_1000_spectra, output_file)
-
-        # print("First 1000 spectra saved to downloads/first_1000_spectra.pkl")
-
-
         # For each entry in the spectral database, we search for the Lotus entries with the
         # same short inchikey and add them as a list to the spectrum object metadata.
         # Since the Lotus entries are sorted by short inchikey, we can do binary search of
         # the spectrum short inchikeys and assign the slice of the Lotus entries with the same
         # short inchikey to the spectrum object.
+        logger.info("Adding Lotus entries to spectral database")
+        start = time()
 
         for spectrum in tqdm(
             self._spectral_db_pos,
@@ -151,6 +164,12 @@ class ISDBEnricher(Enricher):
 
             spectrum.set("lotus_entries", self._lotus[smallest_idx:largest_idx])
 
+        logger.info(
+            "Added Lotus entries to spectral database in %.2f seconds", time() - start
+        )
+
+        logger.info("Creating adducts")
+        start = time()
         self._adducts: List[ChemicalAdduct] = (
             [
                 adduct
@@ -170,6 +189,12 @@ class ISDBEnricher(Enricher):
         # via binary search.
 
         self._adducts = sorted(self._adducts, key=lambda x: x.exact_mass)
+
+        logger.info(
+            "Created and sorted %d adducts in %.2f seconds",
+            len(self._adducts),
+            time() - start,
+        )
 
     def name(self) -> str:
         """Returns the name of the enricher."""

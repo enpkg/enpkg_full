@@ -111,10 +111,10 @@ class AnnotatedSpectra:
         match : Match
             The match object containing the best open tree of life match
             given the expected sample taxonomy.
-        
+
         Implementation details
         -----------------------
-        We iterate over the annotations and combine the following scores 
+        We iterate over the annotations and combine the following scores
         for each annotation:
             - The cosine similarity score (precomputed)
             - The number of matched taxonomical levels between the Lotus entry and the Match entry
@@ -123,7 +123,11 @@ class AnnotatedSpectra:
         We weight the Lotus annotations by these three scores, and return the best one.
         """
         weighted_lotus_entries = [
-            (annotation.cosine_similarity + lotus.taxonomical_similarity_with_otl_match(match), lotus)
+            (
+                annotation.cosine_similarity
+                + lotus.taxonomical_similarity_with_otl_match(match),
+                lotus,
+            )
             for annotation in self.annotations
             if annotation.lotus is not None
             for lotus in annotation.lotus
