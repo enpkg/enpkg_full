@@ -1,7 +1,6 @@
 """Submodule providing adducts for all provided Lotus reference chemicals."""
 
-from dataclasses import dataclass
-from typing import Dict, List
+from typing import List
 from monolith.data import Lotus
 from monolith.data.isdb_data_classes import ChemicalAdduct, AdductRecipe
 

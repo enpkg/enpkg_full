@@ -1,14 +1,16 @@
-from typing import Dict, Any, List, Optional
+"""Module to store annotated spectra and ISDB annotations."""
+from typing import List, Optional
 from dataclasses import dataclass
 from matchms import Spectrum
 from monolith.data.isdb_data_classes.adduct_class import ChemicalAdduct
 from monolith.utils import binary_search_by_key
 from monolith.data.lotus_class import Lotus
-from monolith.data.otl_class import Match, Taxon, LineageItem
+from monolith.data.otl_class import Match
 
 
 @dataclass
 class MS2ChemicalAnnotation:
+    """Class to store an MS2-level chemical annotation."""
     cosine_similarity: float
     number_of_matched_peaks: int
     lotus: List[Lotus]
