@@ -2,64 +2,53 @@
 
 from time import time
 import logging
-from tqdm.auto import tqdm
-from monolith.pipeline.pipeline import Pipeline
-from monolith.enrichers.enricher import Enricher
-from monolith.data.analysis_class import Analysis
-from monolith.data.batch_class import Batch
 from typing import List, Type
 import yaml
 from monolith.data import ISDBEnricherConfig
-
-
+from monolith.pipeline.pipeline import Pipeline
+from monolith.enrichers.enricher import Enricher
 from monolith.enrichers.taxa_enricher import TaxaEnricher
 from monolith.enrichers.isdb_enricher import ISDBEnricher
 
 
-logger = logging.getLogger('pipeline_logger')
+logger = logging.getLogger("pipeline_logger")
 
 
 class DefaultPipeline(Pipeline):
     """Default pipeline for ENPKG analysis."""
 
+    enrichers: List[Type[Enricher]]
+
     def __init__(self, config: str = "config.yaml"):
         """Initializes the pipeline with a list of enrichers."""
-        
+        super().__init__()
 
         with open(config, "r", encoding="utf-8") as file:
             global_configuration = yaml.safe_load(file)
 
         isdb_configuration = ISDBEnricherConfig.from_dict(global_configuration["isdb"])
 
+        self.logger.info("Initializing taxa enricher")
+        start = time()
+        taxa_enricher = TaxaEnricher()
+        self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
+        self.logger.info("Initializing ISDB enricher")
+        start = time()
+        isdb_enricher = ISDBEnricher(
+            isdb_configuration,
+            polarity=global_configuration["general"]["polarity"] == "pos",
+        )
+        self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
+
         self.enrichers: List[Type[Enricher]] = [
-            # Add enrichers here
-            TaxaEnricher(),
-            ISDBEnricher(
-                isdb_configuration,
-                polarity=global_configuration["general"]["polarity"] == "pos",
-            ),
+            taxa_enricher,
+            isdb_enricher,
         ]
 
-    def process(self, batch: Batch) -> Batch:
-        """Processes the batch of analyses."""
-        assert isinstance(batch, Batch)
+    def name(self) -> str:
+        """Returns the name of the pipeline."""
+        return "Default pipeline"
 
-        for enricher in tqdm(
-            self.enrichers,
-            desc="Processing",
-            unit="enricher",
-            leave=False,
-            dynamic_ncols=True,
-        ):
-            start = time()
-            for analysis in tqdm(
-                batch.analyses,
-                desc=enricher.name(),
-                unit="analysis",
-                leave=False,
-                dynamic_ncols=True,
-            ):
-                enricher.enrich(analysis)
-            logger.info(f"Enricher {enricher.name()} took {time() - start:.2f} seconds")
-
-        return batch
+    def enrichers(self) -> List[Type[Enricher]]:
+        """Returns the list of enrichers."""
+        return self.enrichers
