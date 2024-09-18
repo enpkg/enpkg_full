@@ -1,4 +1,5 @@
 """Module to store annotated spectra and ISDB annotations."""
+
 from typing import List, Optional
 from dataclasses import dataclass
 from matchms import Spectrum
@@ -11,6 +12,7 @@ from monolith.data.otl_class import Match
 @dataclass
 class MS2ChemicalAnnotation:
     """Class to store an MS2-level chemical annotation."""
+
     cosine_similarity: float
     number_of_matched_peaks: int
     lotus: List[Lotus]
@@ -89,7 +91,7 @@ class AnnotatedSpectra:
         (_, lower_bound_index) = binary_search_by_key(
             key=lower_bound,
             array=adducts,
-            key_func=lambda adduct: adduct.exact_mass,
+            key_func=lambda adduct: adduct.adduct_mass,
         )
 
         # Find the upper bound by linear search starting from the identified lower
@@ -97,7 +99,7 @@ class AnnotatedSpectra:
         # greater than the upper bound
         upper_bound_index = lower_bound_index
 
-        while upper_bound > adducts[upper_bound_index].exact_mass:
+        while upper_bound > adducts[upper_bound_index].adduct_mass:
             upper_bound_index += 1
 
             if upper_bound_index == len(adducts):

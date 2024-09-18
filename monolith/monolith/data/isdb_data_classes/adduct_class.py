@@ -3,7 +3,7 @@
 A chemical adducts is a molecules form by the combination of the analyte and a given ions. For example [M+H]+ is the adduct formed by the analyte and a proton. This data class is used to represent the adducts in the MS1 annotation process.
 """
 
-from typing import Dict, List
+from typing import Dict
 from dataclasses import dataclass
 from monolith.data.lotus_class import Lotus
 
@@ -40,13 +40,19 @@ class AdductRecipe:
         positive: bool - Whether the adduct is positive or negative.
     """
 
-    ingredients: Dict[str, int]
-    charge: int
+    ingredients: Dict[str, float]
+    charge: float
     positive: bool
-    multimer_factor: int = 1
+    multimer_factor: float = 1.0
+
+    def compute_adduct_mass(self, exact_lotus_mass: float) -> float:
+        """Applies the adduct recepy to the provided exact lotus mass"""
+        return (
+            self.multimer_factor * exact_lotus_mass
+            + sum(ADDUCT_MASSES[key] * count for key, count in self.ingredients.items())
+        ) / self.charge
 
 
-@dataclass
 class ChemicalAdduct:
     """Data class representing a chemical adduct.
 
@@ -62,16 +68,17 @@ class ChemicalAdduct:
 
     lotus: Lotus
     recipe: AdductRecipe
+    adduct_mass: float
+
+    def __init__(self, lotus: Lotus, recipe: AdductRecipe):
+        self.lotus = lotus
+        self.recipe = recipe
+        self.adduct_mass = recipe.compute_adduct_mass(lotus.structure_exact_mass)
 
     @property
     def short_inchikey(self) -> str:
         """Return the first 14 characters of the inchikey."""
         return self.lotus.short_inchikey
-
-    @property
-    def exact_mass(self) -> float:
-        """Return the exact mass of the molecule."""
-        return self.lotus.structure_exact_mass
 
     @property
     def positive(self) -> bool:

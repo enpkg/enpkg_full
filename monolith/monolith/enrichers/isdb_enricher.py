@@ -192,16 +192,17 @@ class ISDBEnricher(Enricher):
 
         start = time()
 
-        # We sort the adducts by the 'exact_mass' key so that when
+        # We sort the adducts by the 'mass' key so that when
         # we match the precursor mass with the adducts, we can do so
         # via binary search.
 
-        self._adducts = sorted(self._adducts, key=lambda x: x.exact_mass)
+        self._adducts = sorted(self._adducts, key=lambda x: x.adduct_mass)
 
         logger.info(
-            "Sorted %d adducts by exact mass in %.2f seconds", len(self._adducts), time() - start
+            "Sorted %d adducts by exact mass in %.2f seconds",
+            len(self._adducts),
+            time() - start,
         )
-        
 
     def name(self) -> str:
         """Returns the name of the enricher."""
