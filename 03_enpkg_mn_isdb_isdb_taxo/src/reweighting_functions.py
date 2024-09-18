@@ -132,7 +132,10 @@ def chemical_reponderator(
             .merge(cluster_count, on="component_id", how="left")
         )
 
+        # ci_count is the number of unique spectra that appear in the 'component_id' component of the graph
+
         df[("freq_" + col)] = df[(col + "_count")] / df["ci_count"]
+
         df[(col + "_score")] = df[("freq_" + col)] / (
             df[("rank_" + col + "_mean")] ** (0.5)
         )

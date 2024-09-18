@@ -3,7 +3,7 @@ import numpy as np
 
 
 def cluster_counter(clusterinfo_summary_file):
-    """Count the numbers of nodes per component index in a molecular network
+    """Count the numbers of unique spectra per component index in a molecular network
 
     Args:
         clusterinfo_summary_file (DataFrame) : A molecular network clusterinfo_summary_file
