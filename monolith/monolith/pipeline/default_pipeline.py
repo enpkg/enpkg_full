@@ -3,11 +3,12 @@
 from time import time
 from typing import List, Type
 import yaml
-from monolith.data import ISDBEnricherConfig
+from monolith.data import ISDBEnricherConfig, NetworkEnricherConfig
 from monolith.pipeline.pipeline import Pipeline
 from monolith.enrichers.enricher import Enricher
 from monolith.enrichers.taxa_enricher import TaxaEnricher
 from monolith.enrichers.isdb_enricher import ISDBEnricher
+from monolith.enrichers.network_enricher import NetworkEnricher
 
 
 class DefaultPipeline(Pipeline):
@@ -23,11 +24,18 @@ class DefaultPipeline(Pipeline):
             global_configuration = yaml.safe_load(file)
 
         isdb_configuration = ISDBEnricherConfig.from_dict(global_configuration["isdb"])
+        network_configuration = NetworkEnricherConfig.from_dict(global_configuration["network"])
 
         self.logger.info("Initializing taxa enricher")
         start = time()
         taxa_enricher = TaxaEnricher()
         self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
+
+        self.logger.info("Initializing network enricher")
+        start = time()
+        network_enricher = NetworkEnricher(network_configuration)
+        self.logger.info("%s took %.2f seconds", network_enricher.name(), time() - start)
+
         self.logger.info("Initializing ISDB enricher")
         start = time()
         isdb_enricher = ISDBEnricher(
@@ -39,6 +47,7 @@ class DefaultPipeline(Pipeline):
 
         self.enrichers: List[Type[Enricher]] = [
             taxa_enricher,
+            network_enricher,
             isdb_enricher,
         ]
 

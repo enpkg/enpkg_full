@@ -12,12 +12,12 @@ An Analysis object contains the following data:
 - metadata: pd.Series, the metadata Series of the analysis
 """
 
-from typing import List, Tuple, Dict, Optional, Iterable
-from matchms.importing import load_from_mgf
+from typing import List, Tuple, Optional, Iterable
 import pandas as pd
+import numpy as np
 import matchms
 import networkx as nx
-from monolith.data.isdb_data_classes import AnnotatedSpectra
+from monolith.data.annotated_spectra_class import AnnotatedSpectra
 from monolith.data.otl_class import Match
 from monolith.data.lotus_class import Lotus
 
@@ -102,11 +102,24 @@ class Analysis:
         return self._annotated_tandem_mass_spectra
 
     @property
+    def feature_ids(self) -> List[str]:
+        """Returns the feature IDs of the analysis."""
+        return [spectrum.feature_id for spectrum in self._annotated_tandem_mass_spectra]
+
+    @property
     def number_of_spectra_with_at_least_one_annotation(self):
         return sum(
             int(spectrum.is_annotated())
             for spectrum in self._annotated_tandem_mass_spectra
         )
+
+    @property
+    def molecular_network(self):
+        """Returns the molecular network of the analysis."""
+        if self._molecular_network is None:
+            raise ValueError("The molecular network is not set.")
+
+        return self._molecular_network
 
     def set_molecular_network(self, molecular_network: nx.Graph):
         """Sets the molecular network of the analysis."""
@@ -139,6 +152,54 @@ class Analysis:
     def extend_ott_matches(self, ott_match: List[Match]):
         """Extends the OTT match of the analysis."""
         self._ott_matches.extend(ott_match)
+
+    def set_isdb_propagated_npc_pathway_annotations(self, npc_pathway_annotations: np.ndarray):
+        """Sets the ISDB propagated pathway annotations"""
+        for spectrum, npc_pathway_annotation in zip(
+            self.annotated_tandem_mass_spectra, npc_pathway_annotations
+        ):
+            spectrum.set_isdb_propagated_npc_pathway_annotations(npc_pathway_annotation)
+
+    def get_one_hot_encoded_npc_pathway_annotations(self) -> np.ndarray:
+        """Returns the one-hot encoded NPC pathway annotations of the analysis."""
+        return np.array(
+            [
+                spectrum.get_one_hot_encoded_npc_pathway_annotations()
+                for spectrum in self.annotated_tandem_mass_spectra
+            ]
+        )
+
+    def set_isdb_propagated_npc_superclass_annotations(self, npc_superclass_annotations: np.ndarray):
+        """Sets the ISDB propagated superclass annotations"""
+        for spectrum, npc_superclass_annotation in zip(
+            self.annotated_tandem_mass_spectra, npc_superclass_annotations
+        ):
+            spectrum.set_isdb_propagated_npc_superclass_annotations(npc_superclass_annotation)
+
+    def get_one_hot_encoded_npc_superclass_annotations(self) -> np.ndarray:
+        """Returns the one-hot encoded NPC superclass annotations of the analysis."""
+        return np.array(
+            [
+                spectrum.get_one_hot_encoded_npc_superclass_annotations()
+                for spectrum in self.annotated_tandem_mass_spectra
+            ]
+        )
+
+    def set_isdb_propagated_npc_class_annotations(self, npc_class_annotations: np.ndarray):
+        """Sets the ISDB propagated class annotations"""
+        for spectrum, npc_class_annotation in zip(
+            self.annotated_tandem_mass_spectra, npc_class_annotations
+        ):
+            spectrum.set_isdb_propagated_npc_class_annotations(npc_class_annotation)
+
+    def get_one_hot_encoded_npc_class_annotations(self) -> np.ndarray:
+        """Returns the one-hot encoded NPC class annotations."""
+        return np.array(
+            [
+                spectrum.get_one_hot_encoded_npc_class_annotations()
+                for spectrum in self.annotated_tandem_mass_spectra
+            ]
+        )
 
     @property
     def best_ott_match(self) -> Match:

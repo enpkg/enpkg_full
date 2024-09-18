@@ -23,6 +23,14 @@ massive-id-addition:
 taxo-info-fetching:
   recompute: True
 
+
+network:
+  mn_msms_mz_tol: 0.01 # the msms mass tolerance to use for spectral matching (in Da)
+  mn_score_cutoff: 0.7 # the minimal modified cosine score for edge creation
+  mn_max_links: 10 # Consider edge between spectrumA and spectrumB if score falls into top_n for spectrumA and spectrumB
+  mn_top_n: 15 # Maximum number of links to add per node.
+  
+
 isdb:
   adducts-formatter:
     taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
@@ -46,12 +54,7 @@ isdb:
     min_score: 0.2 # the minimal cosine to use for spectral matching (if cosine)
     min_peaks: 6 # the minimal matching peaks number to use for spectral matching (if cosine)
   
-  networking_params:
-    mn_msms_mz_tol: 0.01 # the msms mass tolerance to use for spectral matching (in Da)
-    mn_score_cutoff: 0.7 # the minimal modified cosine score for edge creation
-    mn_max_links: 10 # Consider edge between spectrumA and spectrumB if score falls into top_n for spectrumA and spectrumB
-    mn_top_n: 15 # Maximum number of links to add per node.
-  
+
   reweighting_params:
     top_to_output: 1 # Number of candidate structures to output for each feature
     ppm_tol_ms1: 2 # Tolerance for MS1 matching (adducts)

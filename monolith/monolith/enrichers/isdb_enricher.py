@@ -10,8 +10,6 @@ from tqdm.contrib import tzip
 from downloaders import BaseDownloader
 
 from matchms import calculate_scores
-from matchms.similarity import ModifiedCosine
-from matchms.networking import SimilarityNetwork
 from matchms.filtering import default_filters
 from matchms.filtering import normalize_intensities
 from matchms.filtering import select_by_intensity
@@ -26,10 +24,10 @@ from monolith.enrichers.adducts import (
     negative_adducts_from_chemical,
 )
 from monolith.data import ISDBEnricherConfig
-from monolith.data.isdb_data_classes import MS2ChemicalAnnotation
-from monolith.data import Lotus
+from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
+from monolith.data.lotus_class import Lotus, NPC_PATHWAYS, NPC_SUPERCLASSES, NPC_CLASSES
 from monolith.data.isdb_data_classes import ChemicalAdduct
-from monolith.utils import binary_search_by_key
+from monolith.utils import binary_search_by_key, label_propagation_algorithm
 
 
 def peak_processing(spectrum: Spectrum) -> Spectrum:
@@ -210,26 +208,6 @@ class ISDBEnricher(Enricher):
 
     def enrich(self, analysis: Analysis) -> Analysis:
         """Adds ISDB information to the analysis."""
-
-        similarities = calculate_scores(
-            analysis.tandem_mass_spectra,
-            analysis.tandem_mass_spectra,
-            similarity_function=ModifiedCosine(
-                tolerance=self.configuration.networking_params.mn_msms_mz_tol
-            ),
-            is_symmetric=True,
-        )
-        ms_network = SimilarityNetwork(
-            identifier_key="scans",
-            score_cutoff=self.configuration.networking_params.mn_score_cutoff,
-            top_n=self.configuration.networking_params.mn_top_n,
-            max_links=self.configuration.networking_params.mn_max_links,
-            link_method="mutual",
-        )
-        ms_network.create_network(similarities, score_name="ModifiedCosine_score")
-
-        analysis.set_molecular_network(ms_network.graph)
-
         similarity_score = PrecursorMzMatch(
             tolerance=self.configuration.spectral_match_params.parent_mz_tol,
             tolerance_type="Dalton",
@@ -272,8 +250,8 @@ class ISDBEnricher(Enricher):
                         and n_matches
                         > self.configuration.spectral_match_params.min_peaks
                     ):
-                        spectra_chunk[x].add_annotation(
-                            MS2ChemicalAnnotation(
+                        spectra_chunk[x].add_isdb_annotation(
+                            ISDBChemicalAnnotation(
                                 cosine_similarity=msms_score,
                                 number_of_matched_peaks=n_matches,
                                 lotus=self._spectral_db_pos[y].get("lotus_entries"),
@@ -290,5 +268,35 @@ class ISDBEnricher(Enricher):
                 self._adducts,
                 tolerance=self.configuration.spectral_match_params.parent_mz_tol,
             )
+        
+        # propagated_npc_pathway_annotations = label_propagation_algorithm(
+        #     graph=analysis.molecular_network,
+        #     classes=analysis.get_one_hot_encoded_npc_pathway_annotations()
+        # )
+
+        propagated_npc_superclass_annotations = label_propagation_algorithm(
+            graph=analysis.molecular_network,
+            node_names=analysis.feature_ids,
+            classes=analysis.get_one_hot_encoded_npc_superclass_annotations()
+        )
+
+        propagated_npc_class_annotations = label_propagation_algorithm(
+            graph=analysis.molecular_network,
+            node_names=analysis.feature_ids,
+            classes=analysis.get_one_hot_encoded_npc_class_annotations()
+        )
+
+        # analysis.set_isdb_propagated_npc_pathway_annotations(propagated_npc_pathway_annotations)
+        analysis.set_isdb_propagated_npc_superclass_annotations(propagated_npc_superclass_annotations)
+        analysis.set_isdb_propagated_npc_class_annotations(propagated_npc_class_annotations)
+
+        # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
+
+        # pathway = pd.DataFrame(propagated_npc_pathway_annotations, columns=NPC_PATHWAYS)
+        # pathway.to_csv("downloads/pathway.csv", index=False)
+        superclass = pd.DataFrame(propagated_npc_superclass_annotations, columns=NPC_SUPERCLASSES)
+        superclass.to_csv("downloads/superclass.csv", index=False)
+        classes = pd.DataFrame(propagated_npc_class_annotations, columns=NPC_CLASSES)
+        classes.to_csv("downloads/class.csv", index=False)
 
         return analysis
