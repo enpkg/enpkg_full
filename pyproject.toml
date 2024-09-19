@@ -41,6 +41,7 @@ opentree = "^1.0.1"
 userinput = "^1.0.22"
 lxml = "^5.2.2"
 taxonomical-utils = "^0.0.9"
+duckdb = "^1.1.0"
 
 
 

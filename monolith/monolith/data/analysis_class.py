@@ -109,7 +109,7 @@ class Analysis:
     @property
     def number_of_spectra_with_at_least_one_annotation(self):
         return sum(
-            int(spectrum.is_annotated())
+            int(spectrum.is_isdb_annotated())
             for spectrum in self._annotated_tandem_mass_spectra
         )
 
@@ -211,7 +211,7 @@ class Analysis:
     def best_lotus_annotation_per_spectra(self) -> Iterable[Lotus]:
         """Returns the best LOTUS annotation per spectra."""
         for spectrum in self.annotated_tandem_mass_spectra:
-            if not spectrum.is_annotated():
+            if not spectrum.is_isdb_annotated():
                 continue
             best_annotation = spectrum.best_lotus_annotation_by_ott_match(
                 self.best_ott_match
