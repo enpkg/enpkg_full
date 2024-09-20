@@ -24,7 +24,9 @@ class DefaultPipeline(Pipeline):
             global_configuration = yaml.safe_load(file)
 
         isdb_configuration = ISDBEnricherConfig.from_dict(global_configuration["isdb"])
-        network_configuration = NetworkEnricherConfig.from_dict(global_configuration["network"])
+        network_configuration = NetworkEnricherConfig.from_dict(
+            global_configuration["network"]
+        )
 
         self.logger.info("Initializing taxa enricher")
         start = time()
@@ -34,7 +36,9 @@ class DefaultPipeline(Pipeline):
         self.logger.info("Initializing network enricher")
         start = time()
         network_enricher = NetworkEnricher(network_configuration)
-        self.logger.info("%s took %.2f seconds", network_enricher.name(), time() - start)
+        self.logger.info(
+            "%s took %.2f seconds", network_enricher.name(), time() - start
+        )
 
         self.logger.info("Initializing ISDB enricher")
         start = time()

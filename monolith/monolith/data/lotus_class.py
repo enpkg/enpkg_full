@@ -13,7 +13,7 @@ NPC_PATHWAYS: List[str] = [
     "Fatty acids",
     "Polyketides",
     "Shikimates and Phenylpropanoids",
-    "Terpenoids"
+    "Terpenoids",
 ]
 NPC_SUPERCLASSES: List[str] = [
     "Alkylresorcinols",
@@ -92,10 +92,10 @@ NPC_SUPERCLASSES: List[str] = [
     "Tyrosine alkaloids",
     "Xanthones",
     "\u03b2-lactams",
-    "\u03b3-lactam-\u03b2-lactones"
+    "\u03b3-lactam-\u03b2-lactones",
 ]
 NPC_CLASSES: List[str] = [
-     "12-oxophytodienoic acid metabolites",
+    "12-oxophytodienoic acid metabolites",
     "2-arylbenzofurans",
     "2-pyrone derivatives",
     "3-Decalinoyltetramic acids",
@@ -781,12 +781,13 @@ NPC_CLASSES: List[str] = [
     "Zizaane sesquiterpenoids",
     "m-Terphenyls",
     "p-Terphenyls",
-    "pteridine alkaloids"
+    "pteridine alkaloids",
 ]
 
 NUMBER_OF_NPC_PATHWAYS: int = len(NPC_PATHWAYS)
 NUMBER_OF_NPC_SUPERCLASSES: int = len(NPC_SUPERCLASSES)
 NUMBER_OF_NPC_CLASSES: int = len(NPC_CLASSES)
+
 
 @dataclass
 class Lotus:
@@ -922,7 +923,7 @@ class Lotus:
         if self.structure_taxonomy_npclassifier_01pathway is None:
             return None
         return NPC_PATHWAYS.index(self.structure_taxonomy_npclassifier_01pathway)
-    
+
     @property
     def npc_superclass(self) -> Optional[int]:
         """Return the NPC superclass number."""

@@ -153,7 +153,9 @@ class Analysis:
         """Extends the OTT match of the analysis."""
         self._ott_matches.extend(ott_match)
 
-    def set_isdb_propagated_npc_pathway_annotations(self, npc_pathway_annotations: np.ndarray):
+    def set_isdb_propagated_npc_pathway_annotations(
+        self, npc_pathway_annotations: np.ndarray
+    ):
         """Sets the ISDB propagated pathway annotations"""
         for spectrum, npc_pathway_annotation in zip(
             self.annotated_tandem_mass_spectra, npc_pathway_annotations
@@ -169,12 +171,16 @@ class Analysis:
             ]
         )
 
-    def set_isdb_propagated_npc_superclass_annotations(self, npc_superclass_annotations: np.ndarray):
+    def set_isdb_propagated_npc_superclass_annotations(
+        self, npc_superclass_annotations: np.ndarray
+    ):
         """Sets the ISDB propagated superclass annotations"""
         for spectrum, npc_superclass_annotation in zip(
             self.annotated_tandem_mass_spectra, npc_superclass_annotations
         ):
-            spectrum.set_isdb_propagated_npc_superclass_annotations(npc_superclass_annotation)
+            spectrum.set_isdb_propagated_npc_superclass_annotations(
+                npc_superclass_annotation
+            )
 
     def get_one_hot_encoded_npc_superclass_annotations(self) -> np.ndarray:
         """Returns the one-hot encoded NPC superclass annotations of the analysis."""
@@ -185,7 +191,9 @@ class Analysis:
             ]
         )
 
-    def set_isdb_propagated_npc_class_annotations(self, npc_class_annotations: np.ndarray):
+    def set_isdb_propagated_npc_class_annotations(
+        self, npc_class_annotations: np.ndarray
+    ):
         """Sets the ISDB propagated class annotations"""
         for spectrum, npc_class_annotation in zip(
             self.annotated_tandem_mass_spectra, npc_class_annotations

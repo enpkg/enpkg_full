@@ -268,7 +268,7 @@ class ISDBEnricher(Enricher):
                 self._adducts,
                 tolerance=self.configuration.spectral_match_params.parent_mz_tol,
             )
-        
+
         # propagated_npc_pathway_annotations = label_propagation_algorithm(
         #     graph=analysis.molecular_network,
         #     classes=analysis.get_one_hot_encoded_npc_pathway_annotations()
@@ -277,24 +277,30 @@ class ISDBEnricher(Enricher):
         propagated_npc_superclass_annotations = label_propagation_algorithm(
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
-            classes=analysis.get_one_hot_encoded_npc_superclass_annotations()
+            classes=analysis.get_one_hot_encoded_npc_superclass_annotations(),
         )
 
         propagated_npc_class_annotations = label_propagation_algorithm(
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
-            classes=analysis.get_one_hot_encoded_npc_class_annotations()
+            classes=analysis.get_one_hot_encoded_npc_class_annotations(),
         )
 
         # analysis.set_isdb_propagated_npc_pathway_annotations(propagated_npc_pathway_annotations)
-        analysis.set_isdb_propagated_npc_superclass_annotations(propagated_npc_superclass_annotations)
-        analysis.set_isdb_propagated_npc_class_annotations(propagated_npc_class_annotations)
+        analysis.set_isdb_propagated_npc_superclass_annotations(
+            propagated_npc_superclass_annotations
+        )
+        analysis.set_isdb_propagated_npc_class_annotations(
+            propagated_npc_class_annotations
+        )
 
         # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
 
         # pathway = pd.DataFrame(propagated_npc_pathway_annotations, columns=NPC_PATHWAYS)
         # pathway.to_csv("downloads/pathway.csv", index=False)
-        superclass = pd.DataFrame(propagated_npc_superclass_annotations, columns=NPC_SUPERCLASSES)
+        superclass = pd.DataFrame(
+            propagated_npc_superclass_annotations, columns=NPC_SUPERCLASSES
+        )
         superclass.to_csv("downloads/superclass.csv", index=False)
         classes = pd.DataFrame(propagated_npc_class_annotations, columns=NPC_CLASSES)
         classes.to_csv("downloads/class.csv", index=False)
