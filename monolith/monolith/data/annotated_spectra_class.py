@@ -46,19 +46,29 @@ class AnnotatedSpectra:
     def set_isdb_propagated_npc_pathway_annotations(self, npc_pathway: np.ndarray):
         """Set the ISDB propagated NPC pathway annotations"""
         assert isinstance(npc_pathway, np.ndarray), "NPC pathway must be a numpy array."
-        assert npc_pathway.shape == (NUMBER_OF_NPC_PATHWAYS,), "NPC pathway must have the correct shape."
+        assert npc_pathway.shape == (
+            NUMBER_OF_NPC_PATHWAYS,
+        ), "NPC pathway must have the correct shape."
         self.isdb_propagated_npc_pathway = npc_pathway
 
-    def set_isdb_propagated_npc_superclass_annotations(self, npc_superclass: np.ndarray):
+    def set_isdb_propagated_npc_superclass_annotations(
+        self, npc_superclass: np.ndarray
+    ):
         """Set the ISDB propagated NPC superclass annotations"""
-        assert isinstance(npc_superclass, np.ndarray), "NPC superclass must be a numpy array."
-        assert npc_superclass.shape == (NUMBER_OF_NPC_SUPERCLASSES,), "NPC superclass must have the correct shape."
+        assert isinstance(
+            npc_superclass, np.ndarray
+        ), "NPC superclass must be a numpy array."
+        assert npc_superclass.shape == (
+            NUMBER_OF_NPC_SUPERCLASSES,
+        ), "NPC superclass must have the correct shape."
         self.isdb_propagated_npc_superclass = npc_superclass
 
     def set_isdb_propagated_npc_class_annotations(self, npc_class: np.ndarray):
         """Set the ISDB propagated NPC class annotations"""
         assert isinstance(npc_class, np.ndarray), "NPC class must be a numpy array."
-        assert npc_class.shape == (NUMBER_OF_NPC_CLASSES,), "NPC class must have the correct shape."
+        assert npc_class.shape == (
+            NUMBER_OF_NPC_CLASSES,
+        ), "NPC class must have the correct shape."
         self.isdb_propagated_npc_class = npc_class
 
     def get_one_hot_encoded_npc_pathway_annotations(self) -> np.ndarray:
@@ -71,9 +81,11 @@ class AnnotatedSpectra:
             for lotus_entry in annotation.lotus:
                 npc_pathway = lotus_entry.npc_pathway
                 if npc_pathway is not None and not one_hot[npc_pathway]:
-                    print(f"Spectra: {self.feature_id}) ISDB Annotation {lotus_entry.short_inchikey} has pathway {lotus_entry.structure_taxonomy_npclassifier_01pathway}: {one_hot}")
+                    print(
+                        f"Spectra: {self.feature_id}) ISDB Annotation {lotus_entry.short_inchikey} has pathway {lotus_entry.structure_taxonomy_npclassifier_01pathway}: {one_hot}"
+                    )
                     one_hot[npc_pathway] = 1
-        
+
         for annotation in self.sirius_annotations:
             if annotation.lotus is None:
                 continue
@@ -87,7 +99,9 @@ class AnnotatedSpectra:
                 continue
             npc_pathway = adduct.lotus.npc_pathway
             if npc_pathway is not None and not one_hot[npc_pathway]:
-                print(f"Spectra: {self.feature_id}) Adduct {adduct.lotus.short_inchikey} has pathway {adduct.lotus.structure_taxonomy_npclassifier_01pathway}: {one_hot}")
+                print(
+                    f"Spectra: {self.feature_id}) Adduct {adduct.lotus.short_inchikey} has pathway {adduct.lotus.structure_taxonomy_npclassifier_01pathway}: {one_hot}"
+                )
                 one_hot[npc_pathway] = 1
 
         return one_hot

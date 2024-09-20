@@ -1,4 +1,5 @@
 """Label Propagation Algorithm (LPA) implementation."""
+
 from typing import List
 import networkx as nx
 import numpy as np
@@ -54,11 +55,15 @@ def label_propagation_algorithm(
     iteration_number = 0
 
     # We prepare the reverse index for the node names.
-    assert set(node_names) == set(graph.nodes), "The node names must be the same as the graph nodes."
+    assert set(node_names) == set(
+        graph.nodes
+    ), "The node names must be the same as the graph nodes."
 
     # We prepare a reverse index for the node names
     largest_node = max(int(node_name) for node_name in node_names)
-    reverse_index = np.full((largest_node + 1, ), fill_value=10*largest_node, dtype=int)
+    reverse_index = np.full(
+        (largest_node + 1,), fill_value=10 * largest_node, dtype=int
+    )
     for index, node_name in enumerate(node_names):
         reverse_index[int(node_name)] = index
 
@@ -83,7 +88,10 @@ def label_propagation_algorithm(
             disable=not verbose,
         ):
             for neighbor in graph.neighbors(node):
-                new_features[reverse_index[int(node)]] += features[reverse_index[int(neighbor)]] * graph[node][neighbor][weight]
+                new_features[reverse_index[int(node)]] += (
+                    features[reverse_index[int(neighbor)]]
+                    * graph[node][neighbor][weight]
+                )
 
         # We normalize the features
         new_features = new_features / new_features.sum(axis=1)[:, None]
