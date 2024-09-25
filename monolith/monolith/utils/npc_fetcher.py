@@ -4,6 +4,8 @@ import duckdb
 from tqdm import tqdm
 import logging
 import time
+from urllib.parse import quote
+
 
 # Setup logging configuration
 logging.basicConfig(
@@ -15,24 +17,35 @@ logging.basicConfig(
     ],
 )
 
+
 # Modified get_npc_classification function with simple retry mechanism
 def get_npc_classification(smiles, max_retries=3):
-    url = f"https://npclassifier.gnps2.org/classify?smiles={smiles}"
+
+    # URL encode the SMILES string
+    encoded_smiles = quote(smiles)
+
+    url = f"https://npclassifier.gnps2.org/classify?smiles={encoded_smiles}"
     retries = 0
-    
+
     while retries < max_retries:
         try:
-            response = requests.get(url, timeout=10)  # Adding a timeout to avoid hanging
+            response = requests.get(
+                url, timeout=10
+            )  # Adding a timeout to avoid hanging
             if response.status_code == 200:
                 return response.json()
             else:
-                logging.error(f"Error fetching data for SMILES: {smiles} - Status Code: {response.status_code}")
+                logging.error(
+                    f"Error fetching data for SMILES: {smiles} - Status Code: {response.status_code}"
+                )
                 break
         except requests.exceptions.RequestException as e:
             retries += 1
             logging.error(f"Attempt {retries} failed for SMILES: {smiles} - {e}")
-            
-    logging.error(f"Failed to fetch data for SMILES: {smiles} after {max_retries} attempts.")
+
+    logging.error(
+        f"Failed to fetch data for SMILES: {smiles} after {max_retries} attempts."
+    )
     return None
 
 
@@ -209,7 +222,7 @@ def get_classification_results(db_name="monolith/npc_classification.duckdb"):
 if __name__ == "__main__":
     print("Loading metadata...")
     # Load your dataset into a DataFrame
-    path_to_lotus = "downloads/taxo_db_metadata.csv"
+    path_to_lotus = "downloads/unclassified_inchikeys.csv"
     # Load the metadata table
     metadata = pd.read_csv(path_to_lotus)
     print("Keeping only unique InChIKeys...")
