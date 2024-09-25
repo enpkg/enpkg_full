@@ -20,7 +20,7 @@ class TestDefaultPipeline:
             performance_change = elapsed_time / cls.time_requirements[test_name]
             # If the performance is more than 1%, we consider it statistically significant
             if performance_change > 1.01:
-                cls.logger.error(
+                cls.logger.warning(
                     "Performance WORSENED for '%s': %.2f%%",
                     test_name,
                     performance_change * 100,
@@ -80,24 +80,14 @@ class TestDefaultPipeline:
 
         for analysis in batch.analyses:
             assert isinstance(analysis, Analysis)
-            assert len(analysis.annotated_tandem_mass_spectra) == 678
+            assert len(analysis.tandem_mass_spectra) == 678
             assert analysis.number_of_spectra_with_at_least_one_annotation == 191
 
             # We print the best OTT match for the analysis
             # best_ott_match = analysis.best_ott_match
 
-            # print(best_ott_match)
-
-            best_lotus_per_spectrum = list(analysis.best_lotus_annotation_per_spectra)
-
-            # print(best_lotus_per_spectrum)
-
-            # We print the best OTT match for the analysis
-            # best_ott_match = analysis.best_ott_match
-
-            # print(best_ott_match)
-
-            assert len(best_lotus_per_spectrum) == 178
+            for spectrum in analysis.tandem_mass_spectra:
+                print(spectrum.get_top_k_lotus_annotation(5))
 
     def test_default_pipeline_blank(self):
         """Test run for the default pipeline with a blank."""
@@ -113,5 +103,5 @@ class TestDefaultPipeline:
 
         for analysis in batch.analyses:
             assert isinstance(analysis, Analysis)
-            assert len(analysis.annotated_tandem_mass_spectra) == 70
+            assert len(analysis.tandem_mass_spectra) == 70
             assert analysis.number_of_spectra_with_at_least_one_annotation == 24

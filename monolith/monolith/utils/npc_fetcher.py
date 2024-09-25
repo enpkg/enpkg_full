@@ -1,10 +1,9 @@
-import pandas as pd
 import requests
-import duckdb
-from tqdm import tqdm
 import logging
-import time
 from urllib.parse import quote
+import duckdb
+import pandas as pd
+from tqdm import tqdm
 
 
 # Setup logging configuration

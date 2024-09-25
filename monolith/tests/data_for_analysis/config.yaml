@@ -29,7 +29,13 @@ network:
   mn_score_cutoff: 0.7 # the minimal modified cosine score for edge creation
   mn_max_links: 10 # Consider edge between spectrumA and spectrumB if score falls into top_n for spectrumA and spectrumB
   mn_top_n: 15 # Maximum number of links to add per node.
-  
+
+ms1_enricher:
+    tolerance_ppm: 2.0 # Tolerance for MS1 matching (adducts) in ppm
+    taxo_db_metadata_url: https://zenodo.org/record/7534071/files/230106_frozen_metadata.csv.gz
+    taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
+
+
 
 isdb:
   adducts-formatter:
@@ -57,7 +63,6 @@ isdb:
 
   reweighting_params:
     top_to_output: 1 # Number of candidate structures to output for each feature
-    ppm_tol_ms1: 2 # Tolerance for MS1 matching (adducts)
     use_post_taxo: True # Use cluster chemical consistency after taxonomical reweighting (True or False)
     top_N_chemical_consistency: 15 # Top N candidates to consider for cluster chemical consistency 
     min_score_taxo_ms1: 8 # Minimal taxonomical score for MS1-only candidates (6: family, 7 genus, 8 species)

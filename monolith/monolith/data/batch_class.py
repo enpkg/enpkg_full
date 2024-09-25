@@ -1,13 +1,31 @@
 """ This module contains the Batch class. """
 
-from typing import List
-import matchms
-from matchms.importing import load_from_mgf
-from matchms.filtering import add_precursor_mz, require_minimum_number_of_peaks
-import pandas as pd
 import os
+from matchms.filtering import default_filters
+from matchms.filtering import normalize_intensities
+from matchms.filtering import select_by_intensity
+from matchms.filtering import select_by_mz
+from matchms import Spectrum
+from matchms.importing import load_from_mgf
+from matchms.filtering import require_minimum_number_of_peaks
+import pandas as pd
 
 from monolith.data.analysis_class import Analysis
+
+
+def peak_processing(spectrum: Spectrum) -> Spectrum:
+    """Applies peak processing to the spectrum.
+
+    Parameters
+    ----------
+    spectrum : Spectrum
+        The spectrum to process.
+    """
+    spectrum = default_filters(spectrum)
+    spectrum = normalize_intensities(spectrum)
+    spectrum = select_by_intensity(spectrum, intensity_from=0.01)
+    spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)
+    return spectrum
 
 
 class Batch:
@@ -26,6 +44,7 @@ class Batch:
         methods_directory: str = "methods",
         mzml_directory: str = "mzml",
         treated_data_directory: str = "treated_data",
+        minimum_number_of_peaks: int = 1,
     ):
         """Load an analysis from a metadata file."""
         metadata = pd.read_csv(metadata_path, sep="\t")
@@ -49,7 +68,7 @@ class Batch:
             methods_directory, "lcms_processing_params.mzbatch"
         )
 
-        for i, row in metadata.iterrows():
+        for _, row in metadata.iterrows():
             sample_filename = row["sample_filename"]
             assert sample_filename.endswith(
                 ".mzML"
@@ -61,9 +80,9 @@ class Batch:
             )
 
             tandem_mass_spectra = [
-                add_precursor_mz(spectrum)
+                peak_processing(spectrum)
                 for spectrum in load_from_mgf(tandem_mass_spectra_path)
-                if require_minimum_number_of_peaks(spectrum, n_required=1)
+                if require_minimum_number_of_peaks(spectrum, n_required=minimum_number_of_peaks)
             ]
 
             feature_quantification_table_path = (

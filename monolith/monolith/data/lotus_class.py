@@ -1,8 +1,9 @@
 """Data class representing the key information of a LOTUS entry."""
 
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Iterator
 from dataclasses import dataclass
 import pandas as pd
+import numpy as np
 from monolith.data.otl_class import Match
 
 
@@ -787,6 +788,8 @@ NPC_CLASSES: List[str] = [
 NUMBER_OF_NPC_PATHWAYS: int = len(NPC_PATHWAYS)
 NUMBER_OF_NPC_SUPERCLASSES: int = len(NPC_SUPERCLASSES)
 NUMBER_OF_NPC_CLASSES: int = len(NPC_CLASSES)
+MAXIMAL_TAXONOMICAL_SCORE: float = 8.0
+
 
 
 @dataclass
@@ -912,33 +915,67 @@ class Lotus:
             manual_validation=series[Lotus._columns["manual_validation"]],
         )
 
+    def __hash__(self) -> int:
+        """Return the hash of the InChIKey."""
+        return hash((
+            self.structure_inchikey,
+            self.organism_taxonomy_ottid
+        ))
+
     @property
     def short_inchikey(self) -> str:
         """Return the first 14 characters of the InChIKey."""
         return self.structure_inchikey[:14]
 
+    def iter_npc_pathways(self) -> Iterator[int]:
+        """Iterate over the NPC pathways."""
+        for i, npc_pathway in enumerate(NPC_PATHWAYS):
+            if npc_pathway == self.structure_taxonomy_npclassifier_01pathway:
+                yield i
+
+    def iter_npc_superclasses(self) -> Iterator[int]:
+        """Iterate over the NPC superclasses."""
+        for i, npc_superclass in enumerate(NPC_SUPERCLASSES):
+            if npc_superclass == self.structure_taxonomy_npclassifier_02superclass:
+                yield i
+
+    def iter_npc_classes(self) -> Iterator[int]:
+        """Iterate over the NPC classes."""
+        for i, npc_class in enumerate(NPC_CLASSES):
+            if npc_class == self.structure_taxonomy_npclassifier_03class:
+                yield i
+
     @property
-    def npc_pathway(self) -> Optional[int]:
+    def one_hot_encoded_npc_pathway(self) -> np.ndarray:
         """Return the NPC pathway number."""
         if self.structure_taxonomy_npclassifier_01pathway is None:
-            return None
-        return NPC_PATHWAYS.index(self.structure_taxonomy_npclassifier_01pathway)
+            return np.zeros((NUMBER_OF_NPC_PATHWAYS,))
+        
+        one_hot_encoded = np.zeros((NUMBER_OF_NPC_PATHWAYS,))
+        one_hot_encoded[NPC_PATHWAYS.index(self.structure_taxonomy_npclassifier_01pathway)] = 1
+        return one_hot_encoded
 
     @property
-    def npc_superclass(self) -> Optional[int]:
+    def one_hot_encoded_npc_superclass(self) -> np.ndarray:
         """Return the NPC superclass number."""
         if self.structure_taxonomy_npclassifier_02superclass is None:
-            return None
-        return NPC_SUPERCLASSES.index(self.structure_taxonomy_npclassifier_02superclass)
+            return np.zeros((NUMBER_OF_NPC_SUPERCLASSES,))
+            
+        one_hot_encoded = np.zeros((NUMBER_OF_NPC_SUPERCLASSES,))
+        one_hot_encoded[NPC_SUPERCLASSES.index(self.structure_taxonomy_npclassifier_02superclass)] = 1
+        return one_hot_encoded
 
     @property
-    def npc_class(self) -> Optional[int]:
+    def one_hot_encoded_npc_class(self) -> np.ndarray:
         """Return the NPC class number."""
         if self.structure_taxonomy_npclassifier_03class is None:
-            return None
-        return NPC_CLASSES.index(self.structure_taxonomy_npclassifier_03class)
+            return np.zeros((NUMBER_OF_NPC_CLASSES,))
 
-    def taxonomical_similarity_with_otl_match(self, match: Match) -> int:
+        one_hot_encoded = np.zeros((NUMBER_OF_NPC_CLASSES,))
+        one_hot_encoded[NPC_CLASSES.index(self.structure_taxonomy_npclassifier_03class)] = 1
+        return one_hot_encoded
+
+    def taxonomical_similarity_with_otl_match(self, match: Match) -> float:
         """Calculate the taxonomical similarity with an OTL match.
 
         Implementative details
@@ -949,27 +986,41 @@ class Lotus:
         are the same between the two organisms.
         """
         if self.species == match.species:
-            return 8
+            return 8.0
 
         if self.genus == match.genus:
-            return 7
+            return 7.0
 
         if self.family == match.family:
-            return 6
+            return 6.0
 
         if self.order == match.order:
-            return 5
+            return 5.0
 
         if self.klass == match.klass:
-            return 4
+            return 4.0
 
         if self.phylum == match.phylum:
-            return 3
+            return 3.0
 
         if self.kingdom == match.kingdom:
-            return 2
+            return 2.0
 
         if self.domain == match.domain:
-            return 1
+            return 1.0
 
-        return 0
+        return 0.0
+
+    def normalized_taxonomical_similarity_with_otl_match(self, match: Match) -> float:
+        """Calculate the normalized taxonomical similarity with an OTL match.
+
+        Implementative details
+        ----------------------
+        The normalized taxonomical similarity is calculated as the taxonomical similarity
+        divided by the maximum possible similarity (8).
+        """
+        match_score = self.taxonomical_similarity_with_otl_match(match)
+        assert (
+            match_score <= MAXIMAL_TAXONOMICAL_SCORE
+        ), f"Expected a maximal score of {MAXIMAL_TAXONOMICAL_SCORE}, got {match_score}."
+        return match_score / MAXIMAL_TAXONOMICAL_SCORE

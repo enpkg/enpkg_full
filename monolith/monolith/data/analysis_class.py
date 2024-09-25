@@ -14,10 +14,9 @@ An Analysis object contains the following data:
 
 from typing import List, Tuple, Optional, Iterable
 import pandas as pd
-import numpy as np
 import matchms
 import networkx as nx
-from monolith.data.annotated_spectra_class import AnnotatedSpectra
+from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data.otl_class import Match
 from monolith.data.lotus_class import Lotus
 
@@ -55,9 +54,8 @@ class Analysis:
             features_quantification_table, pd.DataFrame
         ), "features_quantification_table must be a pd.DataFrame object"
         self._metadata = metadata
-        self._tandem_mass_spectra = tandem_mass_spectra
-        self._annotated_tandem_mass_spectra: List[AnnotatedSpectra] = [
-            AnnotatedSpectra(
+        self._tandem_mass_spectra: List[AnnotatedSpectrum] = [
+            AnnotatedSpectrum(
                 spectrum,
                 mass_over_charge=row["row m/z"],
                 retention_time=row["row retention time"],
@@ -91,26 +89,24 @@ class Analysis:
 
     @property
     def number_of_spectra(self):
+        """Returns the number of tandem mass spectra of the analysis."""
         return len(self._tandem_mass_spectra)
 
     @property
-    def tandem_mass_spectra(self):
+    def tandem_mass_spectra(self) -> List[AnnotatedSpectrum]:
+        """Returns the tandem mass spectra of the analysis."""
         return self._tandem_mass_spectra
-
-    @property
-    def annotated_tandem_mass_spectra(self):
-        return self._annotated_tandem_mass_spectra
 
     @property
     def feature_ids(self) -> List[str]:
         """Returns the feature IDs of the analysis."""
-        return [spectrum.feature_id for spectrum in self._annotated_tandem_mass_spectra]
+        return [spectrum.feature_id for spectrum in self._tandem_mass_spectra]
 
     @property
     def number_of_spectra_with_at_least_one_annotation(self):
         return sum(
-            int(spectrum.is_isdb_annotated())
-            for spectrum in self._annotated_tandem_mass_spectra
+            int(spectrum.has_isdb_annotations())
+            for spectrum in self._tandem_mass_spectra
         )
 
     @property
@@ -153,62 +149,6 @@ class Analysis:
         """Extends the OTT match of the analysis."""
         self._ott_matches.extend(ott_match)
 
-    def set_isdb_propagated_npc_pathway_annotations(
-        self, npc_pathway_annotations: np.ndarray
-    ):
-        """Sets the ISDB propagated pathway annotations"""
-        for spectrum, npc_pathway_annotation in zip(
-            self.annotated_tandem_mass_spectra, npc_pathway_annotations
-        ):
-            spectrum.set_isdb_propagated_npc_pathway_annotations(npc_pathway_annotation)
-
-    def get_one_hot_encoded_npc_pathway_annotations(self) -> np.ndarray:
-        """Returns the one-hot encoded NPC pathway annotations of the analysis."""
-        return np.array(
-            [
-                spectrum.get_one_hot_encoded_npc_pathway_annotations()
-                for spectrum in self.annotated_tandem_mass_spectra
-            ]
-        )
-
-    def set_isdb_propagated_npc_superclass_annotations(
-        self, npc_superclass_annotations: np.ndarray
-    ):
-        """Sets the ISDB propagated superclass annotations"""
-        for spectrum, npc_superclass_annotation in zip(
-            self.annotated_tandem_mass_spectra, npc_superclass_annotations
-        ):
-            spectrum.set_isdb_propagated_npc_superclass_annotations(
-                npc_superclass_annotation
-            )
-
-    def get_one_hot_encoded_npc_superclass_annotations(self) -> np.ndarray:
-        """Returns the one-hot encoded NPC superclass annotations of the analysis."""
-        return np.array(
-            [
-                spectrum.get_one_hot_encoded_npc_superclass_annotations()
-                for spectrum in self.annotated_tandem_mass_spectra
-            ]
-        )
-
-    def set_isdb_propagated_npc_class_annotations(
-        self, npc_class_annotations: np.ndarray
-    ):
-        """Sets the ISDB propagated class annotations"""
-        for spectrum, npc_class_annotation in zip(
-            self.annotated_tandem_mass_spectra, npc_class_annotations
-        ):
-            spectrum.set_isdb_propagated_npc_class_annotations(npc_class_annotation)
-
-    def get_one_hot_encoded_npc_class_annotations(self) -> np.ndarray:
-        """Returns the one-hot encoded NPC class annotations."""
-        return np.array(
-            [
-                spectrum.get_one_hot_encoded_npc_class_annotations()
-                for spectrum in self.annotated_tandem_mass_spectra
-            ]
-        )
-
     @property
     def best_ott_match(self) -> Match:
         """Returns the best OTT match of the analysis."""
@@ -218,7 +158,7 @@ class Analysis:
     @property
     def best_lotus_annotation_per_spectra(self) -> Iterable[Lotus]:
         """Returns the best LOTUS annotation per spectra."""
-        for spectrum in self.annotated_tandem_mass_spectra:
+        for spectrum in self.tandem_mass_spectra:
             if not spectrum.is_isdb_annotated():
                 continue
             best_annotation = spectrum.best_lotus_annotation_by_ott_match(
