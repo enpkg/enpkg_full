@@ -5,44 +5,30 @@ from typing import List
 import pickle
 from logging import Logger
 import pandas as pd
+import numpy as np
 from tqdm.auto import tqdm, trange
 from tqdm.contrib import tzip
 from downloaders import BaseDownloader
 
 from matchms import calculate_scores
-from matchms.filtering import default_filters
-from matchms.filtering import normalize_intensities
-from matchms.filtering import select_by_intensity
-from matchms.filtering import select_by_mz
-from matchms import Spectrum
 from matchms.similarity import PrecursorMzMatch
 from matchms.similarity import CosineGreedy
+from matchms import Spectrum
 from monolith.enrichers.enricher import Enricher
 from monolith.data import Analysis
-from monolith.enrichers.adducts import (
-    positive_adducts_from_chemical,
-    negative_adducts_from_chemical,
-)
+from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data import ISDBEnricherConfig
 from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
-from monolith.data.lotus_class import Lotus, NPC_PATHWAYS, NPC_SUPERCLASSES, NPC_CLASSES
-from monolith.data.isdb_data_classes import ChemicalAdduct
+from monolith.data.lotus_class import Lotus
 from monolith.utils import binary_search_by_key, label_propagation_algorithm
-
-
-def peak_processing(spectrum: Spectrum) -> Spectrum:
-    """Applies peak processing to the spectrum.
-
-    Parameters
-    ----------
-    spectrum : Spectrum
-        The spectrum to process.
-    """
-    spectrum = default_filters(spectrum)
-    spectrum = normalize_intensities(spectrum)
-    spectrum = select_by_intensity(spectrum, intensity_from=0.01)
-    spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)
-    return spectrum
+from monolith.data.lotus_class import (
+    NUMBER_OF_NPC_PATHWAYS,
+    NUMBER_OF_NPC_SUPERCLASSES,
+    NUMBER_OF_NPC_CLASSES,
+    NPC_PATHWAYS,
+    NPC_SUPERCLASSES,
+    NPC_CLASSES,
+)
 
 
 class ISDBEnricher(Enricher):
@@ -166,42 +152,6 @@ class ISDBEnricher(Enricher):
             "Added Lotus entries to spectral database in %.2f seconds", time() - start
         )
 
-        logger.info("Creating adducts")
-        start = time()
-        self._adducts: List[ChemicalAdduct] = (
-            [
-                adduct
-                for lotus in self._lotus
-                for adduct in positive_adducts_from_chemical(lotus)
-            ]
-            if polarity
-            else [
-                adduct
-                for lotus in self._lotus
-                for adduct in negative_adducts_from_chemical(lotus)
-            ]
-        )
-
-        logger.info(
-            "Created %d adducts in %.2f seconds",
-            len(self._adducts),
-            time() - start,
-        )
-
-        start = time()
-
-        # We sort the adducts by the 'mass' key so that when
-        # we match the precursor mass with the adducts, we can do so
-        # via binary search.
-
-        self._adducts = sorted(self._adducts, key=lambda x: x.adduct_mass)
-
-        logger.info(
-            "Sorted %d adducts by exact mass in %.2f seconds",
-            len(self._adducts),
-            time() - start,
-        )
-
     def name(self) -> str:
         """Returns the name of the enricher."""
         return "ISDB Enricher"
@@ -225,25 +175,27 @@ class ISDBEnricher(Enricher):
             leave=False,
             dynamic_ncols=True,
         ):
-            spectra_chunk = analysis.annotated_tandem_mass_spectra[
+            spectra_chunk: List[AnnotatedSpectrum] = analysis.tandem_mass_spectra[
                 min_range : min_range + range_size
             ]
 
-            peak_processed_spectra = [
-                peak_processing(spectrum.spectrum) for spectrum in spectra_chunk
-            ]
-
             cosine_similarities_with_database = calculate_scores(
-                peak_processed_spectra, self._spectral_db_pos, similarity_score
+                references=spectra_chunk,
+                queries=self._spectral_db_pos,
+                similarity_function=similarity_score,
             )
-            idx_row = cosine_similarities_with_database.scores[:, :][0]
-            idx_col = cosine_similarities_with_database.scores[:, :][1]
+
+            idx_reference = cosine_similarities_with_database.scores[:, :][0]
+            idx_query = cosine_similarities_with_database.scores[:, :][1]
             for x, y in tzip(
-                idx_row, idx_col, desc="Processing chunk similarities", leave=False
+                idx_reference,
+                idx_query,
+                desc="Processing chunk similarities",
+                leave=False,
             ):
                 if x < y:
                     msms_score, n_matches = cosinegreedy.pair(
-                        peak_processed_spectra[x], self._spectral_db_pos[y]
+                        spectra_chunk[x], self._spectral_db_pos[y]
                     )[()]
                     if (
                         msms_score > self.configuration.spectral_match_params.min_score
@@ -258,51 +210,97 @@ class ISDBEnricher(Enricher):
                             )
                         )
 
-        for spectrum in tqdm(
-            analysis.annotated_tandem_mass_spectra,
-            leave=False,
-            desc="Filtering precursor adducts",
+        pathway_features = np.zeros(
+            (analysis.number_of_spectra, NUMBER_OF_NPC_PATHWAYS), dtype=np.float32
+        )
+        superclass_features = np.zeros(
+            (analysis.number_of_spectra, NUMBER_OF_NPC_SUPERCLASSES),
+            dtype=np.float32,
+        )
+        class_features = np.zeros(
+            (analysis.number_of_spectra, NUMBER_OF_NPC_CLASSES), dtype=np.float32
+        )
+
+        for i, spectrum in enumerate(analysis.tandem_mass_spectra):
+
+            # If the spectrum has no ISDB annotations, we cannot make assumptions regarding its scores,
+            # and therefore we give uniform scores to all pathways, superclasses, and classes.
+            if not spectrum.has_isdb_annotations():
+                pathway_features[i] = np.zeros(
+                    (NUMBER_OF_NPC_PATHWAYS,),
+                )
+                superclass_features[i] = np.zeros(
+                    (NUMBER_OF_NPC_SUPERCLASSES,),
+                )
+                class_features[i] = np.zeros((NUMBER_OF_NPC_CLASSES,))
+                continue
+
+            # Now that we have determined the candidates potentially associated with this
+            # spectrum, we can populate the associated features with the candidates' pathway,
+            # superclass, and class annotations, weighted by the adduct's normalized
+            # taxonomical similarity score.
+            for isdb_annotation in spectrum.isdb_annotations:
+                pathway_features[i] += isdb_annotation.get_npc_pathway_scores(
+                    analysis.best_ott_match
+                )
+
+                superclass_features[i] += isdb_annotation.get_npc_superclass_scores(
+                    analysis.best_ott_match
+                )
+
+                class_features[i] += isdb_annotation.get_npc_class_scores(
+                    analysis.best_ott_match
+                )
+
+            # We normalize by the number of ISDB annotations
+            pathway_features[i] /= len(spectrum.isdb_annotations)
+            superclass_features[i] /= len(spectrum.isdb_annotations)
+            class_features[i] /= len(spectrum.isdb_annotations)
+
+        loading_bar = tqdm(
+            desc="Computing LPA scores",
             dynamic_ncols=True,
-        ):
-            spectrum.set_filtered_adducts_from_list(
-                self._adducts,
-                tolerance=self.configuration.spectral_match_params.parent_mz_tol,
-            )
+            leave=False,
+            total=3,
+        )
 
-        # propagated_npc_pathway_annotations = label_propagation_algorithm(
-        #     graph=analysis.molecular_network,
-        #     classes=analysis.get_one_hot_encoded_npc_pathway_annotations()
-        # )
-
-        propagated_npc_superclass_annotations = label_propagation_algorithm(
+        propagated_pathway = label_propagation_algorithm(
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
-            classes=analysis.get_one_hot_encoded_npc_superclass_annotations(),
+            features=pathway_features,
         )
 
-        propagated_npc_class_annotations = label_propagation_algorithm(
+        loading_bar.update(1)
+
+        propagated_superclass = label_propagation_algorithm(
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
-            classes=analysis.get_one_hot_encoded_npc_class_annotations(),
+            features=superclass_features,
         )
 
-        # analysis.set_isdb_propagated_npc_pathway_annotations(propagated_npc_pathway_annotations)
-        analysis.set_isdb_propagated_npc_superclass_annotations(
-            propagated_npc_superclass_annotations
+        loading_bar.update(1)
+
+        propagated_class = label_propagation_algorithm(
+            graph=analysis.molecular_network,
+            node_names=analysis.feature_ids,
+            features=class_features,
         )
-        analysis.set_isdb_propagated_npc_class_annotations(
-            propagated_npc_class_annotations
-        )
+
+        loading_bar.update(1)
+        loading_bar.close()
+
+        for i, spectrum in enumerate(analysis.tandem_mass_spectra):
+            spectrum.set_isdb_npc_pathway_scores(propagated_pathway[i])
+            spectrum.set_isdb_npc_superclass_scores(propagated_superclass[i])
+            spectrum.set_isdb_npc_class_scores(propagated_class[i])
 
         # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
 
-        # pathway = pd.DataFrame(propagated_npc_pathway_annotations, columns=NPC_PATHWAYS)
-        # pathway.to_csv("downloads/pathway.csv", index=False)
-        superclass = pd.DataFrame(
-            propagated_npc_superclass_annotations, columns=NPC_SUPERCLASSES
-        )
-        superclass.to_csv("downloads/superclass.csv", index=False)
-        classes = pd.DataFrame(propagated_npc_class_annotations, columns=NPC_CLASSES)
-        classes.to_csv("downloads/class.csv", index=False)
+        pathway = pd.DataFrame(propagated_pathway, columns=NPC_PATHWAYS)
+        pathway.to_csv("downloads/isdb_pathway.csv", index=False)
+        superclass = pd.DataFrame(propagated_superclass, columns=NPC_SUPERCLASSES)
+        superclass.to_csv("downloads/isdb_superclass.csv", index=False)
+        classes = pd.DataFrame(propagated_class, columns=NPC_CLASSES)
+        classes.to_csv("downloads/isdb_class.csv", index=False)
 
         return analysis

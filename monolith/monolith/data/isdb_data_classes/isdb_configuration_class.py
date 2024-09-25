@@ -2,18 +2,6 @@ from dataclasses import dataclass
 from typing import Dict, Any
 
 
-@dataclass
-class AdductsFormatterParams:
-    """Parameters for adducts formatting."""
-
-    taxo_db_metadata_path: str
-
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "AdductsFormatterParams":
-        """Creates an instance from a dictionary."""
-        return AdductsFormatterParams(
-            taxo_db_metadata_path=data["taxo_db_metadata_path"]
-        )
 
 
 @dataclass
@@ -87,7 +75,6 @@ class ReweightingParams:
     """Parameters for result reweighting."""
 
     top_to_output: int
-    ppm_tol_ms1: float
     use_post_taxo: bool
     top_N_chemical_consistency: int
     min_score_taxo_ms1: int
@@ -101,7 +88,6 @@ class ReweightingParams:
         """Creates an instance from a dictionary."""
         return ReweightingParams(
             top_to_output=data["top_to_output"],
-            ppm_tol_ms1=data["ppm_tol_ms1"],
             use_post_taxo=data["use_post_taxo"],
             top_N_chemical_consistency=data["top_N_chemical_consistency"],
             min_score_taxo_ms1=data["min_score_taxo_ms1"],
@@ -116,7 +102,6 @@ class ReweightingParams:
 class ISDBEnricherConfig:
     """Configuration for IDB Enrichers."""
 
-    adducts_formatter: AdductsFormatterParams
     general_params: GeneralParams
     paths: Paths
     urls: Urls
@@ -127,9 +112,6 @@ class ISDBEnricherConfig:
     def from_dict(data: Dict[str, Any]) -> "ISDBEnricherConfig":
         """Creates an instance from a dictionary."""
         return ISDBEnricherConfig(
-            adducts_formatter=AdductsFormatterParams.from_dict(
-                data["adducts-formatter"]
-            ),
             general_params=GeneralParams.from_dict(data["general_params"]),
             paths=Paths.from_dict(data["paths"]),
             urls=Urls.from_dict(data["urls"]),

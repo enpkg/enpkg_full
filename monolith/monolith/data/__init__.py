@@ -7,6 +7,8 @@ from monolith.data.otl_class import Match, Taxon, LineageItem
 from monolith.data.isdb_data_classes import ISDBEnricherConfig
 from monolith.data.lotus_class import Lotus
 from monolith.data.spectral_network_classes import NetworkEnricherConfig
+from monolith.data.ms1_data_classes import ChemicalAdduct, AdductRecipe, MS1EnricherConfig
+
 
 __all__ = [
     "Analysis",
@@ -18,4 +20,7 @@ __all__ = [
     "ISDBEnricherConfig",
     "Lotus",
     "NetworkEnricherConfig",
+    "ChemicalAdduct",
+    "AdductRecipe",
+    "MS1EnricherConfig",
 ]
