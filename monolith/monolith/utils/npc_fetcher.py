@@ -221,7 +221,7 @@ def get_classification_results(db_name="monolith/npc_classification.duckdb"):
 if __name__ == "__main__":
     print("Loading metadata...")
     # Load your dataset into a DataFrame
-    path_to_lotus = "downloads/unclassified_inchikeys.csv"
+    path_to_lotus = "downloads/taxo_db_metadata.csv"
     # Load the metadata table
     metadata = pd.read_csv(path_to_lotus)
     print("Keeping only unique InChIKeys...")
