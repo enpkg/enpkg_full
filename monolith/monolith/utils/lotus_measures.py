@@ -28,7 +28,7 @@ def unique_inchikey(metadata):
 
     return metadata_unique
 
-
+metadata_unique_ik_pw = unique_inchikey_pathway(metadata)
 metadata_unique_ik = unique_inchikey(metadata)
 
 
@@ -89,7 +89,7 @@ def inchikey_with_multiple_pathways(df):
 
 
 count_inchikey_with_multiple_pathways(metadata_unique)
-metadata_unique_multi_pw = inchikey_with_multiple_pathways(metadata_unique)
+metadata_unique_multi_pw = inchikey_with_multiple_pathways(metadata_unique_ik_pw)
 
 
 # Function to fetch the NPC classification for a given SMILES. We use the following https://npclassifier.gnps2.org/classify?smiles=CC(C)C(N)C(=O)NOC(CC(=O)O)C(=O)O
