@@ -33,7 +33,6 @@ def label_propagation_algorithm(
     """
 
     last_variation = np.inf
-    iteration_number = 0
 
     # We prepare a reverse index for the node names, as we have no guarantee for the network
     # to have the nodes in the same order as the classes, or to have all the nodes.
@@ -45,10 +44,12 @@ def label_propagation_algorithm(
         reverse_index[int(node_name)] = index
 
     global_progress_bar = tqdm(
-        desc="Layer Propagation Algorithm",
+        desc="LPA",
+        total=100,
         dynamic_ncols=True,
         leave=False,
         disable=not verbose,
+        bar_format="{l_bar}{bar}| {n:.2f}%",
     )
 
     # We normalize the features
@@ -76,11 +77,9 @@ def label_propagation_algorithm(
         features = new_features
 
         # We update the features
-        iteration_number += 1
-        global_progress_bar.update()
+        global_progress_bar.update(n=convergence_percentage - global_progress_bar.n)
         global_progress_bar.set_postfix(
             {
-                "Convergence": f"{convergence_percentage:.2f}%",
                 "Variation": last_variation,
             }
         )
