@@ -70,14 +70,17 @@ class Analysis:
 
     @property
     def sample_filename(self):
+        """Returns the filename of the sample."""
         return self._metadata["sample_filename"]
 
     @property
     def raw_source_taxon(self):
+        """Returns the raw source taxon of the analysis."""
         return self._metadata["source_taxon"]
 
     @property
     def normalized_source_taxon(self):
+        """Returns the normalized source taxon of the analysis."""
         if not self.is_source_taxon_defined():
             raise ValueError("The source taxon is not defined.")
         return (

@@ -1,11 +1,9 @@
-"""Submodule providing the data class for representing chemical adducts.
-
-A chemical adducts is a molecules form by the combination of the analyte and a given ions. For example [M+H]+ is the adduct formed by the analyte and a proton. This data class is used to represent the adducts in the MS1 annotation process.
-"""
+"""Submodule providing the data class for representing chemical adducts."""
 
 from typing import Dict, List
 from dataclasses import dataclass
 import numpy as np
+from typeguard import typechecked
 from monolith.data.lotus_class import Lotus
 from monolith.data.otl_class import Match
 
@@ -47,6 +45,7 @@ class AdductRecipe:
     positive: bool
     multimer_factor: float = 1.0
 
+    @typechecked
     def compute_adduct_mass(self, exact_lotus_mass: float) -> float:
         """Applies the adduct recepy to the provided exact lotus mass"""
         return (
@@ -73,20 +72,20 @@ class ChemicalAdduct:
     recipe: AdductRecipe
     adduct_mass: float
 
+    @typechecked
     def __init__(self, lotus: List[Lotus], recipe: AdductRecipe):
         assert len(lotus) > 0, "The lotus must not be empty"
 
         # All lotus entries must have the same exact mass and chemical formula
         structure_exact_mass = lotus[0].structure_exact_mass
         structure_molecular_formula = lotus[0].structure_molecular_formula
-        smiles = lotus[0].structure_smiles
         for lotus_entry in lotus[1:]:
-            # assert (
-            #     lotus_entry.structure_exact_mass == structure_exact_mass
-            # ), f"All lotus entries must have the same exact mass, but got {lotus_entry.structure_exact_mass} (with formula {lotus_entry.structure_molecular_formula}, smiles {lotus_entry.structure_smiles}) and {structure_exact_mass} (with formula {structure_molecular_formula}, smiles {smiles})"
             assert (
                 lotus_entry.structure_molecular_formula == structure_molecular_formula
-            ), f"All lotus entries must have the same molecular formula, but got {lotus_entry.structure_molecular_formula} and {structure_molecular_formula}"
+            ), (
+                f"All lotus entries must have the same molecular formula, "
+                f"but got {lotus_entry.structure_molecular_formula} and {structure_molecular_formula}"
+            )
 
         self.lotus = lotus
         self.recipe = recipe
@@ -107,33 +106,36 @@ class ChemicalAdduct:
         """Return whether the adduct is positive or negative."""
         return self.recipe.positive
 
-    def get_npc_pathway_scores(self, match: Match) -> np.ndarray:
+    @typechecked
+    def get_hammer_pathway_scores(self, match: Match) -> np.ndarray:
         """Return the pathway scores for the adduct."""
         return np.mean(
             [
-                lotus.one_hot_encoded_npc_pathway
+                lotus.structure_taxonomy_hammer_pathways.values
                 * lotus.normalized_taxonomical_similarity_with_otl_match(match)
                 for lotus in self.lotus
             ],
             axis=0,
         )
 
-    def get_npc_superclass_scores(self, match: Match) -> np.ndarray:
+    @typechecked
+    def get_hammer_superclass_scores(self, match: Match) -> np.ndarray:
         """Return the superclass scores for the adduct."""
         return np.mean(
             [
-                lotus.one_hot_encoded_npc_superclass
+                lotus.structure_taxonomy_hammer_superclasses.values
                 * lotus.normalized_taxonomical_similarity_with_otl_match(match)
                 for lotus in self.lotus
             ],
             axis=0,
         )
 
-    def get_npc_class_scores(self, match: Match) -> np.ndarray:
+    @typechecked
+    def get_hammer_class_scores(self, match: Match) -> np.ndarray:
         """Return the class scores for the adduct."""
         return np.mean(
             [
-                lotus.one_hot_encoded_npc_class
+                lotus.structure_taxonomy_hammer_classes.values
                 * lotus.normalized_taxonomical_similarity_with_otl_match(match)
                 for lotus in self.lotus
             ],

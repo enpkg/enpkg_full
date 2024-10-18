@@ -3,14 +3,12 @@
 from typing import List, Optional, Dict
 from matchms import Spectrum
 import numpy as np
+from typeguard import typechecked
 from monolith.data.ms1_data_classes import ChemicalAdduct
 from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
 from monolith.data.sirius_data_classes import SiriusChemicalAnnotation
 from monolith.data.lotus_class import (
     Lotus,
-    NUMBER_OF_NPC_PATHWAYS,
-    NUMBER_OF_NPC_CLASSES,
-    NUMBER_OF_NPC_SUPERCLASSES,
 )
 from monolith.data.otl_class import Match
 
@@ -18,6 +16,7 @@ from monolith.data.otl_class import Match
 class AnnotatedSpectrum(Spectrum):
     """Class to store annotated spectra. This is an extension of the matchms Spectrum class"""
 
+    @typechecked
     def __init__(
         self,
         spectrum: Spectrum,
@@ -44,73 +43,42 @@ class AnnotatedSpectrum(Spectrum):
         self._sirius_annotations: List[SiriusChemicalAnnotation] = []
         self._isdb_annotations: List[ISDBChemicalAnnotation] = []
         self._ms1_annotations: List[ChemicalAdduct] = []
-        self._ms1_npc_pathway_scores: Optional[np.ndarray] = None
-        self._ms1_npc_class_scores: Optional[np.ndarray] = None
-        self._ms1_npc_superclass_scores: Optional[np.ndarray] = None
-        self._isdb_npc_pathway_scores: Optional[np.ndarray] = None
-        self._isdb_npc_superclass_scores: Optional[np.ndarray] = None
-        self._isdb_npc_class_scores: Optional[np.ndarray] = None
+        self._ms1_hammer_pathway_scores: Optional[np.ndarray] = None
+        self._ms1_hammer_class_scores: Optional[np.ndarray] = None
+        self._ms1_hammer_superclass_scores: Optional[np.ndarray] = None
+        self._isdb_hammer_pathway_scores: Optional[np.ndarray] = None
+        self._isdb_hammer_superclass_scores: Optional[np.ndarray] = None
+        self._isdb_hammer_class_scores: Optional[np.ndarray] = None
 
-    def set_ms1_npc_pathway_scores(self, npc_pathway_scores: np.ndarray):
+    @typechecked
+    def set_ms1_hammer_pathway_scores(self, npc_pathway_scores: np.ndarray):
         """Set the ms1 propagated NPC pathway annotations"""
-        assert isinstance(
-            npc_pathway_scores, np.ndarray
-        ), "NPC pathway must be a numpy array."
-        assert npc_pathway_scores.shape == (
-            NUMBER_OF_NPC_PATHWAYS,
-        ), "NPC pathway must have the correct shape."
-        self._ms1_npc_pathway_scores = npc_pathway_scores
+        self._ms1_hammer_pathway_scores = npc_pathway_scores
 
-    def set_ms1_npc_superclass_scores(self, npc_superclass_scores: np.ndarray):
+    @typechecked
+    def set_ms1_hammer_superclass_scores(self, npc_superclass_scores: np.ndarray):
         """Set the ms1 propagated NPC superclass annotations"""
-        assert isinstance(
-            npc_superclass_scores, np.ndarray
-        ), "NPC superclass must be a numpy array."
-        assert npc_superclass_scores.shape == (
-            NUMBER_OF_NPC_SUPERCLASSES,
-        ), "NPC superclass must have the correct shape."
-        self._ms1_npc_superclass_scores = npc_superclass_scores
+        self._ms1_hammer_superclass_scores = npc_superclass_scores
 
-    def set_ms1_npc_class_scores(self, npc_class_scores: np.ndarray):
+    @typechecked
+    def set_ms1_hammer_class_scores(self, npc_class_scores: np.ndarray):
         """Set the ms1 propagated NPC class annotations"""
-        assert isinstance(
-            npc_class_scores, np.ndarray
-        ), "NPC class must be a numpy array."
-        assert npc_class_scores.shape == (
-            NUMBER_OF_NPC_CLASSES,
-        ), "NPC class must have the correct shape."
-        self._ms1_npc_class_scores = npc_class_scores
+        self._ms1_hammer_class_scores = npc_class_scores
 
-    def set_isdb_npc_pathway_scores(self, npc_pathway_scores: np.ndarray):
+    @typechecked
+    def set_isdb_hammer_pathway_scores(self, npc_pathway_scores: np.ndarray):
         """Set the ISDB propagated NPC pathway annotations"""
-        assert isinstance(
-            npc_pathway_scores, np.ndarray
-        ), "NPC pathway must be a numpy array."
-        assert npc_pathway_scores.shape == (
-            NUMBER_OF_NPC_PATHWAYS,
-        ), "NPC pathway must have the correct shape."
-        self._isdb_npc_pathway_scores = npc_pathway_scores
+        self._isdb_hammer_pathway_scores = npc_pathway_scores
 
-    def set_isdb_npc_superclass_scores(self, npc_superclass_scores: np.ndarray):
+    @typechecked
+    def set_isdb_hammer_superclass_scores(self, npc_superclass_scores: np.ndarray):
         """Set the ISDB propagated NPC superclass annotations"""
-        assert isinstance(
-            npc_superclass_scores, np.ndarray
-        ), "NPC superclass must be a numpy array."
-        assert npc_superclass_scores.shape == (
-            NUMBER_OF_NPC_SUPERCLASSES,
-        ), "NPC superclass must have the correct shape."
-        self._isdb_npc_superclass_scores = npc_superclass_scores
+        self._isdb_hammer_superclass_scores = npc_superclass_scores
 
-
-    def set_isdb_npc_class_scores(self, npc_class_scores: np.ndarray):
+    @typechecked
+    def set_isdb_hammer_class_scores(self, npc_class_scores: np.ndarray):
         """Set the ISDB propagated NPC class annotations"""
-        assert isinstance(
-            npc_class_scores, np.ndarray
-        ), "NPC class must be a numpy array."
-        assert npc_class_scores.shape == (
-            NUMBER_OF_NPC_CLASSES,
-        ), "NPC class must have the correct shape."
-        self._isdb_npc_class_scores = npc_class_scores
+        self._isdb_hammer_class_scores = npc_class_scores
 
     @property
     def precursor_mz(self):
@@ -144,7 +112,7 @@ class AnnotatedSpectrum(Spectrum):
     def set_ms1_annotations(self, adducts: List[ChemicalAdduct]):
         """Set the possible MS1 adducts"""
         self._ms1_annotations = adducts
-
+    
     def has_isdb_annotations(self) -> bool:
         """Returns whether the spectrum has ISDB annotations"""
         return len(self._isdb_annotations) > 0
@@ -157,6 +125,7 @@ class AnnotatedSpectrum(Spectrum):
         """Add a Sirius annotation to the spectrum."""
         self._sirius_annotations.append(annotation)
 
+    @typechecked
     def get_top_k_lotus_annotation(self, k: int = 1) -> Optional[List[Lotus]]:
         """Returns the top k best LOTUS annotation from the MS1 and ISDB MS2 annotations.
 
@@ -182,30 +151,17 @@ class AnnotatedSpectrum(Spectrum):
                 continue
             for lotus in annotation.lotus:
                 pathway_score = np.mean(
-                    [
-                        self._isdb_npc_pathway_scores[pathway_id]
-                        for pathway_id in lotus.iter_npc_pathways()
-                    ]
+                    lotus.structure_taxonomy_hammer_pathways.values
+                    * self._isdb_hammer_pathway_scores
                 )
                 superclass_score = np.mean(
-                    [
-                        self._isdb_npc_superclass_scores[superclass_id]
-                        for superclass_id in lotus.iter_npc_superclasses()
-                    ]
+                    lotus.structure_taxonomy_hammer_superclasses.values
+                    * self._isdb_hammer_superclass_scores
                 )
                 class_score = np.mean(
-                    [
-                        self._isdb_npc_class_scores[class_id]
-                        for class_id in lotus.iter_npc_classes()
-                    ]
+                    lotus.structure_taxonomy_hammer_classes.values
+                    * self._isdb_hammer_class_scores
                 )
-
-                if pathway_score == 0.0:
-                    pathway_score = 1.0
-                if superclass_score == 0.0:
-                    superclass_score = 1.0
-                if class_score == 0.0:
-                    class_score = 1.0
 
                 combined_score = pathway_score * superclass_score * class_score
                 annotations[lotus] = annotations.get(lotus, 0) + combined_score
@@ -213,32 +169,19 @@ class AnnotatedSpectrum(Spectrum):
         for annotation in self._ms1_annotations:
             for lotus in annotation.lotus:
                 pathway_score = np.mean(
-                    [
-                        self._ms1_npc_pathway_scores[pathway_id]
-                        for pathway_id in lotus.iter_npc_pathways()
-                    ]
+                    lotus.structure_taxonomy_hammer_pathways.values
+                    * self._ms1_hammer_pathway_scores
                 )
                 superclass_score = np.mean(
-                    [
-                        self._ms1_npc_superclass_scores[superclass_id]
-                        for superclass_id in lotus.iter_npc_superclasses()
-                    ]
+                    lotus.structure_taxonomy_hammer_superclasses.values
+                    * self._ms1_hammer_superclass_scores
                 )
                 class_score = np.mean(
-                    [
-                        self._ms1_npc_class_scores[class_id]
-                        for class_id in lotus.iter_npc_classes()
-                    ]
+                    lotus.structure_taxonomy_hammer_classes.values
+                    * self._ms1_hammer_class_scores
                 )
 
-                if pathway_score == 0.0:
-                    pathway_score = 1.0
-                if superclass_score == 0.0:
-                    superclass_score = 1.0
-                if class_score == 0.0:
-                    class_score = 1.0
-
-                combined_score = pathway_score * superclass_score * class_score
+                combined_score: float = pathway_score * superclass_score * class_score
                 annotations[lotus] = annotations.get(lotus, 0) + combined_score
 
         return sorted(annotations, key=annotations.get, reverse=True)[:k]

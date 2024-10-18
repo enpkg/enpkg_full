@@ -1,7 +1,7 @@
 """Submodule for the ISDB enricher."""
 
 from time import time
-from typing import List
+from typing import List, Optional
 import pickle
 from logging import Logger
 import pandas as pd
@@ -21,14 +21,6 @@ from monolith.data import ISDBEnricherConfig
 from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
 from monolith.data.lotus_class import Lotus
 from monolith.utils import binary_search_by_key, label_propagation_algorithm
-from monolith.data.lotus_class import (
-    NUMBER_OF_NPC_PATHWAYS,
-    NUMBER_OF_NPC_SUPERCLASSES,
-    NUMBER_OF_NPC_CLASSES,
-    NPC_PATHWAYS,
-    NPC_SUPERCLASSES,
-    NPC_CLASSES,
-)
 
 
 class ISDBEnricher(Enricher):
@@ -45,14 +37,43 @@ class ISDBEnricher(Enricher):
         self.polarity = polarity
         downloader = BaseDownloader()
         downloader.download(
-            self.configuration.urls.taxo_db_metadata_url,
-            "downloads/taxo_db_metadata.csv.gz",
+            [
+                self.configuration.urls.taxo_db_metadata_url,
+                self.configuration.urls.taxo_db_pathways_url,
+                self.configuration.urls.taxo_db_superclasses_url,
+                self.configuration.urls.taxo_db_classes_url,
+            ],
+            [
+                self.configuration.paths.taxo_db_metadata_path,
+                self.configuration.paths.taxo_db_pathways_path,
+                self.configuration.paths.taxo_db_superclasses_path,
+                self.configuration.paths.taxo_db_classes_path,
+            ],
         )
         logger.info("Loading Taxonomical Database metadata")
         start = time()
+
         lotus_metadata: pd.DataFrame = pd.read_csv(
-            "downloads/taxo_db_metadata.csv", low_memory=False
+            self.configuration.paths.taxo_db_metadata_path, low_memory=False
         )
+        lotus_metadata_pathways: pd.DataFrame = pd.read_csv(
+            self.configuration.paths.taxo_db_pathways_path,
+            index_col=0,
+        )
+        self._number_of_pathways = lotus_metadata_pathways.shape[1]
+        self._pathways = lotus_metadata_pathways.columns
+        lotus_metadata_superclasses: pd.DataFrame = pd.read_csv(
+            self.configuration.paths.taxo_db_superclasses_path,
+            index_col=0,
+        )
+        self._number_of_superclasses = lotus_metadata_superclasses.shape[1]
+        self._superclasses = lotus_metadata_superclasses.columns
+        lotus_metadata_classes: pd.DataFrame = pd.read_csv(
+            self.configuration.paths.taxo_db_classes_path,
+            index_col=0,
+        )
+        self._number_of_classes = lotus_metadata_classes.shape[1]
+        self._classes = lotus_metadata_classes.columns
         logger.info(
             "Loaded %d Taxonomical Database metadata entries in %.2f seconds",
             len(lotus_metadata),
@@ -62,9 +83,19 @@ class ISDBEnricher(Enricher):
         logger.info(
             "Converting Taxonomical Database metadata DataFrame to Lotus objects"
         )
-        Lotus.setup_lotus_columns(lotus_metadata.columns)
+        structure_smiles_column_number: int = lotus_metadata.columns.get_loc(
+            "structure_smiles"
+        )
+        Lotus.setup_lotus_columns(list(lotus_metadata.columns))
         self._lotus: List[Lotus] = [
-            Lotus.from_pandas_series(row) for row in lotus_metadata.values
+            Lotus.from_pandas_series(
+                list(row),
+                pathways=lotus_metadata_pathways.loc[row[structure_smiles_column_number]],
+                superclasses=lotus_metadata_superclasses.loc[
+                    row[structure_smiles_column_number]
+                ],
+                classes=lotus_metadata_classes.loc[row[structure_smiles_column_number]],
+            ) for row in lotus_metadata.values
         ]
         logger.info(
             "Converted Taxonomical Database metadata DataFrame to Lotus objects in %.2f seconds",
@@ -205,20 +236,20 @@ class ISDBEnricher(Enricher):
                         spectra_chunk[x].add_isdb_annotation(
                             ISDBChemicalAnnotation(
                                 cosine_similarity=msms_score,
-                                number_of_matched_peaks=n_matches,
+                                number_of_matched_peaks=int(n_matches),
                                 lotus=self._spectral_db_pos[y].get("lotus_entries"),
                             )
                         )
 
         pathway_features = np.zeros(
-            (analysis.number_of_spectra, NUMBER_OF_NPC_PATHWAYS), dtype=np.float32
+            (analysis.number_of_spectra, self._number_of_pathways), dtype=np.float32
         )
         superclass_features = np.zeros(
-            (analysis.number_of_spectra, NUMBER_OF_NPC_SUPERCLASSES),
+            (analysis.number_of_spectra, self._number_of_superclasses),
             dtype=np.float32,
         )
         class_features = np.zeros(
-            (analysis.number_of_spectra, NUMBER_OF_NPC_CLASSES), dtype=np.float32
+            (analysis.number_of_spectra, self._number_of_classes), dtype=np.float32
         )
 
         for i, spectrum in enumerate(analysis.tandem_mass_spectra):
@@ -227,12 +258,12 @@ class ISDBEnricher(Enricher):
             # and therefore we give uniform scores to all pathways, superclasses, and classes.
             if not spectrum.has_isdb_annotations():
                 pathway_features[i] = np.zeros(
-                    (NUMBER_OF_NPC_PATHWAYS,),
+                    (self._number_of_pathways,),
                 )
                 superclass_features[i] = np.zeros(
-                    (NUMBER_OF_NPC_SUPERCLASSES,),
+                    (self._number_of_superclasses,),
                 )
-                class_features[i] = np.zeros((NUMBER_OF_NPC_CLASSES,))
+                class_features[i] = np.zeros((self._number_of_classes,))
                 continue
 
             # Now that we have determined the candidates potentially associated with this
@@ -240,17 +271,27 @@ class ISDBEnricher(Enricher):
             # superclass, and class annotations, weighted by the adduct's normalized
             # taxonomical similarity score.
             for isdb_annotation in spectrum.isdb_annotations:
-                pathway_features[i] += isdb_annotation.get_npc_pathway_scores(
+                hammer_pathways_scores: Optional[np.ndarray] = isdb_annotation.get_hammer_pathway_scores(
                     analysis.best_ott_match
                 )
 
-                superclass_features[i] += isdb_annotation.get_npc_superclass_scores(
+                if hammer_pathways_scores is not None:
+                    pathway_features[i] += hammer_pathways_scores
+                
+                hammer_superclasses_scores: Optional[np.ndarray] = isdb_annotation.get_hammer_superclass_scores(
                     analysis.best_ott_match
                 )
 
-                class_features[i] += isdb_annotation.get_npc_class_scores(
+                if hammer_superclasses_scores is not None:
+                    superclass_features[i] += hammer_superclasses_scores
+
+
+                hammer_classes_scores: Optional[np.ndarray] = isdb_annotation.get_hammer_class_scores(
                     analysis.best_ott_match
                 )
+
+                if hammer_classes_scores is not None:
+                    class_features[i] += hammer_classes_scores
 
             # We normalize by the number of ISDB annotations
             pathway_features[i] /= len(spectrum.isdb_annotations)
@@ -290,17 +331,17 @@ class ISDBEnricher(Enricher):
         loading_bar.close()
 
         for i, spectrum in enumerate(analysis.tandem_mass_spectra):
-            spectrum.set_isdb_npc_pathway_scores(propagated_pathway[i])
-            spectrum.set_isdb_npc_superclass_scores(propagated_superclass[i])
-            spectrum.set_isdb_npc_class_scores(propagated_class[i])
+            spectrum.set_isdb_hammer_pathway_scores(propagated_pathway[i])
+            spectrum.set_isdb_hammer_superclass_scores(propagated_superclass[i])
+            spectrum.set_isdb_hammer_class_scores(propagated_class[i])
 
         # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
 
-        pathway = pd.DataFrame(propagated_pathway, columns=NPC_PATHWAYS)
+        pathway = pd.DataFrame(propagated_pathway, columns=self._pathways)
         pathway.to_csv("downloads/isdb_pathway.csv", index=False)
-        superclass = pd.DataFrame(propagated_superclass, columns=NPC_SUPERCLASSES)
+        superclass = pd.DataFrame(propagated_superclass, columns=self._superclasses)
         superclass.to_csv("downloads/isdb_superclass.csv", index=False)
-        classes = pd.DataFrame(propagated_class, columns=NPC_CLASSES)
+        classes = pd.DataFrame(propagated_class, columns=self._classes)
         classes.to_csv("downloads/isdb_class.csv", index=False)
 
         return analysis

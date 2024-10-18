@@ -1,2 +1,3 @@
 matchms
 opentree
+typeguard
