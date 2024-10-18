@@ -8,18 +8,15 @@ import numpy as np
 from downloaders import BaseDownloader
 
 from tqdm.auto import tqdm
+
+from typeguard import typechecked
+
 from monolith.enrichers.enricher import Enricher
 from monolith.data import Analysis
 from monolith.enrichers.adducts import POSITIVE_RECIPES, NEGATIVE_RECIPES
 from monolith.data import MS1EnricherConfig
 from monolith.data.lotus_class import (
     Lotus,
-    NPC_PATHWAYS,
-    NPC_SUPERCLASSES,
-    NPC_CLASSES,
-    NUMBER_OF_NPC_CLASSES,
-    NUMBER_OF_NPC_PATHWAYS,
-    NUMBER_OF_NPC_SUPERCLASSES,
 )
 from monolith.data import ChemicalAdduct
 from monolith.utils import binary_search_by_key, label_propagation_algorithm
@@ -28,6 +25,7 @@ from monolith.utils import binary_search_by_key, label_propagation_algorithm
 class MS1Enricher(Enricher):
     """Enricher that adds MS1 information to the analysis."""
 
+    @typechecked
     def __init__(
         self, configuration: MS1EnricherConfig, polarity: bool, logger: Logger
     ):
@@ -39,26 +37,73 @@ class MS1Enricher(Enricher):
         self.polarity = polarity
         downloader = BaseDownloader()
         downloader.download(
-            self.configuration.taxo_db_metadata_url,
-            "downloads/taxo_db_metadata.csv.gz",
+            [
+                self.configuration.taxo_db_metadata_url,
+                self.configuration.taxo_db_pathways_url,
+                self.configuration.taxo_db_superclasses_url,
+                self.configuration.taxo_db_classes_url,
+            ],
+            [
+                self.configuration.taxo_db_metadata_path,
+                self.configuration.taxo_db_pathways_path,
+                self.configuration.taxo_db_superclasses_path,
+                self.configuration.taxo_db_classes_path,
+            ],
         )
+
         logger.info("Loading Taxonomical Database metadata")
         start = time()
         lotus_metadata: pd.DataFrame = pd.read_csv(
-            "downloads/taxo_db_metadata.csv", low_memory=False
+            self.configuration.taxo_db_metadata_path, low_memory=False
         )
+        lotus_metadata_pathways: pd.DataFrame = pd.read_csv(
+            self.configuration.taxo_db_pathways_path,
+            index_col=0,
+        )
+        self._number_of_pathways = lotus_metadata_pathways.shape[1]
+        self._pathways = lotus_metadata_pathways.columns
+        lotus_metadata_superclasses: pd.DataFrame = pd.read_csv(
+            self.configuration.taxo_db_superclasses_path,
+            index_col=0,
+        )
+        self._number_of_superclasses = lotus_metadata_superclasses.shape[1]
+        self._superclasses = lotus_metadata_superclasses.columns
+        lotus_metadata_classes: pd.DataFrame = pd.read_csv(
+            self.configuration.taxo_db_classes_path,
+            index_col=0,
+        )
+        self._number_of_classes = lotus_metadata_classes.shape[1]
+        self._classes = lotus_metadata_classes.columns
         logger.info(
             "Loaded %d Taxonomical Database metadata entries in %.2f seconds",
             len(lotus_metadata),
             time() - start,
         )
+
         start = time()
         logger.info(
             "Converting Taxonomical Database metadata DataFrame to Lotus objects"
         )
-        Lotus.setup_lotus_columns(lotus_metadata.columns)
+        structure_smiles_column_number: int = lotus_metadata.columns.get_loc(
+            "structure_smiles"
+        )
+        Lotus.setup_lotus_columns(list(lotus_metadata.columns))
         lotus_grouped_by_structure_molecular_formula: List[List[Lotus]] = [
-            [Lotus.from_pandas_series(row) for row in group.values]
+            [
+                Lotus.from_pandas_series(
+                    list(row),
+                    pathways=lotus_metadata_pathways.loc[
+                        row[structure_smiles_column_number]
+                    ],
+                    superclasses=lotus_metadata_superclasses.loc[
+                        row[structure_smiles_column_number]
+                    ],
+                    classes=lotus_metadata_classes.loc[
+                        row[structure_smiles_column_number]
+                    ],
+                )
+                for row in group.values
+            ]
             for (_, group) in lotus_metadata.groupby(by=["structure_molecular_formula"])
         ]
         logger.info(
@@ -116,14 +161,14 @@ class MS1Enricher(Enricher):
         """Adds MS1 information to the analysis."""
 
         pathway_features = np.zeros(
-            (analysis.number_of_spectra, NUMBER_OF_NPC_PATHWAYS), dtype=np.float32
+            (analysis.number_of_spectra, self._number_of_pathways), dtype=np.float32
         )
         superclass_features = np.zeros(
-            (analysis.number_of_spectra, NUMBER_OF_NPC_SUPERCLASSES),
+            (analysis.number_of_spectra, self._number_of_superclasses),
             dtype=np.float32,
         )
         class_features = np.zeros(
-            (analysis.number_of_spectra, NUMBER_OF_NPC_CLASSES), dtype=np.float32
+            (analysis.number_of_spectra, self._number_of_classes), dtype=np.float32
         )
 
         for i, spectrum in tqdm(
@@ -175,13 +220,13 @@ class MS1Enricher(Enricher):
             # and therefore we give uniform scores to all pathways, superclasses, and classes.
             if not spectrum.has_ms1_annotations():
                 pathway_features[i] = np.zeros(
-                    shape=(NUMBER_OF_NPC_PATHWAYS,),
+                    shape=(self._number_of_pathways,),
                 )
                 superclass_features[i] = np.zeros(
-                    shape=(NUMBER_OF_NPC_SUPERCLASSES,),
+                    shape=(self._number_of_superclasses,),
                 )
                 class_features[i] = np.zeros(
-                    shape=(NUMBER_OF_NPC_CLASSES,),
+                    shape=(self._number_of_classes,),
                 )
                 continue
 
@@ -190,15 +235,15 @@ class MS1Enricher(Enricher):
             # superclass, and class annotations, weighted by the adduct's normalized
             # taxonomical similarity score.
             for adduct in spectrum.ms1_annotations:
-                pathway_features[i] += adduct.get_npc_pathway_scores(
+                pathway_features[i] += adduct.get_hammer_pathway_scores(
                     analysis.best_ott_match
                 )
 
-                superclass_features[i] += adduct.get_npc_superclass_scores(
+                superclass_features[i] += adduct.get_hammer_superclass_scores(
                     analysis.best_ott_match
                 )
 
-                class_features[i] += adduct.get_npc_class_scores(
+                class_features[i] += adduct.get_hammer_class_scores(
                     analysis.best_ott_match
                 )
 
@@ -240,17 +285,17 @@ class MS1Enricher(Enricher):
         loading_bar.close()
 
         for i, spectrum in enumerate(analysis.tandem_mass_spectra):
-            spectrum.set_ms1_npc_pathway_scores(propagated_pathway[i])
-            spectrum.set_ms1_npc_superclass_scores(propagated_superclass[i])
-            spectrum.set_ms1_npc_class_scores(propagated_class[i])
+            spectrum.set_ms1_hammer_pathway_scores(propagated_pathway[i])
+            spectrum.set_ms1_hammer_superclass_scores(propagated_superclass[i])
+            spectrum.set_ms1_hammer_class_scores(propagated_class[i])
 
         # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
 
-        pathway = pd.DataFrame(propagated_pathway, columns=NPC_PATHWAYS)
+        pathway = pd.DataFrame(propagated_pathway, columns=self._pathways)
         pathway.to_csv("downloads/ms1_pathway.csv", index=False)
-        superclass = pd.DataFrame(propagated_superclass, columns=NPC_SUPERCLASSES)
+        superclass = pd.DataFrame(propagated_superclass, columns=self._superclasses)
         superclass.to_csv("downloads/ms1_superclass.csv", index=False)
-        classes = pd.DataFrame(propagated_class, columns=NPC_CLASSES)
+        classes = pd.DataFrame(propagated_class, columns=self._classes)
         classes.to_csv("downloads/ms1_class.csv", index=False)
 
         return analysis

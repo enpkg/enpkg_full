@@ -2,16 +2,14 @@ from dataclasses import dataclass
 from typing import Dict, Any
 
 
-
-
 @dataclass
 class GeneralParams:
     """General processing parameters."""
 
     recompute: bool
 
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "GeneralParams":
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "GeneralParams":
         """Creates an instance from a dictionary."""
         return GeneralParams(recompute=data["recompute"])
 
@@ -22,13 +20,19 @@ class Urls:
 
     taxo_db_metadata_url: str
     spectral_db_pos_url: str
+    taxo_db_pathways_url: str
+    taxo_db_superclasses_url: str
+    taxo_db_classes_url: str
 
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "Urls":
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Urls":
         """Creates an instance from a dictionary."""
-        return Urls(
+        return cls(
             taxo_db_metadata_url=data["taxo_db_metadata_url"],
             spectral_db_pos_url=data["spectral_db_pos_url"],
+            taxo_db_pathways_url=data["taxo_db_pathways_url"],
+            taxo_db_superclasses_url=data["taxo_db_superclasses_url"],
+            taxo_db_classes_url=data["taxo_db_classes_url"],
         )
 
 
@@ -39,14 +43,20 @@ class Paths:
     taxo_db_metadata_path: str
     spectral_db_pos_path: str
     spectral_db_neg_path: str
+    taxo_db_pathways_path: str
+    taxo_db_superclasses_path: str
+    taxo_db_classes_path: str
 
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "Paths":
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Paths":
         """Creates an instance from a dictionary."""
-        return Paths(
+        return cls(
             taxo_db_metadata_path=data["taxo_db_metadata_path"],
             spectral_db_pos_path=data["spectral_db_pos_path"],
             spectral_db_neg_path=data["spectral_db_neg_path"],
+            taxo_db_pathways_path=data["taxo_db_pathways_path"],
+            taxo_db_superclasses_path=data["taxo_db_superclasses_path"],
+            taxo_db_classes_path=data["taxo_db_classes_path"],
         )
 
 
@@ -59,10 +69,10 @@ class SpectralMatchParams:
     min_score: float
     min_peaks: int
 
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "SpectralMatchParams":
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "SpectralMatchParams":
         """Creates an instance from a dictionary."""
-        return SpectralMatchParams(
+        return cls(
             parent_mz_tol=data["parent_mz_tol"],
             msms_mz_tol=data["msms_mz_tol"],
             min_score=data["min_score"],
@@ -83,10 +93,10 @@ class ReweightingParams:
     taxo_weight: float
     chemo_weight: float
 
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "ReweightingParams":
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ReweightingParams":
         """Creates an instance from a dictionary."""
-        return ReweightingParams(
+        return cls(
             top_to_output=data["top_to_output"],
             use_post_taxo=data["use_post_taxo"],
             top_N_chemical_consistency=data["top_N_chemical_consistency"],
@@ -108,10 +118,10 @@ class ISDBEnricherConfig:
     spectral_match_params: SpectralMatchParams
     reweighting_params: ReweightingParams
 
-    @staticmethod
-    def from_dict(data: Dict[str, Any]) -> "ISDBEnricherConfig":
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ISDBEnricherConfig":
         """Creates an instance from a dictionary."""
-        return ISDBEnricherConfig(
+        return cls(
             general_params=GeneralParams.from_dict(data["general_params"]),
             paths=Paths.from_dict(data["paths"]),
             urls=Urls.from_dict(data["urls"]),
