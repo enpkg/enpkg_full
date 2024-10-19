@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 CLEANED_GNPS_LIBRARY_URL = "https://zenodo.org/records/11566051/files/cleaned_gnps_library.mgf?download=1"
 LOTUS_METADATA_URL = "https://zenodo.org/record/7534071/files/230106_frozen_metadata.csv.gz"
-DOWNLOAD_DIR = "downloads"
+DOWNLOAD_DIR = "monolith/downloads"
 
 def download_files():
     """Downloads necessary files for processing."""
