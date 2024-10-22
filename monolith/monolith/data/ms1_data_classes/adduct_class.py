@@ -107,37 +107,24 @@ class ChemicalAdduct:
         return self.recipe.positive
 
     @typechecked
-    def get_hammer_pathway_scores(self, match: Match) -> np.ndarray:
+    def maximal_normalized_taxonomical_similarity(self, match: Match) -> float:
+        """Return the maximal normalized taxonomical similarity of the adduct."""
+        return max(
+            lotus.normalized_taxonomical_similarity_with_otl_match(match)
+            for lotus in self.lotus
+        )
+
+    @typechecked
+    def get_hammer_pathway_scores(self) -> np.ndarray:
         """Return the pathway scores for the adduct."""
-        return np.mean(
-            [
-                lotus.structure_taxonomy_hammer_pathways.values
-                * lotus.normalized_taxonomical_similarity_with_otl_match(match)
-                for lotus in self.lotus
-            ],
-            axis=0,
-        )
+        return self.lotus[0].structure_taxonomy_hammer_pathways.values
 
     @typechecked
-    def get_hammer_superclass_scores(self, match: Match) -> np.ndarray:
+    def get_hammer_superclass_scores(self) -> np.ndarray:
         """Return the superclass scores for the adduct."""
-        return np.mean(
-            [
-                lotus.structure_taxonomy_hammer_superclasses.values
-                * lotus.normalized_taxonomical_similarity_with_otl_match(match)
-                for lotus in self.lotus
-            ],
-            axis=0,
-        )
+        return self.lotus[0].structure_taxonomy_hammer_superclasses.values
 
     @typechecked
-    def get_hammer_class_scores(self, match: Match) -> np.ndarray:
+    def get_hammer_class_scores(self) -> np.ndarray:
         """Return the class scores for the adduct."""
-        return np.mean(
-            [
-                lotus.structure_taxonomy_hammer_classes.values
-                * lotus.normalized_taxonomical_similarity_with_otl_match(match)
-                for lotus in self.lotus
-            ],
-            axis=0,
-        )
+        return self.lotus[0].structure_taxonomy_hammer_classes.values

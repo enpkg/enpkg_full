@@ -1,7 +1,7 @@
 """Submodule for the MS1 level enricher, which adds the Adducts to a given batch and computes its LPA scores."""
 
 from time import time
-from typing import List
+from typing import List, Optional
 from logging import Logger
 import pandas as pd
 import numpy as np
@@ -18,6 +18,7 @@ from monolith.data import MS1EnricherConfig
 from monolith.data.lotus_class import (
     Lotus,
 )
+from monolith.data.otl_class import Match
 from monolith.data import ChemicalAdduct
 from monolith.utils import binary_search_by_key, label_propagation_algorithm
 
@@ -209,6 +210,8 @@ class MS1Enricher(Enricher):
                 self._adducts[lower_bound_index:upper_bound_index]
             )
 
+        best_ott_match: Optional[Match] = analysis.best_ott_match
+
         for i, spectrum in tqdm(
             enumerate(analysis.tandem_mass_spectra),
             leave=False,
@@ -234,23 +237,47 @@ class MS1Enricher(Enricher):
             # spectrum, we can populate the associated features with the adducts' pathway,
             # superclass, and class annotations, weighted by the adduct's normalized
             # taxonomical similarity score.
-            for adduct in spectrum.ms1_annotations:
-                pathway_features[i] += adduct.get_hammer_pathway_scores(
-                    analysis.best_ott_match
+
+            # First, we compute the maximal normalized taxonomical similarity score for
+            # each adducts, if we do have a known sample taxonomy match.
+            if best_ott_match is not None:
+                taxonomical_similarities: np.ndarray = np.fromiter(
+                    (
+                        adduct.maximal_normalized_taxonomical_similarity(best_ott_match)
+                        for adduct in spectrum.ms1_annotations
+                    ),
+                    dtype=np.float32,
+                )
+            else:
+                taxonomical_similarities: np.ndarray = np.ones(
+                    shape=(len(spectrum.ms1_annotations),), dtype=np.float32
                 )
 
-                superclass_features[i] += adduct.get_hammer_superclass_scores(
-                    analysis.best_ott_match
+            taxonomical_similarities /= np.sum(taxonomical_similarities)
+
+            for taxonomical_similarity, adduct in zip(
+                taxonomical_similarities, spectrum.ms1_annotations
+            ):
+                pathway_features[i] += (
+                    taxonomical_similarity * adduct.get_hammer_pathway_scores()
                 )
 
-                class_features[i] += adduct.get_hammer_class_scores(
-                    analysis.best_ott_match
+                superclass_features[i] += (
+                    taxonomical_similarity * adduct.get_hammer_superclass_scores()
                 )
 
-            # And we normalize the scores by the number of adducts
-            pathway_features[i] /= len(spectrum.ms1_annotations)
-            superclass_features[i] /= len(spectrum.ms1_annotations)
-            class_features[i] /= len(spectrum.ms1_annotations)
+                class_features[i] += (
+                    taxonomical_similarity * adduct.get_hammer_class_scores()
+                )
+
+        # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
+
+        pathway = pd.DataFrame(pathway_features, columns=self._pathways)
+        pathway.to_csv("downloads/before_lpa_ms1_pathway.csv", index=False)
+        superclass = pd.DataFrame(superclass_features, columns=self._superclasses)
+        superclass.to_csv("downloads/before_lpa_ms1_superclass.csv", index=False)
+        classes = pd.DataFrame(class_features, columns=self._classes)
+        classes.to_csv("downloads/before_lpa_ms1_class.csv", index=False)
 
         loading_bar = tqdm(
             desc="Computing LPA scores",
@@ -263,6 +290,8 @@ class MS1Enricher(Enricher):
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
             features=pathway_features,
+            normalize=False,
+            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
@@ -271,6 +300,8 @@ class MS1Enricher(Enricher):
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
             features=superclass_features,
+            normalize=False,
+            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
@@ -279,6 +310,8 @@ class MS1Enricher(Enricher):
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
             features=class_features,
+            normalize=False,
+            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
