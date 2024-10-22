@@ -1,5 +1,6 @@
 """Submodule for creating a similarity network for the analysis."""
 
+import networkx as nx
 from matchms import calculate_scores
 from matchms.similarity import ModifiedCosine
 from matchms.networking import SimilarityNetwork
@@ -42,6 +43,16 @@ class NetworkEnricher(Enricher):
         )
         ms_network.create_network(similarities, score_name="ModifiedCosine_score")
 
-        analysis.set_molecular_network(ms_network.graph)
+        assert len(ms_network.graph.nodes) == analysis.number_of_spectra, (
+            f"The number of nodes in the network ({len(ms_network.graph.nodes)}) "
+            f"does not match the number of feature IDs ({analysis.number_of_spectra})"
+        )
+
+        # We make sure that the nodes of the graph are sorted by scan number
+        corrected_graph = nx.Graph()
+        corrected_graph.add_nodes_from(analysis.feature_ids)
+        corrected_graph.add_edges_from(ms_network.graph.edges(data=True))
+
+        analysis.set_molecular_network(corrected_graph)
 
         return analysis

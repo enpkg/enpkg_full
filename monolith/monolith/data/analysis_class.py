@@ -16,6 +16,7 @@ from typing import List, Tuple, Optional, Iterable
 import pandas as pd
 import matchms
 import networkx as nx
+from typeguard import typechecked
 from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data.otl_class import Match
 from monolith.data.lotus_class import Lotus
@@ -107,6 +108,7 @@ class Analysis:
 
     @property
     def number_of_spectra_with_at_least_one_annotation(self):
+        """Returns the number of spectra with at least one annotation."""
         return sum(
             int(spectrum.has_isdb_annotations())
             for spectrum in self._tandem_mass_spectra
@@ -116,15 +118,35 @@ class Analysis:
     def molecular_network(self):
         """Returns the molecular network of the analysis."""
         if self._molecular_network is None:
-            raise ValueError("The molecular network is not set.")
+            raise RuntimeError("The molecular network is not set.")
 
         return self._molecular_network
 
+    @typechecked
     def set_molecular_network(self, molecular_network: nx.Graph):
         """Sets the molecular network of the analysis."""
-        assert isinstance(
-            molecular_network, nx.Graph
-        ), "molecular_network must be a nx.Graph object"
+        # We check that the number of nodes in the network
+        # is the same as the number of spectra in the analysis
+        assert len(molecular_network.nodes) == self.number_of_spectra, (
+            f"The number of nodes in the network ({len(molecular_network.nodes)}) "
+            f"must be the same as the number of spectra in the analysis ({self.number_of_spectra})."
+        )
+        # We check that the names of the nodes in the network
+        # are the same as the feature IDs of the spectra
+        assert set(molecular_network.nodes) == set(self.feature_ids), (
+            f"The nodes in the network ({set(molecular_network.nodes)}) "
+            f"must be the same as the feature IDs of the spectra ({set(self.feature_ids)})."
+        )
+        # We check that the order of the nodes in the network
+        # is the same as the order of the spectra in the analysis
+        assert all(
+            node == feature_id
+            for node, feature_id in zip(molecular_network.nodes, self.feature_ids)
+        ), (
+            "The order of the nodes in the network must be the same "
+            "as the order of the spectra in the analysis."
+        )
+
         self._molecular_network = molecular_network
 
     @property
@@ -155,7 +177,7 @@ class Analysis:
     @property
     def best_ott_match(self) -> Optional[Match]:
         """Returns the best OTT match of the analysis.
-        
+
         In some cases, there may not be a best OTT match, in which case None is returned.
         """
         if not self._ott_matches:

@@ -1,7 +1,6 @@
 """Label Propagation Algorithm (LPA) implementation."""
 
 from typing import List
-import warnings
 import networkx as nx
 import numpy as np
 from typeguard import typechecked
@@ -51,28 +50,6 @@ def label_propagation_algorithm(
     for index, node_name in enumerate(node_names):
         reverse_index[int(node_name)] = index
 
-    # We check whether all nodes are singletons, i.e. they do not
-    # have neighbours, or if they do, all the neighbours are zeroed
-    # in the case we are ignoring zeroed nodes.
-    found_not_singleton = False
-    for node in graph.nodes:
-        for neighbor in graph.neighbors(node):
-            if (
-                not ignore_zeroed_nodes
-                or features[reverse_index[int(neighbor)]].sum() != 0
-            ):
-                found_not_singleton = True
-                break
-        if found_not_singleton:
-            break
-    
-    if not found_not_singleton:
-        warnings.warn(
-            "All nodes are singletons or have zeroed neighbours. "
-            "If all nodes are singletons, the LPA will not execute "
-            "as there is no topology to speak of."
-        )
-
     global_progress_bar = tqdm(
         desc="LPA",
         total=100,
@@ -97,16 +74,17 @@ def label_propagation_algorithm(
 
     while last_variation > threshold:
         number_of_iterations += 1
+        zeroed_mask: np.ndarray = features.sum(axis=1) == 0
 
         # We propagate the features
-        new_features = features.copy()
+        new_features: np.ndarray = features.copy()
         for node in graph.nodes:
             weights: np.ndarray = np.fromiter(
                 (
                     graph[node][neighbor][weight]
                     for neighbor in graph.neighbors(node)
                     if not ignore_zeroed_nodes
-                    or features[reverse_index[int(neighbor)]].sum() != 0
+                    or not zeroed_mask[reverse_index[int(neighbor)]]
                 ),
                 dtype=float,
             )
@@ -115,16 +93,24 @@ def label_propagation_algorithm(
             assert weights.sum() != 0, "The sum of the weights must not be zero."
 
             weights_sum = weights.sum()
-            weights_sum_with_self_loop = weights_sum + 1
-            normalized_weights: np.ndarray = weights / weights_sum_with_self_loop
-            new_features[reverse_index[int(node)]] = features[reverse_index[int(node)]] / weights_sum_with_self_loop
+
+            # We include the node itself in the sum of the weights only if
+            # it is not zeroed or if we are not ignoring zeroed nodes
+            if not ignore_zeroed_nodes or not zeroed_mask[reverse_index[int(node)]]:
+                weights_sum: float = weights_sum + 1
+                new_features[reverse_index[int(node)]] = (
+                    features[reverse_index[int(node)]] / weights_sum
+                )
+
+            normalized_weights: np.ndarray = weights / weights_sum
+
             for normalized_weight, neighbour_features in zip(
                 normalized_weights,
                 (
                     features[reverse_index[int(neighbor)]]
                     for neighbor in graph.neighbors(node)
                     if not ignore_zeroed_nodes
-                    or features[reverse_index[int(neighbor)]].sum() != 0
+                    or not zeroed_mask[reverse_index[int(neighbor)]]
                 ),
             ):
 
