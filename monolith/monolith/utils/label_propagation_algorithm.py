@@ -1,17 +1,22 @@
 """Label Propagation Algorithm (LPA) implementation."""
 
 from typing import List
+import warnings
 import networkx as nx
 import numpy as np
+from typeguard import typechecked
 from tqdm.auto import tqdm
 
 
+@typechecked
 def label_propagation_algorithm(
     graph: nx.Graph,
     features: np.ndarray,
     node_names: List[str],
     weight: str = "weight",
     threshold: float = 1e-5,
+    normalize: bool = True,
+    ignore_zeroed_nodes: bool = True,
     verbose: bool = True,
 ) -> np.ndarray:
     """Return LPA-ed classes.
@@ -28,10 +33,13 @@ def label_propagation_algorithm(
         Name of the edge attribute containing the weight of the edges.
     threshold : float
         The threshold to stop the LPA.
+    normalize : bool
+        Whether to normalize the features at each iteration.
+    ignore_zeroed_nodes : bool
+        Whether to ignore nodes with zero features.
     verbose : bool
         Whether to show a progress bar.
     """
-
     last_variation = np.inf
 
     # We prepare a reverse index for the node names, as we have no guarantee for the network
@@ -43,6 +51,28 @@ def label_propagation_algorithm(
     for index, node_name in enumerate(node_names):
         reverse_index[int(node_name)] = index
 
+    # We check whether all nodes are singletons, i.e. they do not
+    # have neighbours, or if they do, all the neighbours are zeroed
+    # in the case we are ignoring zeroed nodes.
+    found_not_singleton = False
+    for node in graph.nodes:
+        for neighbor in graph.neighbors(node):
+            if (
+                not ignore_zeroed_nodes
+                or features[reverse_index[int(neighbor)]].sum() != 0
+            ):
+                found_not_singleton = True
+                break
+        if found_not_singleton:
+            break
+    
+    if not found_not_singleton:
+        warnings.warn(
+            "All nodes are singletons or have zeroed neighbours. "
+            "If all nodes are singletons, the LPA will not execute "
+            "as there is no topology to speak of."
+        )
+
     global_progress_bar = tqdm(
         desc="LPA",
         total=100,
@@ -53,21 +83,58 @@ def label_propagation_algorithm(
     )
 
     # We normalize the features
-    features = features / features.sum(axis=1)[:, None].clip(1e-10)
+    if normalize:
+        features = features / features.sum(axis=1)[:, None].clip(1e-10)
+    else:
+        # If the user has requested to NOT normalize the features, we expect
+        # for each value to be between 0 and 1.
+        if features.min() < 0 or features.max() > 1:
+            raise ValueError(
+                "The features must be between 0 and 1 if the user has requested to NOT normalize them."
+            )
+
+    number_of_iterations = 0
 
     while last_variation > threshold:
+        number_of_iterations += 1
 
         # We propagate the features
         new_features = features.copy()
         for node in graph.nodes:
-            for neighbor in graph.neighbors(node):
-                new_features[reverse_index[int(node)]] += (
+            weights: np.ndarray = np.fromiter(
+                (
+                    graph[node][neighbor][weight]
+                    for neighbor in graph.neighbors(node)
+                    if not ignore_zeroed_nodes
+                    or features[reverse_index[int(neighbor)]].sum() != 0
+                ),
+                dtype=float,
+            )
+            if weights.size == 0:
+                continue
+            assert weights.sum() != 0, "The sum of the weights must not be zero."
+
+            weights_sum = weights.sum()
+            weights_sum_with_self_loop = weights_sum + 1
+            normalized_weights: np.ndarray = weights / weights_sum_with_self_loop
+            new_features[reverse_index[int(node)]] = features[reverse_index[int(node)]] / weights_sum_with_self_loop
+            for normalized_weight, neighbour_features in zip(
+                normalized_weights,
+                (
                     features[reverse_index[int(neighbor)]]
-                    * graph[node][neighbor][weight]
+                    for neighbor in graph.neighbors(node)
+                    if not ignore_zeroed_nodes
+                    or features[reverse_index[int(neighbor)]].sum() != 0
+                ),
+            ):
+
+                new_features[reverse_index[int(node)]] += (
+                    neighbour_features * normalized_weight
                 )
 
         # We normalize the features
-        new_features = new_features / new_features.sum(axis=1)[:, None].clip(1e-10)
+        if normalize:
+            new_features = new_features / new_features.sum(axis=1)[:, None].clip(1e-10)
 
         # We compute the variation
         last_variation = np.linalg.norm(new_features - features)

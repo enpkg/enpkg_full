@@ -20,6 +20,7 @@ from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data import ISDBEnricherConfig
 from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
 from monolith.data.lotus_class import Lotus
+from monolith.data.otl_class import Match
 from monolith.utils import binary_search_by_key, label_propagation_algorithm
 
 
@@ -90,12 +91,15 @@ class ISDBEnricher(Enricher):
         self._lotus: List[Lotus] = [
             Lotus.from_pandas_series(
                 list(row),
-                pathways=lotus_metadata_pathways.loc[row[structure_smiles_column_number]],
+                pathways=lotus_metadata_pathways.loc[
+                    row[structure_smiles_column_number]
+                ],
                 superclasses=lotus_metadata_superclasses.loc[
                     row[structure_smiles_column_number]
                 ],
                 classes=lotus_metadata_classes.loc[row[structure_smiles_column_number]],
-            ) for row in lotus_metadata.values
+            )
+            for row in lotus_metadata.values
         ]
         logger.info(
             "Converted Taxonomical Database metadata DataFrame to Lotus objects in %.2f seconds",
@@ -252,51 +256,76 @@ class ISDBEnricher(Enricher):
             (analysis.number_of_spectra, self._number_of_classes), dtype=np.float32
         )
 
+        best_ott_match: Optional[Match] = analysis.best_ott_match
+
         for i, spectrum in enumerate(analysis.tandem_mass_spectra):
 
             # If the spectrum has no ISDB annotations, we cannot make assumptions regarding its scores,
             # and therefore we give uniform scores to all pathways, superclasses, and classes.
             if not spectrum.has_isdb_annotations():
-                pathway_features[i] = np.zeros(
-                    (self._number_of_pathways,),
-                )
-                superclass_features[i] = np.zeros(
-                    (self._number_of_superclasses,),
-                )
-                class_features[i] = np.zeros((self._number_of_classes,))
                 continue
 
             # Now that we have determined the candidates potentially associated with this
             # spectrum, we can populate the associated features with the candidates' pathway,
             # superclass, and class annotations, weighted by the adduct's normalized
             # taxonomical similarity score.
-            for isdb_annotation in spectrum.isdb_annotations:
-                hammer_pathways_scores: Optional[np.ndarray] = isdb_annotation.get_hammer_pathway_scores(
-                    analysis.best_ott_match
+
+            chemical_similarities: np.ndarray = np.fromiter(
+                (
+                    annotation.cosine_similarity
+                    for annotation in spectrum.isdb_annotations
+                    if annotation.has_lotus_entries()
+                ),
+                dtype=np.float32,
+            )
+
+            if best_ott_match is not None:
+                taxonomical_similarities: np.ndarray = np.fromiter(
+                    (
+                        annotation.maximal_normalized_taxonomical_similarity(
+                            best_ott_match
+                        )
+                        for annotation in spectrum.isdb_annotations
+                        if annotation.has_lotus_entries()
+                    ),
+                    dtype=np.float32,
+                )
+            else:
+                taxonomical_similarities = np.ones(
+                    (chemical_similarities.size,), dtype=np.float32
                 )
 
-                if hammer_pathways_scores is not None:
-                    pathway_features[i] += hammer_pathways_scores
-                
-                hammer_superclasses_scores: Optional[np.ndarray] = isdb_annotation.get_hammer_superclass_scores(
-                    analysis.best_ott_match
+            combined_similarities: np.ndarray = (
+                taxonomical_similarities * chemical_similarities
+            )
+
+            # We normalize the combined similarity scores
+            combined_similarities /= np.sum(combined_similarities)
+
+            for isdb_annotation, combined_similarity in zip(
+                (
+                    annotation
+                    for annotation in spectrum.isdb_annotations
+                    if annotation.has_lotus_entries()
+                ),
+                combined_similarities,
+            ):
+                pathway_features[i] += (
+                    combined_similarity * isdb_annotation.get_hammer_pathway_scores()
+                )
+                superclass_features[i] += (
+                    combined_similarity * isdb_annotation.get_hammer_superclass_scores()
+                )
+                class_features[i] += (
+                    combined_similarity * isdb_annotation.get_hammer_class_scores()
                 )
 
-                if hammer_superclasses_scores is not None:
-                    superclass_features[i] += hammer_superclasses_scores
-
-
-                hammer_classes_scores: Optional[np.ndarray] = isdb_annotation.get_hammer_class_scores(
-                    analysis.best_ott_match
-                )
-
-                if hammer_classes_scores is not None:
-                    class_features[i] += hammer_classes_scores
-
-            # We normalize by the number of ISDB annotations
-            pathway_features[i] /= len(spectrum.isdb_annotations)
-            superclass_features[i] /= len(spectrum.isdb_annotations)
-            class_features[i] /= len(spectrum.isdb_annotations)
+        pathway = pd.DataFrame(pathway_features, columns=self._pathways)
+        pathway.to_csv("downloads/before_lpa_isdb_pathway.csv", index=False)
+        superclass = pd.DataFrame(superclass_features, columns=self._superclasses)
+        superclass.to_csv("downloads/before_lpa_isdb_superclass.csv", index=False)
+        classes = pd.DataFrame(class_features, columns=self._classes)
+        classes.to_csv("downloads/before_lpa_isdb_class.csv", index=False)
 
         loading_bar = tqdm(
             desc="Computing LPA scores",
@@ -309,6 +338,8 @@ class ISDBEnricher(Enricher):
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
             features=pathway_features,
+            normalize=False,
+            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
@@ -317,6 +348,8 @@ class ISDBEnricher(Enricher):
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
             features=superclass_features,
+            normalize=False,
+            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
@@ -325,6 +358,8 @@ class ISDBEnricher(Enricher):
             graph=analysis.molecular_network,
             node_names=analysis.feature_ids,
             features=class_features,
+            normalize=False,
+            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)

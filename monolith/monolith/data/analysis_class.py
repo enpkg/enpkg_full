@@ -153,8 +153,14 @@ class Analysis:
         self._ott_matches.extend(ott_match)
 
     @property
-    def best_ott_match(self) -> Match:
-        """Returns the best OTT match of the analysis."""
+    def best_ott_match(self) -> Optional[Match]:
+        """Returns the best OTT match of the analysis.
+        
+        In some cases, there may not be a best OTT match, in which case None is returned.
+        """
+        if not self._ott_matches:
+            return None
+
         # TODO! UPDATE THIS SOMEHOW! Fo rexample by removing synonyms or taking only accepted names.
         return self._ott_matches[0]
 
