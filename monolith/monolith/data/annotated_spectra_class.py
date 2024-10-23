@@ -1,9 +1,10 @@
 """Module to store annotated spectra and MSMS annotations."""
 
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any, Tuple
 from matchms import Spectrum
 import numpy as np
 from typeguard import typechecked
+from scipy.stats import entropy
 from monolith.data.ms1_data_classes import ChemicalAdduct
 from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
 from monolith.data.sirius_data_classes import SiriusChemicalAnnotation
@@ -35,7 +36,8 @@ class AnnotatedSpectrum(Spectrum):
         # the precursor mass over charge
         if abs(mass_over_charge - spectrum.get("precursor_mz")) > 0.001:
             raise ValueError(
-                f"Provided mass over charge {mass_over_charge} does not match the precursor mass over charge {spectrum.get('precursor_mz')}"
+                f"Provided mass over charge {mass_over_charge} does "
+                f"not match the precursor mass over charge {spectrum.get('precursor_mz')}"
             )
 
         self.retention_time: float = retention_time
@@ -112,7 +114,7 @@ class AnnotatedSpectrum(Spectrum):
     def set_ms1_annotations(self, adducts: List[ChemicalAdduct]):
         """Set the possible MS1 adducts"""
         self._ms1_annotations = adducts
-    
+
     def has_isdb_annotations(self) -> bool:
         """Returns whether the spectrum has ISDB annotations"""
         return len(self._isdb_annotations) > 0
@@ -186,37 +188,173 @@ class AnnotatedSpectrum(Spectrum):
 
         return sorted(annotations, key=annotations.get, reverse=True)[:k]
 
-    def best_lotus_annotation_by_ott_match(self, match: Match) -> Optional[Lotus]:
-        """Returns the best lotus annotation from the set of MS2 annotations.
+    def best_chemical_annotation(
+        self,
+        match: Optional[Match],
+        ms1_importance_score: float = 0.5,
+        isdb_importance_score: float = 0.5,
+    ) -> Optional[Tuple[Lotus, float]]:
+        """Returns the best Chemical Annotation from the set of MS2 annotations.
 
         Parameters
         ----------
-        match : Match
+        match : Optional[Match]
             The match object containing the best open tree of life match
-            given the expected sample taxonomy.
-
-        Implementation details
-        -----------------------
-        We iterate over the annotations and combine the following scores
-        for each annotation:
-            - The cosine similarity score (precomputed)
-            - The number of matched taxonomical levels between the Lotus entry and the Match entry
-            - The chemical reponderation step performs chemical consistency reweighting on the set of MS2 annotations. requires component index.
-
-        We weight the Lotus annotations by these three scores, and return the best one.
+            given the expected sample taxonomy. In some cases, spectra may
+            come from unknown sources that  prevent us to retrieve the OTL match.
+            In such cases, we ignore the taxonomical reponderation step.
         """
-        weighted_lotus_entries = [
-            (
-                annotation.cosine_similarity
-                + lotus.taxonomical_similarity_with_otl_match(match),
-                lotus,
-            )
-            for annotation in self._isdb_annotations
-            if annotation.lotus is not None
-            for lotus in annotation.lotus
-        ]
+        assert ms1_importance_score + isdb_importance_score == 1
 
-        if not weighted_lotus_entries:
+        if not self.has_ms1_annotations() and not self.has_isdb_annotations():
             return None
 
-        return max(weighted_lotus_entries, key=lambda x: x[0])[1]
+        pathway_scores = np.zeros_like(self._isdb_hammer_pathway_scores)
+        superclass_scores = np.zeros_like(self._isdb_hammer_superclass_scores)
+        class_scores = np.zeros_like(self._isdb_hammer_class_scores)
+
+        if self._isdb_hammer_pathway_scores.sum() > 0:
+            assert self._isdb_hammer_superclass_scores.sum() > 0
+            assert self._isdb_hammer_class_scores.sum() > 0
+            pathway_scores += isdb_importance_score * self._isdb_hammer_pathway_scores
+            superclass_scores += (
+                isdb_importance_score * self._isdb_hammer_superclass_scores
+            )
+            class_scores += isdb_importance_score * self._isdb_hammer_class_scores
+        else:
+            isdb_importance_score = 0
+
+        if self._ms1_hammer_pathway_scores.sum() > 0:
+            assert self._ms1_hammer_superclass_scores.sum() > 0
+            assert self._ms1_hammer_class_scores.sum() > 0
+            pathway_scores += ms1_importance_score * self._ms1_hammer_pathway_scores
+            superclass_scores += (
+                ms1_importance_score * self._ms1_hammer_superclass_scores
+            )
+            class_scores += ms1_importance_score * self._ms1_hammer_class_scores
+        else:
+            ms1_importance_score = 0
+
+        # We adjust the scores in case one of the two scores is zero
+        pathway_scores /= isdb_importance_score + ms1_importance_score
+        superclass_scores /= isdb_importance_score + ms1_importance_score
+        class_scores /= isdb_importance_score + ms1_importance_score
+
+        isdb_annotations: List[Tuple[ISDBChemicalAnnotation, Lotus, float]] = []
+
+        for annotation in self._isdb_annotations:
+            if not annotation.has_lotus_annotations():
+                continue
+            # Next, we store the KL divergence score for the pathways scores
+            entropy_score: float = (
+                entropy(
+                    annotation.get_hammer_pathway_scores(),
+                    pathway_scores,
+                )
+                * entropy(
+                    annotation.get_hammer_superclass_scores(),
+                    superclass_scores,
+                )
+                * entropy(
+                    annotation.get_hammer_class_scores(),
+                    class_scores,
+                )
+            )
+            for lotus_annotation in annotation.lotus_annotations():
+                # Next, we store the taxonomical reponderation score
+                if match is not None:
+                    taxonomical_similarity: float = (
+                        lotus_annotation.normalized_taxonomical_similarity_with_otl_match(
+                            match
+                        )
+                    )
+                else:
+                    taxonomical_similarity: float = 1.0
+
+                isdb_annotations.append(
+                    (
+                        annotation,
+                        lotus_annotation,
+                        taxonomical_similarity / entropy_score,
+                    )
+                )
+
+        ms1_annotations: List[Tuple[Lotus, float]] = []
+
+        for annotation in self._ms1_annotations:
+            # Next, we store the KL divergence score for the pathways scores
+            entropy_score: float = (
+                entropy(
+                    annotation.get_hammer_pathway_scores(),
+                    pathway_scores,
+                )
+                * entropy(
+                    annotation.get_hammer_superclass_scores(),
+                    superclass_scores,
+                )
+                * entropy(
+                    annotation.get_hammer_class_scores(),
+                    class_scores,
+                )
+            )
+            for lotus_annotation in annotation.lotus:
+                # Next, we store the taxonomical reponderation score
+                if match is not None:
+                    taxonomical_similarity: float = (
+                        lotus_annotation.normalized_taxonomical_similarity_with_otl_match(
+                            match
+                        )
+                    )
+                else:
+                    taxonomical_similarity: float = 1.0
+
+                ms1_annotations.append(
+                    (
+                        lotus_annotation,
+                        taxonomical_similarity / entropy_score,
+                    )
+                )
+
+        # We rank first the isdb annotations, which include in their sorting
+        # procedure also the cosine similarity. After that, we strictly compare
+        # the MS1 annotations with the ISDB annotations using the combination of
+        # taxonomical similarity and entropy.
+
+        if len(isdb_annotations) > 0:
+            most_similar_isdb_annotation: Tuple[ISDBChemicalAnnotation, Lotus, float] = max(
+                isdb_annotations, key=lambda x: x[2] * x[0].cosine_similarity
+            )
+            most_similar_isdb_annotation: Tuple[Optional[Lotus], float] = (
+                most_similar_isdb_annotation[1],
+                most_similar_isdb_annotation[2],
+            )
+        else:
+            most_similar_isdb_annotation: Tuple[Optional[Lotus], float] = (None, -np.inf)
+
+        if len(ms1_annotations) > 0:
+            most_similar_ms1_annotation: Tuple[Optional[Lotus], float] = max(
+                ms1_annotations, key=lambda x: x[1]
+            )
+        else:
+            most_similar_ms1_annotation: Tuple[Optional[Lotus], float] = (None, -np.inf)
+
+        if most_similar_isdb_annotation[1] > most_similar_ms1_annotation[1]:
+            return most_similar_isdb_annotation[0], most_similar_isdb_annotation[1]
+        return most_similar_ms1_annotation[0], most_similar_ms1_annotation[1]
+
+    def into_dict(self, match: Optional[Match]) -> Dict[str, Any]:
+        """Returns the main features of the spectrum as a dictionary."""
+        annotation_candidate: Optional[Tuple[Lotus, float]] = (
+            self.best_chemical_annotation(match)
+        )
+
+        annotation_metadata = {}
+        if annotation_candidate is not None:
+            annotation, score = annotation_candidate
+            annotation_metadata = annotation.to_dict()
+            annotation_metadata["annotation_score"] = score
+
+        return {
+            "feature_id": self.feature_id,
+            **annotation_metadata,
+        }

@@ -291,7 +291,6 @@ class MS1Enricher(Enricher):
             node_names=analysis.feature_ids,
             features=pathway_features,
             normalize=False,
-            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
@@ -301,7 +300,6 @@ class MS1Enricher(Enricher):
             node_names=analysis.feature_ids,
             features=superclass_features,
             normalize=False,
-            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)
@@ -311,7 +309,6 @@ class MS1Enricher(Enricher):
             node_names=analysis.feature_ids,
             features=class_features,
             normalize=False,
-            ignore_zeroed_nodes=True,
         )
 
         loading_bar.update(1)

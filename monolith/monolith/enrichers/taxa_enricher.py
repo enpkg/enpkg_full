@@ -47,9 +47,6 @@ class TaxaEnricher(Enricher):
             include_suppressed=False,
         ).response_dict
 
-        if "results" not in ott_match:
-            return analysis
-
         assert "results" in ott_match, "No results in the OTT match"
 
         ott_match_results = ott_match["results"][0]
