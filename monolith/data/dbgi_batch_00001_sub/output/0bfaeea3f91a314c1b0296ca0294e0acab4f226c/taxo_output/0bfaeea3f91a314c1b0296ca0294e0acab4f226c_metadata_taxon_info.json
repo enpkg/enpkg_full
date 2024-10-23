@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "matches": [
+        {
+          "is_approximate_match": false,
+          "is_synonym": false,
+          "matched_name": "Verbascum bombyciferum",
+          "nomenclature_code": "ICN",
+          "score": 1.0,
+          "search_string": "verbascum bombyciferum",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Verbascum bombyciferum",
+            "ott_id": 3883068,
+            "rank": "species",
+            "source": "ott3.7draft2",
+            "synonyms": [],
+            "tax_sources": [
+              "gbif:3741100"
+            ],
+            "unique_name": "Verbascum bombyciferum"
+          }
+        },
+        {
+          "is_approximate_match": false,
+          "is_synonym": true,
+          "matched_name": "Verbascum bombyciferum",
+          "nomenclature_code": "ICN",
+          "score": 1.0,
+          "search_string": "verbascum bombyciferum",
+          "taxon": {
+            "flags": [],
+            "is_suppressed": false,
+            "is_suppressed_from_synth": false,
+            "name": "Verbascum longifolium",
+            "ott_id": 6074998,
+            "rank": "species",
+            "source": "ott3.7draft2",
+            "synonyms": [
+              "Verbascum bombyciferum",
+              "Verbascum epirotum",
+              "Verbascum macrostachyum",
+              "Verbascum pachyurum",
+              "Verbascum pannosum",
+              "Verbascum samaritanii"
+            ],
+            "tax_sources": [
+              "gbif:3738156"
+            ],
+            "unique_name": "Verbascum longifolium"
+          }
+        }
+      ],
+      "name": "verbascum bombyciferum"
+    }
+  ],
+  "unmatched_names": []
+}

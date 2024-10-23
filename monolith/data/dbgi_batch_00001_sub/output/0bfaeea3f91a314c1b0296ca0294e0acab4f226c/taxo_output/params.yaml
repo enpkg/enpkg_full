@@ -1,0 +1,12 @@
+git:
+  git_commit: 25b7f9890b14c86542cb5cfa9618623d05b3e195
+  git_commit_link: https://github.com/enpkg/enpkg_full/tree/25b7f9890b14c86542cb5cfa9618623d05b3e195
+ott:
+  taxonomy_about:
+    author: open tree of life project
+    name: ott
+    source: ott3.7draft2
+    version: '3.7'
+    weburl: https://tree.opentreeoflife.org/about/taxonomy-version/ott3.7
+package_versions:
+  opentree: 1.0.1

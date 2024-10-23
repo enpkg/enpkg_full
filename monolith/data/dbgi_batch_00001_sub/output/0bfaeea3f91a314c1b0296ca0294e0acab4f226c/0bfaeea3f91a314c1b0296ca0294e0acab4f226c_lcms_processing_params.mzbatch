@@ -1,0 +1,1226 @@
+<?xml version="1.0" encoding="UTF-8"?><batch mzmine_version="4.1.0">
+    <batchstep method="io.github.mzmine.modules.io.import_rawdata_all.AllSpectralDataImportModule" parameter_version="1">
+        <parameter name="File names">
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002607_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002487_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001866_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002468_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002500_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002753_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002778_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002870_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003084_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002840_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002979_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002747_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003173_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001901_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002885_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002770_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001920_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003186_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003115_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002805_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001809_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002533_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002249_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002653_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001927_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002815_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003024_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002899_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003162_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003210_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003060_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001831_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003061_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002546_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001803_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002940_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003200_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002479_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002774_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001893_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003030_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003007_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002520_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002703_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003005_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001862_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001764_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001838_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003040_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003039_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001895_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002496_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003011_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002566_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001189_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001832_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001880_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002549_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002969_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002980_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003092_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003202_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002757_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002644_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001904_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003019_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002751_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001765_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002701_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002581_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002773_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003028_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002434_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002413_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002826_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002374_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002924_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002425_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_001794_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002705_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001861_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001841_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002823_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002831_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002499_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003049_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002949_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002842_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002999_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002822_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001792_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001776_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002952_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002775_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002978_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002871_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002465_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002710_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002454_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002355_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002595_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001912_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002469_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002519_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001805_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002797_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002959_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002694_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002270_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001870_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001860_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002875_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002953_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003045_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002488_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002619_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002964_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002729_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002272_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001802_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002853_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002690_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002338_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002354_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002825_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002651_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002857_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002513_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002313_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003029_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002843_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002452_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002837_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002439_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002874_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002385_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002539_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001760_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002963_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002829_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002537_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002318_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001833_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002806_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002544_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002543_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002394_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002725_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001793_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001879_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001816_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002594_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001918_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002821_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002896_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002288_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002859_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002627_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002554_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003110_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003022_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002702_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002491_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002950_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002743_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002569_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003053_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002791_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003008_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002473_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002279_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003121_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002446_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002458_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002591_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002769_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002915_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003133_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001199_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003033_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002981_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002830_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002721_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001191_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002767_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241731_EB_dbgi_003208_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002476_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002660_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003108_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002466_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001812_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001936_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002880_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002501_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002828_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002708_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002541_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002812_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003027_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002686_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001835_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002610_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003169_01_02.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001875_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001847_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002431_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002576_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002955_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002824_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003062_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002808_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002641_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002401_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002433_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001781_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003070_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002942_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002814_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002801_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001837_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002792_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_batch_blk_000009_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002887_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002839_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002997_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002621_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002285_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002484_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003055_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002507_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001891_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002772_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002264_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002497_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002620_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002561_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002809_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002472_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002583_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003114_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002719_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002900_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003059_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001804_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001919_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002643_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002635_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002511_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002876_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_batch_blk_000012_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002675_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002498_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003034_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002927_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001933_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002766_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002748_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003046_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002869_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001755_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002922_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002662_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002929_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002868_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002383_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003109_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002768_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002410_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002914_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002592_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002577_01_03.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001863_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001887_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003122_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003086_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002674_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003001_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002568_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001869_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001846_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003123_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002589_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001799_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003021_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003010_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002514_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001864_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002750_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002503_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003116_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003012_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003069_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002453_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003065_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002661_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001807_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003098_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002818_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003048_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003194_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002671_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001842_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002652_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003120_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001925_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002864_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001834_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002935_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003130_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002247_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002615_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002699_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002531_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002726_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002535_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002386_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001796_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002387_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002714_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003142_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002492_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002455_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001906_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002550_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002943_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002790_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003043_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002538_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001758_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001839_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002312_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002529_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241731_EB_dbgi_003208_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002251_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003032_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002493_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002971_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003052_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002813_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002542_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001821_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001852_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003143_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002624_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002457_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002878_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001894_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003004_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002759_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003041_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002794_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001928_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003139_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001751_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002665_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003058_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001795_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002502_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001777_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002459_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002987_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002294_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002954_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002609_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002253_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002481_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002521_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002395_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001219_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003066_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001882_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003124_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003190_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002429_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_batch_blk_000004_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002460_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002784_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003125_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003192_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_batch_blk_000002_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002988_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002992_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002730_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002755_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002932_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002365_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001872_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002271_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001915_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002625_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003042_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001827_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001819_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003037_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002648_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002650_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002393_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001857_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002764_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002760_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002894_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002461_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_batch_blk_000008_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002448_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002577_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002564_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002989_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002467_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002844_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002834_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002796_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002854_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001881_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002917_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001788_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002359_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002422_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002799_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002970_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002973_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003051_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003016_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002647_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002901_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002960_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002893_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002590_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001825_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002246_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002867_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003212_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002489_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001197_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002618_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003038_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001884_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_001888_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002807_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002909_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002776_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002527_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002984_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001849_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003144_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002424_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002551_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002846_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_003068_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001759_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002642_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001820_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003031_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003080_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002963_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002478_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002803_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002895_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002746_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003167_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002371_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002761_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002414_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002946_02_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003026_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002888_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002528_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002962_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002580_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001817_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002783_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002928_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003095_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002902_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002536_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001843_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003057_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003009_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002836_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002482_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002709_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002450_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002483_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002820_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002277_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002994_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002375_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002832_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002847_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002323_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002269_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002995_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001808_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003013_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002261_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002727_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002918_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_batch_blk_000007_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002711_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001898_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003020_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002278_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001778_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002421_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002603_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003157_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001773_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002645_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002463_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001926_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003206_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002795_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002363_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002919_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003103_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002480_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002555_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001813_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002886_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002996_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002898_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002881_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001798_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002256_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002948_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002605_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002919_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002972_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002848_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002965_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002740_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002335_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002462_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002906_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001848_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002506_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002707_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_batch_blk_000005_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001828_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002523_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001913_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002728_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002744_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001783_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002360_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002268_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002819_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002515_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002779_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002933_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002250_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001889_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002749_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_batch_blk_000006_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002804_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002321_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002382_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002742_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003064_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001774_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002736_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002693_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002575_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002841_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003015_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001782_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001934_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003035_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002697_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002633_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001858_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001877_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002611_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002816_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002364_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001867_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001195_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002613_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002326_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002738_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001201_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002745_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003036_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002443_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001797_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002600_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002904_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002524_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001836_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001771_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002522_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002265_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002882_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002990_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003003_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002593_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003083_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002475_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001873_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001818_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002428_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001787_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002777_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002526_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002437_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002858_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002934_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001213_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002552_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002640_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001043_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001855_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002789_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002712_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002390_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002944_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003217_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001910_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002351_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002430_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002754_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002623_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002716_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241731_EB_dbgi_003224_01_02.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001215_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002442_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001823_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003135_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001784_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002456_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002628_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002666_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001210_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001840_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003134_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002763_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002866_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002280_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002862_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002474_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002578_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002275_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002737_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_001890_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001801_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002606_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002490_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002849_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002622_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003002_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002991_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001790_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002907_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002733_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002339_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001826_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002258_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002892_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002732_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002470_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002677_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002532_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002471_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002602_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002905_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002855_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002477_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002510_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003017_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002598_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002872_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002749_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002706_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002782_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002608_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002975_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002451_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003100_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001856_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002688_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002863_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002788_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002715_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001779_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002810_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001192_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003056_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_batch_blk_000003_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002983_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003000_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003126_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001769_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002879_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003025_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002669_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241731_EB_dbgi_003224_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002758_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002698_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002567_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_003050_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002444_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002947_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003054_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002802_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002370_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002240_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_batch_blk_000001_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002958_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002974_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002636_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002827_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001935_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002845_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404241651_EB_dbgi_003163_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003047_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002877_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_batch_blk_000011_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405171439_HC_dbgi_002762_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002601_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002449_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002811_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003075_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002891_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_002616_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002704_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003073_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002445_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002718_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002356_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002577_01_02.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002938_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_003018_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002781_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_001878_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_003006_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002508_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002873_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001859_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_001922_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002464_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003063_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240405_EB_dbgi_002851_01_01_100mm_C18_15min_DDA_ELON_pos.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002388_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002332_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002342_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002897_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003023_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_003152_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002756_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405081555_EB_dbgi_002680_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202405241509_EB_dbgi_001871_01_01.mzML</file>
+            <file>/tmp/subset_2024061211/202404191203_HC_dbgi_002928_02_01.mzML</file>
+            <file>/tmp/subset_2024061211/20240307_EB_dbgi_002509_01_01.mzML</file>
+        </parameter>
+        <parameter name="Advanced import" selected="false">
+            <parameter name="Scan filters" selected="true">
+                <parameter name="Scan number"/>
+                <parameter name="Base Filtering Integer"/>
+                <parameter name="Retention time"/>
+                <parameter name="Mobility"/>
+                <parameter name="MS level filter" selected="All MS levels">1</parameter>
+                <parameter name="Scan definition"/>
+                <parameter name="Polarity">Any</parameter>
+                <parameter name="Spectrum type">ANY</parameter>
+            </parameter>
+            <parameter name="Crop MS1 m/z" selected="false"/>
+            <parameter name="MS1 detector (Advanced)" selected="true" selected_item="Factor of lowest signal">
+                <module name="Factor of lowest signal">
+                    <parameter name="Noise factor">5.0</parameter>
+                </module>
+                <module name="Auto">
+                    <parameter name="Noise level">1000.0</parameter>
+                </module>
+                <module name="Centroid">
+                    <parameter name="Noise level"/>
+                </module>
+                <module name="Exact mass">
+                    <parameter name="Noise level"/>
+                </module>
+                <module name="Local maxima">
+                    <parameter name="Noise level"/>
+                </module>
+                <module name="Recursive threshold">
+                    <parameter name="Noise level"/>
+                    <parameter name="Min m/z peak width"/>
+                    <parameter name="Max m/z peak width"/>
+                </module>
+                <module name="Wavelet transform">
+                    <parameter name="Noise level"/>
+                    <parameter name="Scale level"/>
+                    <parameter name="Wavelet window size (%)"/>
+                </module>
+            </parameter>
+            <parameter name="MS2 detector (Advanced)" selected="true" selected_item="Factor of lowest signal">
+                <module name="Factor of lowest signal">
+                    <parameter name="Noise factor">0.0</parameter>
+                </module>
+                <module name="Auto">
+                    <parameter name="Noise level">1000.0</parameter>
+                </module>
+                <module name="Centroid">
+                    <parameter name="Noise level"/>
+                </module>
+                <module name="Exact mass">
+                    <parameter name="Noise level"/>
+                </module>
+                <module name="Local maxima">
+                    <parameter name="Noise level"/>
+                </module>
+                <module name="Recursive threshold">
+                    <parameter name="Noise level"/>
+                    <parameter name="Min m/z peak width"/>
+                    <parameter name="Max m/z peak width"/>
+                </module>
+                <module name="Wavelet transform">
+                    <parameter name="Noise level"/>
+                    <parameter name="Scale level"/>
+                    <parameter name="Wavelet window size (%)"/>
+                </module>
+            </parameter>
+            <parameter name="Denormalize fragment scans (traps)">true</parameter>
+        </parameter>
+        <parameter name="Metadata file" selected="true">
+            <current_file>/home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_metadata.tsv</current_file>
+            <last_file>/home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_metadata.tsv</last_file>
+            <last_file>/home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/metadata/treated/dbgi_batch_00001_metadata_fully_resolved.csv</last_file>
+            <last_file>/home/allardpm/git_repos/mapp-metabolomics-unit/adria-leboeuf-group/docs/mapp_project_00014/mapp_batch_00074/metadata/treated/mapp_batch_00074_metadata.tsv</last_file>
+        </parameter>
+        <parameter name="Spectral library files"/>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.featdet_massdetection.MassDetectionModule" parameter_version="1">
+        <parameter name="Raw data files" type="BATCH_LAST_FILES"/>
+        <parameter name="Scan filters" selected="true">
+            <parameter name="Scan number"/>
+            <parameter name="Base Filtering Integer"/>
+            <parameter name="Retention time"/>
+            <parameter name="Mobility"/>
+            <parameter name="MS level filter" selected="MS1, level = 1">1</parameter>
+            <parameter name="Scan definition"/>
+            <parameter name="Polarity">Any</parameter>
+            <parameter name="Spectrum type">ANY</parameter>
+        </parameter>
+        <parameter name="Scan types (IMS)">All scan types</parameter>
+        <parameter name="Mass detector" selected_item="Factor of lowest signal">
+            <module name="Factor of lowest signal">
+                <parameter name="Noise factor">5.0</parameter>
+            </module>
+            <module name="Auto">
+                <parameter name="Noise level">1000.0</parameter>
+            </module>
+            <module name="Centroid">
+                <parameter name="Noise level"/>
+            </module>
+            <module name="Exact mass">
+                <parameter name="Noise level"/>
+            </module>
+            <module name="Local maxima">
+                <parameter name="Noise level"/>
+            </module>
+            <module name="Recursive threshold">
+                <parameter name="Noise level"/>
+                <parameter name="Min m/z peak width"/>
+                <parameter name="Max m/z peak width"/>
+            </module>
+            <module name="Wavelet transform">
+                <parameter name="Noise level"/>
+                <parameter name="Scale level"/>
+                <parameter name="Wavelet window size (%)"/>
+            </module>
+        </parameter>
+        <parameter name="Denormalize fragment scans (traps)">true</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.featdet_massdetection.MassDetectionModule" parameter_version="1">
+        <parameter name="Raw data files" type="BATCH_LAST_FILES"/>
+        <parameter name="Scan filters" selected="true">
+            <parameter name="Scan number"/>
+            <parameter name="Base Filtering Integer"/>
+            <parameter name="Retention time"/>
+            <parameter name="Mobility"/>
+            <parameter name="MS level filter" selected="MSn, level ≥ 2">3</parameter>
+            <parameter name="Scan definition"/>
+            <parameter name="Polarity">Any</parameter>
+            <parameter name="Spectrum type">ANY</parameter>
+        </parameter>
+        <parameter name="Scan types (IMS)">All scan types</parameter>
+        <parameter name="Mass detector" selected_item="Factor of lowest signal">
+            <module name="Factor of lowest signal">
+                <parameter name="Noise factor">0.0</parameter>
+            </module>
+            <module name="Auto">
+                <parameter name="Noise level">1000.0</parameter>
+            </module>
+            <module name="Centroid">
+                <parameter name="Noise level"/>
+            </module>
+            <module name="Exact mass">
+                <parameter name="Noise level"/>
+            </module>
+            <module name="Local maxima">
+                <parameter name="Noise level"/>
+            </module>
+            <module name="Recursive threshold">
+                <parameter name="Noise level"/>
+                <parameter name="Min m/z peak width"/>
+                <parameter name="Max m/z peak width"/>
+            </module>
+            <module name="Wavelet transform">
+                <parameter name="Noise level"/>
+                <parameter name="Scale level"/>
+                <parameter name="Wavelet window size (%)"/>
+            </module>
+        </parameter>
+        <parameter name="Denormalize fragment scans (traps)">true</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.featdet_adapchromatogrambuilder.ModularADAPChromatogramBuilderModule" parameter_version="1">
+        <parameter name="Raw data files" type="BATCH_LAST_FILES"/>
+        <parameter name="Scan filters" selected="true">
+            <parameter name="Scan number"/>
+            <parameter name="Base Filtering Integer"/>
+            <parameter name="Retention time">
+                <min>0.0</min>
+                <max>12.01</max>
+            </parameter>
+            <parameter name="Mobility"/>
+            <parameter name="MS level filter" selected="MS1, level = 1">1</parameter>
+            <parameter name="Scan definition"/>
+            <parameter name="Polarity">+</parameter>
+            <parameter name="Spectrum type">ANY</parameter>
+        </parameter>
+        <parameter name="Minimum consecutive scans">5</parameter>
+        <parameter name="Minimum intensity for consecutive scans">10000.0</parameter>
+        <parameter name="Minimum absolute height">50000.0</parameter>
+        <parameter name="m/z tolerance (scan-to-scan)">
+            <absolutetolerance>0.002</absolutetolerance>
+            <ppmtolerance>10.0</ppmtolerance>
+        </parameter>
+        <parameter name="Suffix">eics</parameter>
+        <parameter name="Allow single scan chromatograms"/>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.featdet_smoothing.SmoothingModule" parameter_version="1">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Smoothing algorithm" selected_item="Savitzky Golay">
+            <module name="Savitzky Golay">
+                <parameter name="Retention time smoothing" selected="true">5</parameter>
+                <parameter name="Mobility smoothing" selected="false">5</parameter>
+            </module>
+            <module name="Loess smoothing">
+                <parameter name="Retention time width (scans)" selected="false">5</parameter>
+                <parameter name="Mobility width (scans)" selected="false">5</parameter>
+            </module>
+        </parameter>
+        <parameter name="Original feature list">KEEP</parameter>
+        <parameter name="Suffix">sm</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.featdet_chromatogramdeconvolution.minimumsearch.MinimumSearchFeatureResolverModule" parameter_version="2">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Suffix">r</parameter>
+        <parameter name="Original feature list">KEEP</parameter>
+        <parameter name="MS/MS scan pairing" selected="true">
+            <parameter name="MS1 to MS2 precursor tolerance (m/z)">
+                <absolutetolerance>0.01</absolutetolerance>
+                <ppmtolerance>10.0</ppmtolerance>
+            </parameter>
+            <parameter name="Retention time filter" selected="Use feature edges" unit="MINUTES">0.05</parameter>
+            <parameter name="Minimum relative feature height" selected="true">0.25</parameter>
+            <parameter name="Minimum required signals" selected="true">1</parameter>
+            <parameter name="Limit by ion mobility edges">true</parameter>
+            <parameter name="Merge MS/MS spectra (TIMS)">false</parameter>
+            <parameter name="Minimum signal intensity (absolute, TIMS)" selected="false">0.0</parameter>
+            <parameter name="Minimum signal intensity (relative, TIMS)" selected="false">0.01</parameter>
+        </parameter>
+        <parameter name="Dimension">Retention time</parameter>
+        <parameter name="Chromatographic threshold">0.3</parameter>
+        <parameter name="Minimum search range RT/Mobility (absolute)">0.05000000074505806</parameter>
+        <parameter name="Minimum relative height">0.0</parameter>
+        <parameter name="Minimum absolute height">50000.0</parameter>
+        <parameter name="Min ratio of peak top/edge">2.0</parameter>
+        <parameter name="Peak duration range (min/mobility)">
+            <min>0.0</min>
+            <max>1.5000000223517418</max>
+        </parameter>
+        <parameter name="Minimum scans (data points)">5</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.filter_isotopegrouper.IsotopeGrouperModule" parameter_version="1">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Name suffix">deiso</parameter>
+        <parameter name="m/z tolerance (intra-sample)">
+            <absolutetolerance>0.0015</absolutetolerance>
+            <ppmtolerance>3.0</ppmtolerance>
+        </parameter>
+        <parameter name="Retention time tolerance" unit="MINUTES">0.04</parameter>
+        <parameter name="Mobility tolerance" selected="false">1.0</parameter>
+        <parameter name="Monotonic shape">true</parameter>
+        <parameter name="Maximum charge">2</parameter>
+        <parameter name="Representative isotope">Most intense</parameter>
+        <parameter name="Never remove feature with MS2">true</parameter>
+        <parameter name="Original feature list">KEEP</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.filter_rowsfilter.RowsFilterModule" parameter_version="2">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Name suffix">filtered</parameter>
+        <parameter name="Minimum aligned features (samples)" selected="false">
+            <abs>1</abs>
+            <rel>0.0</rel>
+        </parameter>
+        <parameter name="Minimum features in an isotope pattern" selected="true">2</parameter>
+        <parameter name="Validate 13C isotope pattern" selected="false">
+            <parameter name="m/z tolerance">
+                <absolutetolerance>5.0E-4</absolutetolerance>
+                <ppmtolerance>10.0</ppmtolerance>
+            </parameter>
+            <parameter name="Max charge">1</parameter>
+            <parameter name="Estimate minimum carbon">true</parameter>
+            <parameter name="Remove if 13C">true</parameter>
+            <parameter name="Exclude isotopes">H,C,N,O,S</parameter>
+        </parameter>
+        <parameter name="Remove redundant isotope rows">false</parameter>
+        <parameter name="m/z" selected="false"/>
+        <parameter name="Retention time" selected="false"/>
+        <parameter name="features duration range" selected="false">
+            <min>0.0</min>
+            <max>3.0</max>
+        </parameter>
+        <parameter name="Chromatographic FWHM" selected="false">
+            <min>0.0</min>
+            <max>1.0</max>
+        </parameter>
+        <parameter name="Charge" selected="false">
+            <min>1</min>
+            <max>2</max>
+        </parameter>
+        <parameter name="Kendrick mass defect" selected="false">
+            <parameter name="Kendrick mass defect">
+                <min>0.0</min>
+                <max>1.0</max>
+            </parameter>
+            <parameter name="Kendrick mass base"/>
+            <parameter name="Shift">0.0</parameter>
+            <parameter name="Charge">1</parameter>
+            <parameter name="Divisor">1</parameter>
+            <parameter name="Use Remainder of Kendrick mass">false</parameter>
+        </parameter>
+        <parameter name="Parameter">No parameters defined</parameter>
+        <parameter name="Only identified?">false</parameter>
+        <parameter name="Text in identity" selected="false"/>
+        <parameter name="Text in comment" selected="false"/>
+        <parameter name="Keep or remove rows">Keep rows that match all criteria</parameter>
+        <parameter name="Feature with MS2 scan">false</parameter>
+        <parameter name="Never remove feature with MS2">true</parameter>
+        <parameter name="Never remove annotated rows">false</parameter>
+        <parameter name="Reset the feature number ID">true</parameter>
+        <parameter name="Mass defect" selected="false"/>
+        <parameter name="Original feature list">KEEP</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.filter_isotopefinder.IsotopeFinderModule" parameter_version="1">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Chemical elements">H,C,N,O,S</parameter>
+        <parameter name="m/z tolerance (feature-to-scan)">
+            <absolutetolerance>0.0015</absolutetolerance>
+            <ppmtolerance>3.0</ppmtolerance>
+        </parameter>
+        <parameter name="Maximum charge of isotope m/z">1</parameter>
+        <parameter name="Search in scans">SINGLE MOST INTENSE</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.align_join.JoinAlignerModule" parameter_version="1">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Feature list name">Aligned feature list</parameter>
+        <parameter name="m/z tolerance (sample-to-sample)">
+            <absolutetolerance>0.0015</absolutetolerance>
+            <ppmtolerance>5.0</ppmtolerance>
+        </parameter>
+        <parameter name="Weight for m/z">3.0</parameter>
+        <parameter name="Retention time tolerance" unit="MINUTES">0.1</parameter>
+        <parameter name="Weight for RT">1.0</parameter>
+        <parameter name="Mobility tolerance" selected="false">1.0</parameter>
+        <parameter name="Mobility weight">1.0</parameter>
+        <parameter name="Require same charge state">false</parameter>
+        <parameter name="Require same ID">false</parameter>
+        <parameter name="Compare isotope pattern" selected="false">
+            <parameter name="Isotope m/z tolerance">
+                <absolutetolerance>0.001</absolutetolerance>
+                <ppmtolerance>5.0</ppmtolerance>
+            </parameter>
+            <parameter name="Minimum absolute intensity"/>
+            <parameter name="Minimum score"/>
+        </parameter>
+        <parameter name="Compare spectra similarity" selected="false">
+            <parameter name="Spectral m/z tolerance">
+                <absolutetolerance>0.001</absolutetolerance>
+                <ppmtolerance>10.0</ppmtolerance>
+            </parameter>
+            <parameter name="MS level">2</parameter>
+            <parameter name="Compare spectra similarity" selected_item="Weighted cosine similarity">
+                <module name="Weighted cosine similarity">
+                    <parameter name="Weights">MassBank (mz^2 * I^0.5)</parameter>
+                    <parameter name="Minimum  cos similarity">0.7</parameter>
+                    <parameter name="Handle unmatched signals">KEEP ALL AND MATCH TO ZERO</parameter>
+                </module>
+                <module name="Composite cosine identity (e.g., GC-EI-MS; similar to NIST search)">
+                    <parameter name="Weights">MassBank (mz^2 * I^0.5)</parameter>
+                    <parameter name="Minimum  cos similarity">0.7</parameter>
+                    <parameter name="Handle unmatched signals">KEEP ALL AND MATCH TO ZERO</parameter>
+                </module>
+            </parameter>
+        </parameter>
+        <parameter name="Original feature list">KEEP</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.dataprocessing.filter_rowsfilter.RowsFilterModule" parameter_version="2">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Name suffix">peak</parameter>
+        <parameter name="Minimum aligned features (samples)" selected="true">
+            <abs>1</abs>
+            <rel>0.0</rel>
+        </parameter>
+        <parameter name="Minimum features in an isotope pattern" selected="true">2</parameter>
+        <parameter name="Validate 13C isotope pattern" selected="false">
+            <parameter name="m/z tolerance">
+                <absolutetolerance>0.0015</absolutetolerance>
+                <ppmtolerance>3.0</ppmtolerance>
+            </parameter>
+            <parameter name="Max charge">2</parameter>
+            <parameter name="Estimate minimum carbon">true</parameter>
+            <parameter name="Remove if 13C">true</parameter>
+            <parameter name="Exclude isotopes">O,O</parameter>
+        </parameter>
+        <parameter name="Remove redundant isotope rows">false</parameter>
+        <parameter name="m/z" selected="false"/>
+        <parameter name="Retention time" selected="false"/>
+        <parameter name="features duration range" selected="false">
+            <min>0.0</min>
+            <max>3.0</max>
+        </parameter>
+        <parameter name="Chromatographic FWHM" selected="false">
+            <min>0.0</min>
+            <max>1.0</max>
+        </parameter>
+        <parameter name="Charge" selected="false">
+            <min>1</min>
+            <max>2</max>
+        </parameter>
+        <parameter name="Kendrick mass defect" selected="false">
+            <parameter name="Kendrick mass defect">
+                <min>0.0</min>
+                <max>1.0</max>
+            </parameter>
+            <parameter name="Kendrick mass base"/>
+            <parameter name="Shift">0.0</parameter>
+            <parameter name="Charge">1</parameter>
+            <parameter name="Divisor">1</parameter>
+            <parameter name="Use Remainder of Kendrick mass">false</parameter>
+        </parameter>
+        <parameter name="Parameter">No parameters defined</parameter>
+        <parameter name="Only identified?">false</parameter>
+        <parameter name="Text in identity" selected="false"/>
+        <parameter name="Text in comment" selected="false"/>
+        <parameter name="Keep or remove rows">Keep rows that match all criteria</parameter>
+        <parameter name="Feature with MS2 scan">true</parameter>
+        <parameter name="Never remove feature with MS2">true</parameter>
+        <parameter name="Never remove annotated rows">false</parameter>
+        <parameter name="Reset the feature number ID">false</parameter>
+        <parameter name="Mass defect" selected="false"/>
+        <parameter name="Original feature list">KEEP</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.io.export_features_gnps.fbmn.GnpsFbmnExportAndSubmitModule" parameter_version="2">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Filename">
+            <current_file>/home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/results/mzmine/dbgi_batch_00001</current_file>
+        </parameter>
+        <parameter name="Merge MS/MS (experimental)" selected="false">
+            <parameter name="Select spectra to merge">across samples</parameter>
+            <parameter name="m/z merge mode">weighted average (remove outliers)</parameter>
+            <parameter name="intensity merge mode">sum intensities</parameter>
+            <parameter name="Expected mass deviation">
+                <absolutetolerance>0.001</absolutetolerance>
+                <ppmtolerance>5.0</ppmtolerance>
+            </parameter>
+            <parameter name="Cosine threshold (%)">0.7</parameter>
+            <parameter name="Signal count threshold (%)">0.2</parameter>
+            <parameter name="Isolation window offset (m/z)">0.0</parameter>
+            <parameter name="Isolation window width (m/z)">3.0</parameter>
+        </parameter>
+        <parameter name="Filter rows">MS2 OR ION IDENTITY</parameter>
+        <parameter name="Feature intensity">Height</parameter>
+        <parameter name="CSV export">SIMPLE</parameter>
+        <parameter name="Submit to GNPS" selected="false">
+            <parameter name="Meta data file" selected="false"/>
+            <parameter name="Export ion identity networks">true</parameter>
+            <parameter name="Presets">HIGHRES</parameter>
+            <parameter name="Job title"/>
+            <parameter name="Email"/>
+            <parameter name="Username"/>
+            <parameter name="Password"/>
+            <parameter name="Open website">true</parameter>
+        </parameter>
+        <parameter name="Open folder">false</parameter>
+    </batchstep>
+    <batchstep method="io.github.mzmine.modules.io.export_features_sirius.SiriusExportModule" parameter_version="1">
+        <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
+        <parameter name="Filename">
+            <current_file>/home/allardpm/git_repos/DBGI/dbgi-metabolomics/docs/dbgi_project_00001/dbgi_batch_00001/results/mzmine/dbgi_batch_00001_sirius</current_file>
+            <last_file>/home/allardpm/git_repos/mapp-metabolomics-unit/adria-leboeuf-group/docs/mapp_project_00014/mapp_batch_00074/results/mzmine/mapp_batch_00074_sirius.mgf</last_file>
+        </parameter>
+        <parameter name="Merge MS/MS" selected="true">
+            <parameter name="Select spectra to merge">across samples</parameter>
+            <parameter name="m/z merge mode">weighted average (remove outliers)</parameter>
+            <parameter name="intensity merge mode">sum intensities</parameter>
+            <parameter name="Expected mass deviation">
+                <absolutetolerance>0.001</absolutetolerance>
+                <ppmtolerance>5.0</ppmtolerance>
+            </parameter>
+            <parameter name="Cosine threshold (%)">0.7</parameter>
+            <parameter name="Signal count threshold (%)">0.2</parameter>
+            <parameter name="Isolation window offset (m/z)">0.0</parameter>
+            <parameter name="Isolation window width (m/z)">3.0</parameter>
+        </parameter>
+        <parameter name="m/z tolerance">
+            <absolutetolerance>0.002</absolutetolerance>
+            <ppmtolerance>5.0</ppmtolerance>
+        </parameter>
+        <parameter name="Only rows with annotation">false</parameter>
+        <parameter name="Exclude multiple charge">false</parameter>
+        <parameter name="Exclude multimers">false</parameter>
+    </batchstep>
+</batch>
