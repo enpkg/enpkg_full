@@ -21,6 +21,10 @@ def test_lpa():
         pd.read_csv("tests/node_names.txt", header=None, dtype=str).values.flatten().tolist()
     )
 
+    # We ensure that the graph has all of the nodes, including those
+    # that are singletons.
+    graph.add_nodes_from(node_names)
+
     # We run the LPA
     propagated_features: np.ndarray = label_propagation_algorithm(
         graph,
@@ -28,7 +32,6 @@ def test_lpa():
         node_names,
         threshold=1e-5,
         normalize=False,
-        ignore_zeroed_nodes=True,
         verbose=True,
     )
 

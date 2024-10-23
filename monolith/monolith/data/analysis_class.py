@@ -12,14 +12,13 @@ An Analysis object contains the following data:
 - metadata: pd.Series, the metadata Series of the analysis
 """
 
-from typing import List, Tuple, Optional, Iterable
+from typing import List, Tuple, Optional
 import pandas as pd
 import matchms
 import networkx as nx
 from typeguard import typechecked
 from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data.otl_class import Match
-from monolith.data.lotus_class import Lotus
 
 
 class Analysis:
@@ -168,6 +167,7 @@ class Analysis:
 
     @property
     def sample_type(self):
+        """Returns the sample type of the analysis."""
         return self._metadata["sample_type"]
 
     def extend_ott_matches(self, ott_match: List[Match]):
@@ -186,17 +186,9 @@ class Analysis:
         # TODO! UPDATE THIS SOMEHOW! Fo rexample by removing synonyms or taking only accepted names.
         return self._ott_matches[0]
 
-    @property
-    def best_lotus_annotation_per_spectra(self) -> Iterable[Lotus]:
-        """Returns the best LOTUS annotation per spectra."""
-        for spectrum in self.tandem_mass_spectra:
-            if not spectrum.is_isdb_annotated():
-                continue
-            best_annotation = spectrum.best_lotus_annotation_by_ott_match(
-                self.best_ott_match
-            )
-
-            if best_annotation is None:
-                continue
-
-            yield best_annotation
+    def to_dataframe(self) -> pd.DataFrame:
+        """Returns the analysis as a DataFrame."""
+        return pd.DataFrame([
+            spectrum.into_dict(self.best_ott_match)
+            for spectrum in self._tandem_mass_spectra
+        ])

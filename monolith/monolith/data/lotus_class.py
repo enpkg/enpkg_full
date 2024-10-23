@@ -1,6 +1,6 @@
 """Data class representing the key information of a LOTUS entry."""
 
-from typing import List, Any
+from typing import List, Any, Dict
 from dataclasses import dataclass
 from typeguard import typechecked
 import pandas as pd
@@ -148,6 +148,53 @@ class Lotus:
             self.structure_inchikey == other.structure_inchikey
             and self.organism_taxonomy_ottid == other.organism_taxonomy_ottid
         )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns the principal informations of the LOTUS entry as a dictionary.
+        
+        Implementative details
+        ----------------------
+        We solely maintain the features that can be represented
+        in a tabular form. Complex features such as the scores are,
+        therefore, excluded.
+        """
+        return {
+            "structure_inchikey": self.structure_inchikey,
+            "structure_inchi": self.structure_inchi,
+            "structure_smiles": self.structure_smiles,
+            "structure_molecular_formula": self.structure_molecular_formula,
+            "structure_exact_mass": self.structure_exact_mass,
+            "structure_xlogp": self.structure_xlogp,
+            "structure_smiles_2d": self.structure_smiles_2d,
+            "structure_cid": self.structure_cid,
+            "structure_name_iupac": self.structure_name_iupac,
+            "structure_name_traditional": self.structure_name_traditional,
+            "structure_stereocenters_total": self.structure_stereocenters_total,
+            "structure_stereocenters_unspecified": self.structure_stereocenters_unspecified,
+            "structure_taxonomy_classyfire_chemontid": self.structure_taxonomy_classyfire_chemontid,
+            "structure_taxonomy_classyfire_01kingdom": self.structure_taxonomy_classyfire_01kingdom,
+            "structure_taxonomy_classyfire_02superclass": self.structure_taxonomy_classyfire_02superclass,
+            "structure_taxonomy_classyfire_03class": self.structure_taxonomy_classyfire_03class,
+            "structure_taxonomy_classyfire_04directparent": self.structure_taxonomy_classyfire_04directparent,
+            "organism_wikidata": self.organism_wikidata,
+            "organism_name": self.organism_name,
+            "organism_taxonomy_gbifid": self.organism_taxonomy_gbifid,
+            "organism_taxonomy_ncbiid": self.organism_taxonomy_ncbiid,
+            "organism_taxonomy_ottid": self.organism_taxonomy_ottid,
+            "domain": self.domain,
+            "kingdom": self.kingdom,
+            "phylum": self.phylum,
+            "klass": self.klass,
+            "order": self.order,
+            "family": self.family,
+            "tribe": self.tribe,
+            "genus": self.genus,
+            "species": self.species,
+            "varietas": self.varietas,
+            "reference_wikidata": self.reference_wikidata,
+            "reference_doi": self.reference_doi,
+            "manual_validation": self.manual_validation,
+        }
 
     @property
     def short_inchikey(self) -> str:

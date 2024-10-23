@@ -5,6 +5,50 @@ import networkx as nx
 import numpy as np
 from typeguard import typechecked
 from tqdm.auto import tqdm
+from numba import njit, prange
+
+
+@njit(parallel=True)
+def numba_label_propagation(
+    features: np.ndarray,
+    zeroed_mask: np.ndarray,
+    weights_data: np.ndarray,
+    weights_indices: np.ndarray,
+    weights_indptr: np.ndarray,
+) -> np.ndarray:
+    """Executes one iteration of the LPA using Numba."""
+    new_features = np.zeros_like(features)
+
+    for node in prange(features.shape[0]):  # pylint: disable=not-an-iterable
+        row_weights = weights_data[weights_indptr[node] : weights_indptr[node + 1]]
+        neighbors = weights_indices[weights_indptr[node] : weights_indptr[node + 1]]
+
+        # We include the node itself in the sum of the weights only if
+        # it is not zeroed
+        weights_sum = 0
+
+        for neighbor, weight in zip(
+            neighbors,
+            row_weights,
+        ):
+            if not zeroed_mask[neighbor]:
+                weights_sum += weight
+
+        if not zeroed_mask[node]:
+            weights_sum += 1
+            for i in range(features.shape[1]):
+                new_features[node, i] = features[node, i] / weights_sum
+
+        if weights_sum == 0:
+            continue
+
+        for neighbor, normalized_weight in zip(neighbors, row_weights / weights_sum):
+            for i in range(features.shape[1]):
+                new_features[node, i] += features[neighbor, i] * normalized_weight
+
+        zeroed_mask[node] = False
+
+    return new_features
 
 
 @typechecked
@@ -15,7 +59,6 @@ def label_propagation_algorithm(
     weight: str = "weight",
     threshold: float = 1e-5,
     normalize: bool = True,
-    ignore_zeroed_nodes: bool = True,
     verbose: bool = True,
 ) -> np.ndarray:
     """Return LPA-ed classes.
@@ -34,21 +77,13 @@ def label_propagation_algorithm(
         The threshold to stop the LPA.
     normalize : bool
         Whether to normalize the features at each iteration.
-    ignore_zeroed_nodes : bool
-        Whether to ignore nodes with zero features.
     verbose : bool
         Whether to show a progress bar.
     """
     last_variation = np.inf
 
-    # We prepare a reverse index for the node names, as we have no guarantee for the network
-    # to have the nodes in the same order as the classes, or to have all the nodes.
-    largest_node = max(int(node_name) for node_name in node_names)
-    reverse_index = np.full(
-        (largest_node + 1,), fill_value=10 * largest_node, dtype=int
-    )
-    for index, node_name in enumerate(node_names):
-        reverse_index[int(node_name)] = index
+    # We convert the graph into a SciPy sparse matrix
+    weights = nx.to_scipy_sparse_array(graph, nodelist=node_names, weight=weight)
 
     global_progress_bar = tqdm(
         desc="LPA",
@@ -70,53 +105,12 @@ def label_propagation_algorithm(
                 "The features must be between 0 and 1 if the user has requested to NOT normalize them."
             )
 
-    number_of_iterations = 0
+    zeroed_mask: np.ndarray = features.sum(axis=1) == 0
 
     while last_variation > threshold:
-        number_of_iterations += 1
-        zeroed_mask: np.ndarray = features.sum(axis=1) == 0
-
-        # We propagate the features
-        new_features: np.ndarray = features.copy()
-        for node in graph.nodes:
-            weights: np.ndarray = np.fromiter(
-                (
-                    graph[node][neighbor][weight]
-                    for neighbor in graph.neighbors(node)
-                    if not ignore_zeroed_nodes
-                    or not zeroed_mask[reverse_index[int(neighbor)]]
-                ),
-                dtype=float,
-            )
-            if weights.size == 0:
-                continue
-            assert weights.sum() != 0, "The sum of the weights must not be zero."
-
-            weights_sum = weights.sum()
-
-            # We include the node itself in the sum of the weights only if
-            # it is not zeroed or if we are not ignoring zeroed nodes
-            if not ignore_zeroed_nodes or not zeroed_mask[reverse_index[int(node)]]:
-                weights_sum: float = weights_sum + 1
-                new_features[reverse_index[int(node)]] = (
-                    features[reverse_index[int(node)]] / weights_sum
-                )
-
-            normalized_weights: np.ndarray = weights / weights_sum
-
-            for normalized_weight, neighbour_features in zip(
-                normalized_weights,
-                (
-                    features[reverse_index[int(neighbor)]]
-                    for neighbor in graph.neighbors(node)
-                    if not ignore_zeroed_nodes
-                    or not zeroed_mask[reverse_index[int(neighbor)]]
-                ),
-            ):
-
-                new_features[reverse_index[int(node)]] += (
-                    neighbour_features * normalized_weight
-                )
+        new_features = numba_label_propagation(
+            features, zeroed_mask, weights.data, weights.indices, weights.indptr
+        )
 
         # We normalize the features
         if normalize:
@@ -125,7 +119,7 @@ def label_propagation_algorithm(
         # We compute the variation
         last_variation = np.linalg.norm(new_features - features)
 
-        convergence_percentage = threshold / last_variation * 100
+        convergence_percentage = (threshold / last_variation) * 100
 
         features = new_features
 

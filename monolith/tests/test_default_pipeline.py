@@ -78,30 +78,26 @@ class TestDefaultPipeline:
         assert isinstance(batch, Batch)
         assert len(batch.analyses) == 1
 
-        for analysis in batch.analyses:
+        for i, analysis in enumerate(batch.analyses):
             assert isinstance(analysis, Analysis)
             assert len(analysis.tandem_mass_spectra) == 678
             assert analysis.number_of_spectra_with_at_least_one_annotation == 191
 
-            # We print the best OTT match for the analysis
-            # best_ott_match = analysis.best_ott_match
+            analysis.to_dataframe().to_csv(f"{i}.csv.gz", index=False)
 
-            for spectrum in analysis.tandem_mass_spectra:
-                print(spectrum.get_top_k_lotus_annotation(5))
+    def test_default_pipeline_blank(self):
+        """Test run for the default pipeline with a blank."""
+        batch = Batch(
+            metadata_path="tests/data_for_analysis/blank/metadata/metadata.tsv",
+            methods_directory="tests/data_for_analysis/blank/methods",
+            mzml_directory="tests/data_for_analysis/blank/mzml",
+            treated_data_directory="tests/data_for_analysis/blank/treated_data",
+        )
+        batch = self.pipeline.process(batch)
+        assert isinstance(batch, Batch)
+        assert len(batch.analyses) == 1
 
-    # def test_default_pipeline_blank(self):
-    #     """Test run for the default pipeline with a blank."""
-    #     batch = Batch(
-    #         metadata_path="tests/data_for_analysis/blank/metadata/metadata.tsv",
-    #         methods_directory="tests/data_for_analysis/blank/methods",
-    #         mzml_directory="tests/data_for_analysis/blank/mzml",
-    #         treated_data_directory="tests/data_for_analysis/blank/treated_data",
-    #     )
-    #     batch = self.pipeline.process(batch)
-    #     assert isinstance(batch, Batch)
-    #     assert len(batch.analyses) == 1
-
-    #     for analysis in batch.analyses:
-    #         assert isinstance(analysis, Analysis)
-    #         assert len(analysis.tandem_mass_spectra) == 70
-    #         assert analysis.number_of_spectra_with_at_least_one_annotation == 24
+        for analysis in batch.analyses:
+            assert isinstance(analysis, Analysis)
+            assert len(analysis.tandem_mass_spectra) == 70
+            assert analysis.number_of_spectra_with_at_least_one_annotation == 24
