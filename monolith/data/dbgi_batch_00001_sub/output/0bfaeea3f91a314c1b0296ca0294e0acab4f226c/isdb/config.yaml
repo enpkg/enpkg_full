@@ -1,0 +1,33 @@
+adducts-formatter:
+  taxo_db_metadata_path: ./db_metadata/230106_frozen_metadata.csv.gz
+general_params:
+  recompute: false
+networking_params:
+  mn_max_links: 10
+  mn_msms_mz_tol: 0.01
+  mn_score_cutoff: 0.7
+  mn_top_n: 15
+paths:
+  adducts_neg_path: data_loc/230106_frozen_metadata/230106_frozen_metadata_adducts_neg.tsv.gz
+  adducts_pos_path: data_loc/230106_frozen_metadata/230106_frozen_metadata_adducts_pos.tsv.gz
+  spectral_db_neg_path: db_spectra/isdb_neg.mgf
+  spectral_db_pos_path: db_spectra/isdb_pos_cleaned.pkl
+  taxo_db_metadata_path: db_metadata/230106_frozen_metadata.csv.gz
+reweighting_params:
+  chemo_weight: 0.5
+  min_score_chemo_ms1: 2
+  min_score_taxo_ms1: 8
+  msms_weight: 4
+  ppm_tol_ms1: 2
+  taxo_weight: 1
+  top_N_chemical_consistency: 15
+  top_to_output: 1
+  use_post_taxo: true
+spectral_match_params:
+  min_peaks: 6
+  min_score: 0.2
+  msms_mz_tol: 0.01
+  parent_mz_tol: 0.01
+version_info:
+  git_commit: 25b7f9890b14c86542cb5cfa9618623d05b3e195
+  git_commit_link: https://github.com/enpkg/enpkg_full/tree/25b7f9890b14c86542cb5cfa9618623d05b3e195
