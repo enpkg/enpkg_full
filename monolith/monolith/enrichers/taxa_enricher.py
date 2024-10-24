@@ -1,6 +1,6 @@
 """Submodule for the taxa enricher."""
 
-from typing import Dict, List
+from typing import Dict
 from opentree import OT
 import requests
 from monolith.data.analysis_class import Analysis
@@ -30,15 +30,8 @@ class TaxaEnricher(Enricher):
         """Returns the name of the enricher."""
         return "Taxonomical Enricher"
 
-    def enrich(self, analysis: Analysis) -> Analysis:
-        """Adds taxa information to the analysis."""
-
-        if not analysis.is_source_taxon_defined():
-            return analysis
-
-        # We retrieve OTT matches for the source taxon
-
-        genus, species = analysis.genus_and_species
+    def retrieve_matches(self, genus: str, species: str) -> list[Match]:
+        """Retrieves OTT matches for the source taxon."""
 
         ott_match: Dict = OT.tnrs_match(
             [f"{genus} {species}"],
@@ -55,14 +48,12 @@ class TaxaEnricher(Enricher):
             "matches" in ott_match_results
         ), f"No matches in the OTT match results searching for '{genus} {species}'"
 
-        matches: List[Match] = [
+        matches: list[Match] = [
             Match.from_dict(match) for match in ott_match_results["matches"]
         ]
 
         if len(matches) == 0:
-            return analysis
-
-        analysis.extend_ott_matches(matches)
+            return []
 
         # We retrieve the upper taxon information for each match
         for match in matches:
@@ -88,5 +79,19 @@ class TaxaEnricher(Enricher):
                 continue
 
             match.set_wikidata(WikidataOTTQuery.from_dict(r.json()))
+
+        return matches
+
+    def enrich(self, analysis: Analysis) -> Analysis:
+        """Adds taxa information to the analysis."""
+
+        if not analysis.is_source_taxon_defined():
+            return analysis
+
+        # We retrieve OTT matches for the source taxon
+
+        genus, species = analysis.genus_and_species
+
+        analysis.extend_ott_matches(self.retrieve_matches(genus, species))
 
         return analysis

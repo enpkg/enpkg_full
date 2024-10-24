@@ -1,7 +1,7 @@
 """An abstract interface for pipelines to process a batch of analyses."""
 
 from abc import ABC, abstractmethod
-from typing import List, Type
+from typing import Type
 from time import time
 from logging import Logger, getLogger
 from tqdm.auto import tqdm
@@ -24,7 +24,7 @@ class Pipeline(ABC):
         """Returns the name of the pipeline."""
 
     @abstractmethod
-    def enrichers(self) -> List[Type[Enricher]]:
+    def enrichers(self) -> list[Type[Enricher]]:
         """Returns the list of enrichers."""
 
     def process(self, batch: Batch) -> Batch:

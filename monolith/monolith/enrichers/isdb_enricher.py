@@ -1,7 +1,7 @@
 """Submodule for the ISDB enricher."""
 
 from time import time
-from typing import List, Optional
+from typing import Optional
 import pickle
 from logging import Logger
 import pandas as pd
@@ -28,14 +28,12 @@ class ISDBEnricher(Enricher):
     """Enricher that adds ISDB information to the analysis."""
 
     def __init__(
-        self, configuration: ISDBEnricherConfig, polarity: bool, logger: Logger
+        self, configuration: ISDBEnricherConfig, logger: Logger
     ):
         """Initializes the enricher."""
         assert isinstance(configuration, ISDBEnricherConfig)
-        assert isinstance(polarity, bool)
 
         self.configuration = configuration
-        self.polarity = polarity
         downloader = BaseDownloader()
         downloader.download(
             [
@@ -88,7 +86,7 @@ class ISDBEnricher(Enricher):
             "structure_smiles"
         )
         Lotus.setup_lotus_columns(list(lotus_metadata.columns))
-        self._lotus: List[Lotus] = [
+        self._lotus: list[Lotus] = [
             Lotus.from_pandas_series(
                 list(row),
                 pathways=lotus_metadata_pathways.loc[
@@ -122,7 +120,7 @@ class ISDBEnricher(Enricher):
         logger.info("Loading positive spectral database")
         start = time()
         with open("downloads/spectral_db_pos.pkl", "rb") as file:
-            self._spectral_db_pos: List[Spectrum] = pickle.load(file)
+            self._spectral_db_pos: list[Spectrum] = pickle.load(file)
         logger.info(
             "Loaded %d positive spectral database entries in %.2f seconds",
             len(self._spectral_db_pos),
@@ -210,7 +208,7 @@ class ISDBEnricher(Enricher):
             leave=False,
             dynamic_ncols=True,
         ):
-            spectra_chunk: List[AnnotatedSpectrum] = analysis.tandem_mass_spectra[
+            spectra_chunk: list[AnnotatedSpectrum] = analysis.tandem_mass_spectra[
                 min_range : min_range + range_size
             ]
 
@@ -299,8 +297,11 @@ class ISDBEnricher(Enricher):
                 taxonomical_similarities * chemical_similarities
             )
 
-            # We normalize the combined similarity scores
-            combined_similarities /= np.sum(combined_similarities)
+            total_combined_similarity = np.sum(combined_similarities)
+
+            if total_combined_similarity > 0:
+                # We normalize the combined similarity scores
+                combined_similarities /= total_combined_similarity
 
             for isdb_annotation, combined_similarity in zip(
                 (

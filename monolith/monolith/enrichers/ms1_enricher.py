@@ -1,15 +1,13 @@
 """Submodule for the MS1 level enricher, which adds the Adducts to a given batch and computes its LPA scores."""
 
 from time import time
-from typing import List, Optional
+from typing import Optional
 from logging import Logger
 import pandas as pd
 import numpy as np
 from downloaders import BaseDownloader
 
 from tqdm.auto import tqdm
-
-from typeguard import typechecked
 
 from monolith.enrichers.enricher import Enricher
 from monolith.data import Analysis
@@ -26,16 +24,11 @@ from monolith.utils import binary_search_by_key, label_propagation_algorithm
 class MS1Enricher(Enricher):
     """Enricher that adds MS1 information to the analysis."""
 
-    @typechecked
-    def __init__(
-        self, configuration: MS1EnricherConfig, polarity: bool, logger: Logger
-    ):
+    def __init__(self, configuration: MS1EnricherConfig, logger: Logger):
         """Initializes the enricher."""
         assert isinstance(configuration, MS1EnricherConfig)
-        assert isinstance(polarity, bool)
 
         self.configuration = configuration
-        self.polarity = polarity
         downloader = BaseDownloader()
         downloader.download(
             [
@@ -89,7 +82,7 @@ class MS1Enricher(Enricher):
             "structure_smiles"
         )
         Lotus.setup_lotus_columns(list(lotus_metadata.columns))
-        lotus_grouped_by_structure_molecular_formula: List[List[Lotus]] = [
+        lotus_grouped_by_structure_molecular_formula: list[list[Lotus]] = [
             [
                 Lotus.from_pandas_series(
                     list(row),
@@ -114,7 +107,7 @@ class MS1Enricher(Enricher):
 
         logger.info("Creating adducts")
         start = time()
-        self._adducts: List[ChemicalAdduct] = (
+        self._adducts: list[ChemicalAdduct] = (
             [
                 ChemicalAdduct(
                     lotus=lotus_group,
@@ -123,7 +116,7 @@ class MS1Enricher(Enricher):
                 for lotus_group in lotus_grouped_by_structure_molecular_formula
                 for recipe in POSITIVE_RECIPES
             ]
-            if polarity
+            if self.configuration.has_positive_polarity()
             else [
                 ChemicalAdduct(
                     lotus=lotus_group,
@@ -253,7 +246,9 @@ class MS1Enricher(Enricher):
                     shape=(len(spectrum.ms1_annotations),), dtype=np.float32
                 )
 
-            taxonomical_similarities /= np.sum(taxonomical_similarities)
+            total_taxonomical_similarities = np.sum(taxonomical_similarities)
+            if total_taxonomical_similarities > 0:
+                taxonomical_similarities /= total_taxonomical_similarities
 
             for taxonomical_similarity, adduct in zip(
                 taxonomical_similarities, spectrum.ms1_annotations

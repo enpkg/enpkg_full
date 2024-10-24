@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
 from monolith.data.wikidata_ott_query_class import WikidataOTTQuery
 
@@ -9,28 +9,28 @@ class Taxon:
     Represents the taxonomic details of a match.
 
     Attributes:
-        flags (List[str]): A list of flags associated with the taxon.
+        flags (list[str]): A list of flags associated with the taxon.
         is_suppressed (bool): Indicates whether the taxon is suppressed.
         is_suppressed_from_synth (bool): Indicates whether the taxon is suppressed from synthesis.
         name (str): The scientific name of the taxon.
         ott_id (int): The Open Tree Taxonomy (OTT) identifier for the taxon.
         rank (str): The taxonomic rank of the taxon (e.g., species, genus).
         source (str): The source of the taxon information.
-        synonyms (List[str]): A list of synonyms for the taxon.
-        tax_sources (List[str]): A list of taxonomic sources.
+        synonyms (list[str]): A list of synonyms for the taxon.
+        tax_sources (list[str]): A list of taxonomic sources.
         unique_name (str): A unique name for the taxon.
-        lineage (List[LineageItem]): A list representing the lineage hierarchy for the taxon.
+        lineage (list[LineageItem]): A list representing the lineage hierarchy for the taxon.
     """
 
-    flags: List[str]
+    flags: list[str]
     is_suppressed: bool
     is_suppressed_from_synth: bool
     name: str
     ott_id: int
     rank: str
     source: str
-    synonyms: List[str]
-    tax_sources: List[str]
+    synonyms: list[str]
+    tax_sources: list[str]
     unique_name: str
     wikidata: Optional[WikidataOTTQuery] = None
 
@@ -79,10 +79,10 @@ class Taxon:
 class LineageItem:
     """Data class representing a lineage item."""
 
-    flags: List[str]
+    flags: list[str]
     is_suppressed: bool
     is_suppressed_from_synth: bool
-    taxa: List[Taxon]
+    taxa: list[Taxon]
 
     @staticmethod
     def from_dict(data: Dict[str, Any]) -> "LineageItem":
@@ -136,6 +136,9 @@ class Match:
     def _taxonomical_rank(self, rank: str) -> Optional[str]:
         """Returns the taxonomical rank of the taxon."""
         assert self.lineage is not None, "Lineage is not set for the match"
+
+        if self.taxon.rank == rank:
+            return self.taxon.name
 
         for taxon in self.lineage.taxa:
             if taxon.rank == rank:

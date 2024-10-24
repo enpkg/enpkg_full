@@ -2,7 +2,6 @@
 general:
   raw_data_path: /home/allardpm/EMIKG/dbgi_batch_00001/input
   treated_data_path: /home/allardpm/EMIKG/dbgi_batch_00001/output
-  polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 # data-download:
 #   record_id: 10018590
@@ -40,6 +39,7 @@ ms1_enricher:
     taxo_db_superclasses_path: db_metadata/superclasses.csv.gz
     taxo_db_classes_url: https://zenodo.org/records/13951644/files/classes.csv.gz?download=1
     taxo_db_classes_path: db_metadata/classes.csv.gz
+    polarity: pos
 
 isdb:
   general_params:

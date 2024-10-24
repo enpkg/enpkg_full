@@ -1,8 +1,7 @@
 """Submodule providing dataclasses for representing MS2-level chemical annotations from ISDB."""
 
-from typing import List, Optional, Set
+from typing import Optional, Set
 import numpy as np
-from typeguard import typechecked
 from monolith.data.lotus_class import (
     Lotus,
 )
@@ -12,14 +11,13 @@ from monolith.data.chemical_annotation import ChemicalAnnotation
 class ISDBChemicalAnnotation(ChemicalAnnotation):
     """Dataclass for representing chemical annotations from ISDB."""
 
-    lotus: Optional[List[Lotus]]
+    lotus: Optional[list[Lotus]]
     cosine_similarity: float
     number_of_matched_peaks: int
 
-    @typechecked
     def __init__(
         self,
-        lotus: Optional[List[Lotus]],
+        lotus: Optional[list[Lotus]],
         cosine_similarity: float,
         number_of_matched_peaks: int,
     ):
@@ -38,11 +36,10 @@ class ISDBChemicalAnnotation(ChemicalAnnotation):
                 len(short_inchikey_set) == 1
             ), f"All Lotus entries must have the same Short InChIKey: {short_inchikey_set}."
 
-        self.lotus: Optional[List[Lotus]] = lotus
+        self.lotus: Optional[list[Lotus]] = lotus
         self.cosine_similarity = cosine_similarity
         self.number_of_matched_peaks = number_of_matched_peaks
 
-    @typechecked
     def get_hammer_pathway_scores(self) -> Optional[np.ndarray]:
         """Return the pathway scores for the ISDB chemical annotation."""
         if self.lotus is None:
@@ -73,7 +70,7 @@ class ISDBChemicalAnnotation(ChemicalAnnotation):
         # be the same.
         return self.lotus[0].structure_taxonomy_hammer_classes.values
 
-    def lotus_annotations(self) -> Optional[List[Lotus]]:
+    def lotus_annotations(self) -> Optional[list[Lotus]]:
         """Return the list of Lotus annotations."""
         return self.lotus
 

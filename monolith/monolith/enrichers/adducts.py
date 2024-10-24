@@ -1,9 +1,8 @@
 """Submodule providing adducts for all provided Lotus reference chemicals."""
 
-from typing import List
 from monolith.data import AdductRecipe
 
-POSITIVE_RECIPES: List[AdductRecipe] = [
+POSITIVE_RECIPES: list[AdductRecipe] = [
     AdductRecipe(ingredients={"proton": 3}, charge=3, positive=True),
     AdductRecipe(ingredients={"proton": 2, "sodium": 1}, charge=3, positive=True),
     AdductRecipe(ingredients={"proton": 1, "sodium": 2}, charge=3, positive=True),
@@ -67,7 +66,7 @@ POSITIVE_RECIPES: List[AdductRecipe] = [
     ),
 ]
 
-NEGATIVE_RECIPES: List[AdductRecipe] = [
+NEGATIVE_RECIPES: list[AdductRecipe] = [
     AdductRecipe(ingredients={"proton": -3}, charge=3, positive=False),
     AdductRecipe(ingredients={"proton": -2}, charge=2, positive=False),
     AdductRecipe(ingredients={"proton": -1}, charge=1, positive=False),

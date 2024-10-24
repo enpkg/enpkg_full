@@ -1,7 +1,7 @@
 import os
 import logging
 from tqdm import tqdm
-from typing import List, Dict, Set
+from typing import Dict, Set
 from collections import Counter, defaultdict
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -30,7 +30,7 @@ def download_files():
         logging.error(f"Error downloading files: {e}")
         raise
 
-def load_spectrums(file_path: str) -> List:
+def load_spectrums(file_path: str) -> list:
     """Loads and returns spectrums from an MGF file."""
     try:
         logging.info(f"Loading spectrums from {file_path}...")
@@ -41,7 +41,7 @@ def load_spectrums(file_path: str) -> List:
         logging.error(f"Error loading spectrums from {file_path}: {e}")
         raise
 
-def plot_instrument_counts(spectrums: List):
+def plot_instrument_counts(spectrums: list):
     """Plots a bar chart of instrument_type occurrences."""
     logging.info("Extracting and plotting instrument types...")
     instrument_types = [spectrum.metadata.get('instrument_type') for spectrum in spectrums]
@@ -59,7 +59,7 @@ def plot_instrument_counts(spectrums: List):
     logging.info("Instrument type plot completed.")
     return instrument_counts
 
-def filter_spectrums_by_inchikey(spectrums: List, valid_inchikeys: Set[str]) -> List:
+def filter_spectrums_by_inchikey(spectrums: list, valid_inchikeys: Set[str]) -> list:
     """Filters spectrums that have matching InChIKeys in the metadata."""
     logging.info("Filtering spectrums by InChIKey...")
     filtered_spectrums = [spectrum for spectrum in tqdm(spectrums, desc="Filtering spectrums") 
@@ -67,12 +67,12 @@ def filter_spectrums_by_inchikey(spectrums: List, valid_inchikeys: Set[str]) -> 
     logging.info(f"{len(filtered_spectrums)} spectrums found with matching InChIKey.")
     return filtered_spectrums
 
-def get_instrument_rank(spectrum, instrument_rank: Dict[str, int], instrument_priority: List[str]):
+def get_instrument_rank(spectrum, instrument_rank: Dict[str, int], instrument_priority: list[str]):
     """Returns the rank of the instrument type based on priority."""
     instrument_type = spectrum.metadata.get('instrument_type')
     return instrument_rank.get(instrument_type, len(instrument_priority))
 
-def filter_by_instrument_priority(spectrums: List, instrument_rank: Dict[str, int], instrument_priority: List[str]) -> List:
+def filter_by_instrument_priority(spectrums: list, instrument_rank: Dict[str, int], instrument_priority: list[str]) -> list:
     """Filters to retain only one representative spectrum per InChIKey."""
     logging.info("Selecting highest-priority spectrum for each InChIKey...")
     spectra_by_inchikey = defaultdict(list)
@@ -89,7 +89,7 @@ def filter_by_instrument_priority(spectrums: List, instrument_rank: Dict[str, in
     logging.info(f"{len(final_spectrums)} spectrums selected after filtering by instrument priority.")
     return final_spectrums
 
-def count_unique_inchikeys(spectrums: List) -> int:
+def count_unique_inchikeys(spectrums: list) -> int:
     """Counts the number of unique InChIKeys in a list of spectrums."""
     inchikeys = [spectrum.metadata.get('inchikey') for spectrum in spectrums]
     return len(set(inchikeys))

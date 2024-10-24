@@ -1,8 +1,7 @@
 """Data class representing the key information of a LOTUS entry."""
 
-from typing import List, Any, Dict
+from typing import Any, Dict
 from dataclasses import dataclass
-from typeguard import typechecked
 import pandas as pd
 from monolith.data.otl_class import Match
 
@@ -53,16 +52,14 @@ class Lotus:
     manual_validation: bool
 
     @classmethod
-    @typechecked
-    def setup_lotus_columns(cls, columns: List[str]):
+    def setup_lotus_columns(cls, columns: list[str]):
         """Set up the columns of the LOTUS DataFrame."""
         cls._columns = {column: i for i, column in enumerate(columns)}
 
     @classmethod
-    @typechecked
     def from_pandas_series(
         cls,
-        series: List[Any],
+        series: list[Any],
         pathways: pd.Series,
         superclasses: pd.Series,
         classes: pd.Series,
@@ -201,7 +198,6 @@ class Lotus:
         """Return the first 14 characters of the InChIKey."""
         return self.structure_inchikey[:14]
 
-    @typechecked
     def taxonomical_similarity_with_otl_match(self, match: Match) -> float:
         """Calculate the taxonomical similarity with an OTL match.
 
@@ -238,7 +234,6 @@ class Lotus:
 
         return 0.0
 
-    @typechecked
     def normalized_taxonomical_similarity_with_otl_match(self, match: Match) -> float:
         """Calculate the normalized taxonomical similarity with an OTL match.
 

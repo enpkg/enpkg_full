@@ -32,7 +32,7 @@ class Batch:
     """This is a class for the Batch class.
 
     Attributes:
-    - analyses: List[Analysis], a list of Analysis objects
+    - analyses: list[Analysis], a list of Analysis objects
     - lcms_method_params: str, the parameters of the LCMS method
     - lcms_processing_params_path: str, the path to the LCMS processing parameters
 
