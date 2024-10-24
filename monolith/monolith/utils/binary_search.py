@@ -1,11 +1,11 @@
 """Submodule providing a binary search by key function."""
 
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, Optional, Tuple
 
 
 def binary_search_by_key(
     key: Any,
-    array: List[Any],
+    array: list[Any],
     key_func: Callable[[Any], Any],
     left: Optional[int] = None,
     right: Optional[int] = None,

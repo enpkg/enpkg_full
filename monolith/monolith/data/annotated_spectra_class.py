@@ -1,9 +1,8 @@
 """Module to store annotated spectra and MSMS annotations."""
 
-from typing import List, Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple
 from matchms import Spectrum
 import numpy as np
-from typeguard import typechecked
 from scipy.stats import entropy
 from monolith.data.ms1_data_classes import ChemicalAdduct
 from monolith.data.isdb_data_classes import ISDBChemicalAnnotation
@@ -17,7 +16,6 @@ from monolith.data.otl_class import Match
 class AnnotatedSpectrum(Spectrum):
     """Class to store annotated spectra. This is an extension of the matchms Spectrum class"""
 
-    @typechecked
     def __init__(
         self,
         spectrum: Spectrum,
@@ -42,9 +40,9 @@ class AnnotatedSpectrum(Spectrum):
 
         self.retention_time: float = retention_time
         self.intensity: float = intensity
-        self._sirius_annotations: List[SiriusChemicalAnnotation] = []
-        self._isdb_annotations: List[ISDBChemicalAnnotation] = []
-        self._ms1_annotations: List[ChemicalAdduct] = []
+        self._sirius_annotations: list[SiriusChemicalAnnotation] = []
+        self._isdb_annotations: list[ISDBChemicalAnnotation] = []
+        self._ms1_annotations: list[ChemicalAdduct] = []
         self._ms1_hammer_pathway_scores: Optional[np.ndarray] = None
         self._ms1_hammer_class_scores: Optional[np.ndarray] = None
         self._ms1_hammer_superclass_scores: Optional[np.ndarray] = None
@@ -52,32 +50,26 @@ class AnnotatedSpectrum(Spectrum):
         self._isdb_hammer_superclass_scores: Optional[np.ndarray] = None
         self._isdb_hammer_class_scores: Optional[np.ndarray] = None
 
-    @typechecked
     def set_ms1_hammer_pathway_scores(self, npc_pathway_scores: np.ndarray):
         """Set the ms1 propagated NPC pathway annotations"""
         self._ms1_hammer_pathway_scores = npc_pathway_scores
 
-    @typechecked
     def set_ms1_hammer_superclass_scores(self, npc_superclass_scores: np.ndarray):
         """Set the ms1 propagated NPC superclass annotations"""
         self._ms1_hammer_superclass_scores = npc_superclass_scores
 
-    @typechecked
     def set_ms1_hammer_class_scores(self, npc_class_scores: np.ndarray):
         """Set the ms1 propagated NPC class annotations"""
         self._ms1_hammer_class_scores = npc_class_scores
 
-    @typechecked
     def set_isdb_hammer_pathway_scores(self, npc_pathway_scores: np.ndarray):
         """Set the ISDB propagated NPC pathway annotations"""
         self._isdb_hammer_pathway_scores = npc_pathway_scores
 
-    @typechecked
     def set_isdb_hammer_superclass_scores(self, npc_superclass_scores: np.ndarray):
         """Set the ISDB propagated NPC superclass annotations"""
         self._isdb_hammer_superclass_scores = npc_superclass_scores
 
-    @typechecked
     def set_isdb_hammer_class_scores(self, npc_class_scores: np.ndarray):
         """Set the ISDB propagated NPC class annotations"""
         self._isdb_hammer_class_scores = npc_class_scores
@@ -98,12 +90,12 @@ class AnnotatedSpectrum(Spectrum):
         return self.get("feature_id")
 
     @property
-    def ms1_annotations(self) -> List[ChemicalAdduct]:
+    def ms1_annotations(self) -> list[ChemicalAdduct]:
         """Return the possible MS1 adducts"""
         return self._ms1_annotations
 
     @property
-    def isdb_annotations(self) -> List[ISDBChemicalAnnotation]:
+    def isdb_annotations(self) -> list[ISDBChemicalAnnotation]:
         """Return the ISDB annotations"""
         return self._isdb_annotations
 
@@ -111,7 +103,7 @@ class AnnotatedSpectrum(Spectrum):
         """Returns whether the spectrum has MS1 annotations"""
         return len(self._ms1_annotations) > 0
 
-    def set_ms1_annotations(self, adducts: List[ChemicalAdduct]):
+    def set_ms1_annotations(self, adducts: list[ChemicalAdduct]):
         """Set the possible MS1 adducts"""
         self._ms1_annotations = adducts
 
@@ -127,8 +119,7 @@ class AnnotatedSpectrum(Spectrum):
         """Add a Sirius annotation to the spectrum."""
         self._sirius_annotations.append(annotation)
 
-    @typechecked
-    def get_top_k_lotus_annotation(self, k: int = 1) -> Optional[List[Lotus]]:
+    def get_top_k_lotus_annotation(self, k: int = 1) -> Optional[list[Lotus]]:
         """Returns the top k best LOTUS annotation from the MS1 and ISDB MS2 annotations.
 
 
@@ -139,7 +130,7 @@ class AnnotatedSpectrum(Spectrum):
 
         Returns
         -------
-        Optional[List[Lotus]]
+        Optional[list[Lotus]]
             The top k best LOTUS annotations.
             If the spectrum has no annotations, returns None.
         """
@@ -206,7 +197,7 @@ class AnnotatedSpectrum(Spectrum):
         """
         assert ms1_importance_score + isdb_importance_score == 1
 
-        if not self.has_ms1_annotations() and not self.has_isdb_annotations():
+        if not self.has_isdb_annotations() and not self.has_ms1_annotations():
             return None
 
         pathway_scores = np.zeros_like(self._isdb_hammer_pathway_scores)
@@ -240,12 +231,12 @@ class AnnotatedSpectrum(Spectrum):
         superclass_scores /= isdb_importance_score + ms1_importance_score
         class_scores /= isdb_importance_score + ms1_importance_score
 
-        isdb_annotations: List[Tuple[ISDBChemicalAnnotation, Lotus, float]] = []
+        isdb_annotations: list[Tuple[ISDBChemicalAnnotation, Lotus, float]] = []
 
         for annotation in self._isdb_annotations:
             if not annotation.has_lotus_annotations():
                 continue
-            # Next, we store the KL divergence score for the pathways scores
+            # # Next, we store the KL divergence score for the pathways scores
             entropy_score: float = (
                 entropy(
                     annotation.get_hammer_pathway_scores(),
@@ -269,7 +260,7 @@ class AnnotatedSpectrum(Spectrum):
                         )
                     )
                 else:
-                    taxonomical_similarity: float = 1.0
+                    taxonomical_similarity: float = 0.0
 
                 isdb_annotations.append(
                     (
@@ -279,7 +270,7 @@ class AnnotatedSpectrum(Spectrum):
                     )
                 )
 
-        ms1_annotations: List[Tuple[Lotus, float]] = []
+        ms1_annotations: list[Tuple[Lotus, float]] = []
 
         for annotation in self._ms1_annotations:
             # Next, we store the KL divergence score for the pathways scores
@@ -306,7 +297,7 @@ class AnnotatedSpectrum(Spectrum):
                         )
                     )
                 else:
-                    taxonomical_similarity: float = 1.0
+                    taxonomical_similarity: float = 0.0
 
                 ms1_annotations.append(
                     (
@@ -321,15 +312,18 @@ class AnnotatedSpectrum(Spectrum):
         # taxonomical similarity and entropy.
 
         if len(isdb_annotations) > 0:
-            most_similar_isdb_annotation: Tuple[ISDBChemicalAnnotation, Lotus, float] = max(
-                isdb_annotations, key=lambda x: x[2] * x[0].cosine_similarity
-            )
+            most_similar_isdb_annotation: Tuple[
+                ISDBChemicalAnnotation, Lotus, float
+            ] = max(isdb_annotations, key=lambda x: x[2] * x[0].cosine_similarity)
             most_similar_isdb_annotation: Tuple[Optional[Lotus], float] = (
                 most_similar_isdb_annotation[1],
                 most_similar_isdb_annotation[2],
             )
         else:
-            most_similar_isdb_annotation: Tuple[Optional[Lotus], float] = (None, -np.inf)
+            most_similar_isdb_annotation: Tuple[Optional[Lotus], float] = (
+                None,
+                -np.inf,
+            )
 
         if len(ms1_annotations) > 0:
             most_similar_ms1_annotation: Tuple[Optional[Lotus], float] = max(

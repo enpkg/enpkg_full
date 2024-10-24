@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from typing import Dict, Any
-from typeguard import typechecked
 
 
 @dataclass
@@ -18,9 +17,9 @@ class MS1EnricherConfig:
     taxo_db_classes_url: str
     taxo_db_classes_path: str
     tolerance: float
+    polarity: str
 
     @classmethod
-    @typechecked
     def from_dict(cls, data: Dict[str, Any]) -> "MS1EnricherConfig":
         """Creates an instance from a dictionary."""
         return cls(
@@ -33,4 +32,9 @@ class MS1EnricherConfig:
             taxo_db_classes_url=data["taxo_db_classes_url"],
             taxo_db_classes_path=data["taxo_db_classes_path"],
             tolerance=data["tolerance_ppm"] / 1e6,
+            polarity=data["polarity"],
         )
+
+    def has_positive_polarity(self) -> bool:
+        """Returns whether the polarity is positive."""
+        return self.polarity == "pos"

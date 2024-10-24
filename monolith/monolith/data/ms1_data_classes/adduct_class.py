@@ -1,9 +1,8 @@
 """Submodule providing the data class for representing chemical adducts."""
 
-from typing import Dict, List
+from typing import Dict
 from dataclasses import dataclass
 import numpy as np
-from typeguard import typechecked
 from monolith.data.lotus_class import Lotus
 from monolith.data.otl_class import Match
 
@@ -45,7 +44,6 @@ class AdductRecipe:
     positive: bool
     multimer_factor: float = 1.0
 
-    @typechecked
     def compute_adduct_mass(self, exact_lotus_mass: float) -> float:
         """Applies the adduct recepy to the provided exact lotus mass"""
         return (
@@ -59,7 +57,7 @@ class ChemicalAdduct:
 
     Attributes:
     -----------
-    lotus: List[Lotus]
+    lotus: list[Lotus]
         A list of Lotus entries that are part of the adduct.
         All Lotus entries must have the same exact mass and chemical formula.
     recipe: AdductRecipe
@@ -68,12 +66,11 @@ class ChemicalAdduct:
         The mass of the adduct determined using the recipe and the exact mass of the Lotus entries.
     """
 
-    lotus: List[Lotus]
+    lotus: list[Lotus]
     recipe: AdductRecipe
     adduct_mass: float
 
-    @typechecked
-    def __init__(self, lotus: List[Lotus], recipe: AdductRecipe):
+    def __init__(self, lotus: list[Lotus], recipe: AdductRecipe):
         assert len(lotus) > 0, "The lotus must not be empty"
 
         # All lotus entries must have the same exact mass and chemical formula
@@ -106,7 +103,6 @@ class ChemicalAdduct:
         """Return whether the adduct is positive or negative."""
         return self.recipe.positive
 
-    @typechecked
     def maximal_normalized_taxonomical_similarity(self, match: Match) -> float:
         """Return the maximal normalized taxonomical similarity of the adduct."""
         return max(
@@ -114,17 +110,14 @@ class ChemicalAdduct:
             for lotus in self.lotus
         )
 
-    @typechecked
     def get_hammer_pathway_scores(self) -> np.ndarray:
         """Return the pathway scores for the adduct."""
         return self.lotus[0].structure_taxonomy_hammer_pathways.values
 
-    @typechecked
     def get_hammer_superclass_scores(self) -> np.ndarray:
         """Return the superclass scores for the adduct."""
         return self.lotus[0].structure_taxonomy_hammer_superclasses.values
 
-    @typechecked
     def get_hammer_class_scores(self) -> np.ndarray:
         """Return the class scores for the adduct."""
         return self.lotus[0].structure_taxonomy_hammer_classes.values

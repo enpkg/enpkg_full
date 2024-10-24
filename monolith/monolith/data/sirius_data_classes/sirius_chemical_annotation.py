@@ -1,7 +1,6 @@
 """Submodule providing dataclasses for representing chemical annotations from Sirius."""
 
 from dataclasses import dataclass
-from typing import List
 from monolith.data.lotus_class import Lotus
 from monolith.data.chemical_annotation import ChemicalAnnotation
 
@@ -10,8 +9,8 @@ from monolith.data.chemical_annotation import ChemicalAnnotation
 class SiriusChemicalAnnotation(ChemicalAnnotation):
     """Dataclass for representing chemical annotations from Sirius."""
 
-    lotus: List[Lotus]
+    lotus: list[Lotus]
 
-    def lotus_annotations(self) -> List[Lotus]:
+    def lotus_annotations(self) -> list[Lotus]:
         """Return the list of Lotus annotations."""
         return self.lotus

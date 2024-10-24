@@ -1,6 +1,5 @@
 """Test that LPA works as intended."""
 
-from typing import List
 import pandas as pd
 import numpy as np
 import networkx as nx
@@ -17,7 +16,7 @@ def test_lpa():
     features: np.ndarray = np.load("tests/features.npy")
 
     # We read the node names from a TXT
-    node_names: List[str] = (
+    node_names: list[str] = (
         pd.read_csv("tests/node_names.txt", header=None, dtype=str).values.flatten().tolist()
     )
 

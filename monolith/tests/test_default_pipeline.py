@@ -53,7 +53,7 @@ class TestDefaultPipeline:
             cls.time_requirements = {}
 
         start = time()
-        cls.pipeline = DefaultPipeline(config="tests/data_for_analysis/config.yaml")
+        cls.pipeline = DefaultPipeline.from_yaml(config="tests/data_for_analysis/config.yaml")
         elapsed_time = time() - start
         cls.compare_time_requirements("Initializing pipeline", elapsed_time)
 

@@ -12,11 +12,10 @@ An Analysis object contains the following data:
 - metadata: pd.Series, the metadata Series of the analysis
 """
 
-from typing import List, Tuple, Optional
+from typing import Tuple, Optional
 import pandas as pd
 import matchms
 import networkx as nx
-from typeguard import typechecked
 from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data.otl_class import Match
 
@@ -27,7 +26,7 @@ class Analysis:
     def __init__(
         self,
         metadata: pd.Series,
-        tandem_mass_spectra: List[matchms.Spectrum],
+        tandem_mass_spectra: list[matchms.Spectrum],
         features_quantification_table: pd.DataFrame,
     ):
         assert isinstance(metadata, pd.Series), "metadata must be a pd.Series object"
@@ -54,7 +53,7 @@ class Analysis:
             features_quantification_table, pd.DataFrame
         ), "features_quantification_table must be a pd.DataFrame object"
         self._metadata = metadata
-        self._tandem_mass_spectra: List[AnnotatedSpectrum] = [
+        self._tandem_mass_spectra: list[AnnotatedSpectrum] = [
             AnnotatedSpectrum(
                 spectrum,
                 mass_over_charge=row["row m/z"],
@@ -65,7 +64,7 @@ class Analysis:
                 tandem_mass_spectra, features_quantification_table.iterrows()
             )
         ]
-        self._ott_matches: List[Match] = []
+        self._ott_matches: list[Match] = []
         self._molecular_network: Optional[nx.Graph] = None
 
     @property
@@ -96,12 +95,12 @@ class Analysis:
         return len(self._tandem_mass_spectra)
 
     @property
-    def tandem_mass_spectra(self) -> List[AnnotatedSpectrum]:
+    def tandem_mass_spectra(self) -> list[AnnotatedSpectrum]:
         """Returns the tandem mass spectra of the analysis."""
         return self._tandem_mass_spectra
 
     @property
-    def feature_ids(self) -> List[str]:
+    def feature_ids(self) -> list[str]:
         """Returns the feature IDs of the analysis."""
         return [spectrum.feature_id for spectrum in self._tandem_mass_spectra]
 
@@ -121,7 +120,6 @@ class Analysis:
 
         return self._molecular_network
 
-    @typechecked
     def set_molecular_network(self, molecular_network: nx.Graph):
         """Sets the molecular network of the analysis."""
         # We check that the number of nodes in the network
@@ -170,7 +168,7 @@ class Analysis:
         """Returns the sample type of the analysis."""
         return self._metadata["sample_type"]
 
-    def extend_ott_matches(self, ott_match: List[Match]):
+    def extend_ott_matches(self, ott_match: list[Match]):
         """Extends the OTT match of the analysis."""
         self._ott_matches.extend(ott_match)
 

@@ -1,9 +1,7 @@
 """Label Propagation Algorithm (LPA) implementation."""
 
-from typing import List
 import networkx as nx
 import numpy as np
-from typeguard import typechecked
 from tqdm.auto import tqdm
 from numba import njit, prange
 
@@ -51,11 +49,10 @@ def numba_label_propagation(
     return new_features
 
 
-@typechecked
 def label_propagation_algorithm(
     graph: nx.Graph,
     features: np.ndarray,
-    node_names: List[str],
+    node_names: list[str],
     weight: str = "weight",
     threshold: float = 1e-5,
     normalize: bool = True,
@@ -69,7 +66,7 @@ def label_propagation_algorithm(
         The graph whose topology will be used for the LPA.
     features : np.ndarray
         One-hot encoded features to propagate.
-    node_names : List[str]
+    node_names : list[str]
         The names of the nodes in the graph.
     weight : str
         Name of the edge attribute containing the weight of the edges.
@@ -80,6 +77,20 @@ def label_propagation_algorithm(
     verbose : bool
         Whether to show a progress bar.
     """
+    assert features.shape[0] == len(node_names), (
+        f"The number of features ({features.shape[0]}) must be the same as the number of nodes "
+        f"({len(node_names)}) in the graph."
+    )
+    assert features.shape[1] > 0, "The number of features must be greater than 0."
+    nan_count = np.sum(np.isnan(features))
+    assert (
+        nan_count == 0
+    ), f"The features must not contain NaN, but it contains {nan_count}."
+    inf_count = np.sum(np.isinf(features))
+    assert (
+        inf_count == 0
+    ), f"The features must not contain infinite values, but it contains {inf_count}."
+
     last_variation = np.inf
 
     # We convert the graph into a SciPy sparse matrix
@@ -107,7 +118,7 @@ def label_propagation_algorithm(
 
     zeroed_mask: np.ndarray = features.sum(axis=1) == 0
 
-    while last_variation > threshold:
+    while True:
         new_features = numba_label_propagation(
             features, zeroed_mask, weights.data, weights.indices, weights.indptr
         )
@@ -118,6 +129,9 @@ def label_propagation_algorithm(
 
         # We compute the variation
         last_variation = np.linalg.norm(new_features - features)
+
+        if last_variation < threshold:
+            break
 
         convergence_percentage = (threshold / last_variation) * 100
 
