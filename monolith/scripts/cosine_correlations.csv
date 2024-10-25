@@ -1,0 +1,10 @@
+,smiles_fingerprint,spectra_similarity,spearman_correlation,p_value
+0,ECFPFingerprint,CosineGreedy,0.09587438021397068,0.0
+1,ECFPFingerprint,NeutralLossesCosine,0.17668211865482553,0.0
+2,ECFPFingerprint,ModifiedCosine,0.1646665227765613,0.0
+3,AvalonFingerprint,CosineGreedy,0.054426792833399164,0.0
+4,AvalonFingerprint,NeutralLossesCosine,0.06774335574922398,0.0
+5,AvalonFingerprint,ModifiedCosine,0.051446778515837406,0.0
+6,RDKitFingerprint,CosineGreedy,0.046329056643053326,0.0
+7,RDKitFingerprint,NeutralLossesCosine,0.07381088792637187,0.0
+8,RDKitFingerprint,ModifiedCosine,0.053875117708015174,0.0
