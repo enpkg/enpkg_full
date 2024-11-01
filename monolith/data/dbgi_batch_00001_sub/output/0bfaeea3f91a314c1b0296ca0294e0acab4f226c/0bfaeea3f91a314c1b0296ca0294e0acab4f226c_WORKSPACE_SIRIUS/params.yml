@@ -1,0 +1,28 @@
+options:
+  ionization: pos
+  recompute: true
+  sirius_command_arg: -i {file} --output {output_name} --maxmz 800 config --IsotopeSettings.filter=true
+    --FormulaSearchDB=BIO --Timeout.secondsPerTree=0 --FormulaSettings.enforced=HCNOP
+    --Timeout.secondsPerInstance=0 --AdductSettings.detectable=[[M+Na]+,[M+H3N+H]+,[M-H4O2+H]+,[M+K]+,[M+H]+,[M-H2O+H]+]
+    --UseHeuristic.mzToUseHeuristicOnly=650 --AlgorithmProfile=qtof --IsotopeMs2Settings=IGNORE
+    --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIon=1 --UseHeuristic.mzToUseHeuristic=300
+    --FormulaSettings.detectable=B,Cl,Br,Se,S --NumberOfCandidates=10 --ZodiacNumberOfConsideredCandidatesAt300Mz=10
+    --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10
+    --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000
+    --ZodiacEpochs.numberOfMarkovChains=10 --ZodiacNumberOfConsideredCandidatesAt800Mz=50
+    --ZodiacEpochs.iterations=20000 --AdductSettings.enforced=, --AdductSettings.fallback=[[M+Na]+,[M-H+K+K]+,[M+K]+,[M+H]+,[M-H2O+H]+]
+    --FormulaResultThreshold=true --InjectElGordoCompounds=true --StructureSearchDB=BIO
+    --RecomputeResults=false formula zodiac fingerprint structure canopus write-summaries
+    --output {output_name}
+  sirius_password_env: SIRIUS_PASSWORD
+  sirius_user_env: SIRIUS_USERNAME
+  sirius_version: 5
+  zip_output: true
+paths:
+  path_to_sirius: /usr/local/sirius/bin/sirius
+version_info:
+  CSI:FingerID lib: 'CSI:FingerID lib: 2.6.18'
+  SIRIUS: SIRIUS 5.8.6
+  SIRIUS lib: 'SIRIUS lib: 4.13.3'
+  git_commit: 25b7f9890b14c86542cb5cfa9618623d05b3e195
+  git_commit_link: https://github.com/enpkg/enpkg_full/tree/25b7f9890b14c86542cb5cfa9618623d05b3e195
