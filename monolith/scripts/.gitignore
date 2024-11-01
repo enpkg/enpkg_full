@@ -1,3 +1,6 @@
 gnps_cleaned.mgf
 lotus_metadata.csv.gz
 lotus_spectra.mgf
+matchms.mgf
+lotus_spectra_metadata.csv
+isdb_pos_cleaned.pkl

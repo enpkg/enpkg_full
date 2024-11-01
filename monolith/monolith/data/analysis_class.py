@@ -18,6 +18,7 @@ import matchms
 import networkx as nx
 from monolith.data.annotated_spectra_class import AnnotatedSpectrum
 from monolith.data.otl_class import Match
+from monolith.exceptions import GraphNotSetError
 
 
 class Analysis:
@@ -186,7 +187,16 @@ class Analysis:
 
     def to_dataframe(self) -> pd.DataFrame:
         """Returns the analysis as a DataFrame."""
-        return pd.DataFrame([
-            spectrum.into_dict(self.best_ott_match)
-            for spectrum in self._tandem_mass_spectra
-        ])
+        return pd.DataFrame(
+            [
+                spectrum.into_dict(self.best_ott_match)
+                for spectrum in self._tandem_mass_spectra
+            ]
+        )
+
+    def to_graphml(self, filename: str):
+        """Saves the analysis as a GraphML file."""
+        if self._molecular_network is None:
+            raise GraphNotSetError()
+
+        nx.write_graphml(self._molecular_network, filename)

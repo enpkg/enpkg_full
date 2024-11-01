@@ -86,6 +86,7 @@ class TestDefaultPipeline:
             assert analysis.number_of_spectra_with_at_least_one_annotation == 191
 
             analysis.to_dataframe().to_csv(f"{i}.csv.gz", index=False)
+            analysis.to_graphml(f"graphml_{i}.graphml")
 
     def test_default_pipeline_blank(self):
         """Test run for the default pipeline with a blank."""
