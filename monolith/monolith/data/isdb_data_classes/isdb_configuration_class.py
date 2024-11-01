@@ -110,7 +110,7 @@ class ReweightingParams:
 
 @dataclass
 class ISDBEnricherConfig:
-    """Configuration for IDB Enrichers."""
+    """Configuration for ISDB Enrichers."""
 
     general_params: GeneralParams
     paths: Paths
