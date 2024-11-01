@@ -52,6 +52,10 @@ class Batch:
         tandem_mass_spectra_path_pattern = os.path.join(
             treated_data_directory, "{sample_filename}.mgf"
         )
+        tandem_mass_spectra_for_sirius_path_pattern = os.path.join(
+            treated_data_directory, "{sample_filename}_sirius.mgf"
+        )
+        
         feature_quantification_table_path_pattern = os.path.join(
             treated_data_directory,
             "{sample_filename}.mzML_eics_sm_r_deiso_filtered_peak_quant.csv",
@@ -76,6 +80,10 @@ class Batch:
             sample_filename_no_ext = sample_filename.rsplit(".", 1)[0]
 
             tandem_mass_spectra_path = tandem_mass_spectra_path_pattern.format(
+                sample_filename=sample_filename_no_ext
+            )
+
+            tandem_mass_spectra_for_sirius_path = tandem_mass_spectra_for_sirius_path_pattern.format(
                 sample_filename=sample_filename_no_ext
             )
 
@@ -128,6 +136,7 @@ class Batch:
             analysis = Analysis(
                 metadata=row,
                 tandem_mass_spectra=tandem_mass_spectra,
+                tandem_mass_spectra_for_sirius_path=tandem_mass_spectra_for_sirius_path,
                 features_quantification_table=feature_quantification_table,
             )
             analyses.append(analysis)

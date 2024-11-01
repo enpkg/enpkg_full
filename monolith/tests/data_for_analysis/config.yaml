@@ -82,6 +82,7 @@ isdb:
 sirius:
   paths:
     path_to_sirius: /usr/local/sirius/bin/sirius #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
+    output_directory: ./sirius_output # Path to the directory where to store the output files
   options:
     sirius_version: 5 # Sirius version: 4 or 5
     ionization: 'pos' # Ionization mode to process: pos or neg
