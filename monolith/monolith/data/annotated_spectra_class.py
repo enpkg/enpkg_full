@@ -184,7 +184,7 @@ class AnnotatedSpectrum(Spectrum):
         match: Optional[Match],
         ms1_importance_score: float = 0.5,
         isdb_importance_score: float = 0.5,
-    ) -> Optional[Tuple[Lotus, float]]:
+    ) -> Optional[Tuple[Lotus, float, str]]:
         """Returns the best Chemical Annotation from the set of MS2 annotations.
 
         Parameters
@@ -251,6 +251,7 @@ class AnnotatedSpectrum(Spectrum):
                     class_scores,
                 )
             )
+            entropy_score=1.0
             for lotus_annotation in annotation.lotus_annotations():
                 # Next, we store the taxonomical reponderation score
                 if match is not None:
@@ -288,6 +289,7 @@ class AnnotatedSpectrum(Spectrum):
                     class_scores,
                 )
             )
+            entropy_score=1.0
             for lotus_annotation in annotation.lotus:
                 # Next, we store the taxonomical reponderation score
                 if match is not None:
@@ -333,8 +335,8 @@ class AnnotatedSpectrum(Spectrum):
             most_similar_ms1_annotation: Tuple[Optional[Lotus], float] = (None, -np.inf)
 
         if most_similar_isdb_annotation[1] > most_similar_ms1_annotation[1]:
-            return most_similar_isdb_annotation[0], most_similar_isdb_annotation[1]
-        return most_similar_ms1_annotation[0], most_similar_ms1_annotation[1]
+            return most_similar_isdb_annotation[0], most_similar_isdb_annotation[1], "ISDB"
+        return most_similar_ms1_annotation[0], most_similar_ms1_annotation[1], "MS1"
 
     def into_dict(self, match: Optional[Match]) -> Dict[str, Any]:
         """Returns the main features of the spectrum as a dictionary."""
@@ -344,9 +346,10 @@ class AnnotatedSpectrum(Spectrum):
 
         annotation_metadata = {}
         if annotation_candidate is not None:
-            annotation, score = annotation_candidate
+            annotation, score, label = annotation_candidate
             annotation_metadata = annotation.to_dict()
             annotation_metadata["annotation_score"] = score
+            annotation_metadata["source"] = label
 
         return {
             "feature_id": self.feature_id,

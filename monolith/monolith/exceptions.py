@@ -11,3 +11,10 @@ class PipelineError(MonolithError):
 
 class ConfigurationError(PipelineError):
     """Exception raised for errors in the configuration."""
+
+class GraphNotSetError(PipelineError):
+    """Exception raised when a graph is not set."""
+
+    def __init__(self):
+        """Initialize the exception."""
+        super().__init__("The graph was not set by the enrichment pipeline")
