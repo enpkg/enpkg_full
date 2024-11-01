@@ -1,3 +1,4 @@
 matchms
 opentree
 typeguard
+pytest-dotenv

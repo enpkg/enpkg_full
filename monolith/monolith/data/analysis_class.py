@@ -28,6 +28,7 @@ class Analysis:
         self,
         metadata: pd.Series,
         tandem_mass_spectra: list[matchms.Spectrum],
+        tandem_mass_spectra_for_sirius_path: str,
         features_quantification_table: pd.DataFrame,
     ):
         assert isinstance(metadata, pd.Series), "metadata must be a pd.Series object"
@@ -65,8 +66,14 @@ class Analysis:
                 tandem_mass_spectra, features_quantification_table.iterrows()
             )
         ]
+        self._tandem_mass_spectra_for_sirius_path = tandem_mass_spectra_for_sirius_path
         self._ott_matches: list[Match] = []
         self._molecular_network: Optional[nx.Graph] = None
+
+    @property
+    def raw_hash(self):
+        """Returns the hash of the raw mass spec analysis data."""
+        return self._metadata["raw_sha"]
 
     @property
     def sample_filename(self):
@@ -77,6 +84,11 @@ class Analysis:
     def raw_source_taxon(self):
         """Returns the raw source taxon of the analysis."""
         return self._metadata["source_taxon"]
+
+    @property
+    def tandem_mass_spectra_for_sirius_path(self):
+        """Returns the path to the tandem mass spectra for Sirius."""
+        return self._tandem_mass_spectra_for_sirius_path
 
     @property
     def normalized_source_taxon(self):

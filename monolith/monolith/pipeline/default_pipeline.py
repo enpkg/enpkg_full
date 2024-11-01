@@ -3,13 +3,19 @@
 from time import time
 from typing import Type, Optional
 import yaml
-from monolith.data import ISDBEnricherConfig, NetworkEnricherConfig, MS1EnricherConfig
+from monolith.data import (
+    ISDBEnricherConfig,
+    NetworkEnricherConfig,
+    MS1EnricherConfig,
+    SiriusEnricherConfig,
+)
 from monolith.pipeline.pipeline import Pipeline
 from monolith.enrichers.enricher import Enricher
 from monolith.enrichers.taxa_enricher import TaxaEnricher
 from monolith.enrichers.isdb_enricher import ISDBEnricher
 from monolith.enrichers.ms1_enricher import MS1Enricher
 from monolith.enrichers.network_enricher import NetworkEnricher
+from monolith.enrichers.sirius_enricher import SiriusEnricher
 from monolith.exceptions import ConfigurationError
 
 
@@ -20,62 +26,62 @@ class DefaultPipeline(Pipeline):
 
     def __init__(
         self,
-        isdb_configuration: Optional[ISDBEnricherConfig],
-        ms1_configuration: Optional[MS1EnricherConfig],
-        network_configuration: Optional[NetworkEnricherConfig],
+        isdb_configuration: ISDBEnricherConfig,
+        ms1_configuration: MS1EnricherConfig,
+        network_configuration: NetworkEnricherConfig,
+        sirius_configuration: SiriusEnricherConfig,
     ):
         """Initializes the pipeline with a list of enrichers."""
         super().__init__()
 
-        if network_configuration is None:
-            if ms1_configuration is not None:
-                raise ConfigurationError(
-                    "When MS1 configuration is provided, "
-                    "network configuration must be provided as well."
-                )
-
-            if isdb_configuration is not None:
-                raise ConfigurationError(
-                    "When ISDB configuration is provided, "
-                    "network configuration must be provided as well."
-                )
-
         self.enrichers: list[Type[Enricher]] = []
 
-        self.logger.info("Initializing taxa enricher")
+        # self.logger.info("Initializing taxa enricher")
+        # start = time()
+        # taxa_enricher = TaxaEnricher()
+        # self.enrichers.append(taxa_enricher)
+        # self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
+
+        # self.logger.info("Initializing network enricher")
+        # start = time()
+        # network_enricher = NetworkEnricher(network_configuration)
+        # self.enrichers.append(network_enricher)
+        # self.logger.info(
+        #     "%s took %.2f seconds", network_enricher.name(), time() - start
+        # )
+
+        # self.logger.info("Initializing MS1 enricher")
+        # start = time()
+        # ms1_enricher = MS1Enricher(
+        #     ms1_configuration,
+        #     logger=self.logger,
+        # )
+        # self.enrichers.append(ms1_enricher)
+        # self.logger.info(
+        #     "%s took %.2f seconds", ms1_enricher.name(), time() - start
+        # )
+
+        # self.logger.info("Initializing ISDB enricher")
+        # start = time()
+        # isdb_enricher = ISDBEnricher(
+        #     isdb_configuration,
+        #     logger=self.logger,
+        # )
+        # self.enrichers.append(isdb_enricher)
+        # self.logger.info(
+        #     "%s took %.2f seconds", taxa_enricher.name(), time() - start
+        # )
+
+        self.logger.info("Initializing Sirius enricher")
         start = time()
-        taxa_enricher = TaxaEnricher()
-        self.enrichers.append(taxa_enricher)
-        self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
-
-        if network_configuration is not None:
-            self.logger.info("Initializing network enricher")
-            start = time()
-            network_enricher = NetworkEnricher(network_configuration)
-            self.enrichers.append(network_enricher)
-            self.logger.info(
-                "%s took %.2f seconds", network_enricher.name(), time() - start
-            )
-
-        if ms1_configuration is not None:
-            self.logger.info("Initializing MS1 enricher")
-            start = time()
-            ms1_enricher = MS1Enricher(
-                ms1_configuration,
-                logger=self.logger,
-            )
-            self.enrichers.append(ms1_enricher)
-            self.logger.info("%s took %.2f seconds", ms1_enricher.name(), time() - start)
-
-        if isdb_configuration is not None:
-            self.logger.info("Initializing ISDB enricher")
-            start = time()
-            isdb_enricher = ISDBEnricher(
-                isdb_configuration,
-                logger=self.logger,
-            )
-            self.enrichers.append(isdb_enricher)
-            self.logger.info("%s took %.2f seconds", taxa_enricher.name(), time() - start)
+        sirius_enricher = SiriusEnricher(
+            sirius_configuration,
+            logger=self.logger,
+        )
+        self.enrichers.append(sirius_enricher)
+        self.logger.info(
+            "%s took %.2f seconds", sirius_enricher.name(), time() - start
+        )
 
     @classmethod
     def from_yaml(cls, config: str) -> "DefaultPipeline":
@@ -91,11 +97,15 @@ class DefaultPipeline(Pipeline):
         network_configuration = NetworkEnricherConfig.from_dict(
             global_configuration["network"]
         )
+        sirius_configuration = SiriusEnricherConfig.from_dict(
+            global_configuration["sirius"]
+        )
 
         return cls(
             isdb_configuration=isdb_configuration,
             ms1_configuration=ms1_configuration,
             network_configuration=network_configuration,
+            sirius_configuration=sirius_configuration
         )
 
     def name(self) -> str:
