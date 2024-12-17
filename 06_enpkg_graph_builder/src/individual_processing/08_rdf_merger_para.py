@@ -2,172 +2,167 @@ from rdflib import Graph, Namespace
 import pandas as pd
 from pathlib import Path
 import os
-from tqdm import tqdm
-import rdflib
-import argparse
-import textwrap
-import git
-import yaml
-import sys
 from concurrent.futures import ProcessPoolExecutor
+import yaml
+import git
+import sys
 import traceback
-
 
 sys.path.append(os.path.join(Path(__file__).parents[1], 'functions'))
 from hash_functions import get_hash
 
-# These lines allows to make sure that we are placed at the repo directory level 
+# Change to the appropriate working directory
 p = Path(__file__).parents[2]
 os.chdir(p)
 
-# Loading the parameters from yaml file
+# Function to substitute variables in YAML
+def substitute_variables(config):
+    """Recursively substitute placeholders in the YAML configuration."""
+    def substitute(value, context):
+        if isinstance(value, str):
+            for key, replacement in context.items():
+                value = value.replace(f"${{{key}}}", replacement)
+        return value
 
-if not os.path.exists('../params/user.yml'):
-    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
-with open (r'../params/user.yml') as file:    
+    def recurse_dict(d, context):
+        for key, value in d.items():
+            if isinstance(value, dict):
+                recurse_dict(value, context)
+            else:
+                d[key] = substitute(value, context)
+
+    context = {
+        "general.root_data_path": config["general"]["root_data_path"],
+        "general.treated_data_path": config["general"]["treated_data_path"],
+    }
+    recurse_dict(config, context)
+    return config
+
+# Load parameters
+if not os.path.exists("../params/user.yml"):
+    raise FileNotFoundError("No ../params/user.yml: copy from ../params/template.yml and modify according to your needs")
+
+with open("../params/user.yml") as file:
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-params_list = params_list_full['graph-builder']
+# Substitute placeholders
+params_list_full = substitute_variables(params_list_full)
 
-# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+# Extract relevant paths and settings
+sample_dir_path = os.path.normpath(params_list_full["general"]["treated_data_path"])
+output_format = params_list_full["graph-builder"]["graph_format"]
+kg_uri = params_list_full["graph-builder"]["kg_uri"]
+ns_kg = Namespace(kg_uri)
+prefix = params_list_full["graph-builder"]["prefix"]
+module_uri = params_list_full["graph-builder"]["module_uri"]
+ns_module = Namespace(module_uri)
+prefix_module = params_list_full["graph-builder"]["prefix_module"]
+wd_namespace = params_list_full["graph-builder"]["wd_namespace"]
+WD = Namespace(wd_namespace)
 
-sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
-output_format = params_list_full['graph-builder']['graph_format']
+# Ensure the sample directory exists
+if not os.path.exists(sample_dir_path):
+    raise FileNotFoundError(f"Sample directory path not found: {sample_dir_path}")
 
-# Create enpkg namespace
-kg_uri = params_list_full['graph-builder']['kg_uri']
-ns_kg = rdflib.Namespace(kg_uri)
-prefix = params_list_full['graph-builder']['prefix']
+# Define RDF files to merge
+files = [
+    f"rdf/canopus_pos.{output_format}", f"rdf/canopus_neg.{output_format}",
+    f"rdf/features_pos.{output_format}", f"rdf/features_neg.{output_format}",
+    f"rdf/features_spec2vec_pos.{output_format}", f"rdf/features_spec2vec_neg.{output_format}",
+    f"rdf/individual_mn_pos.{output_format}", f"rdf/individual_mn_neg.{output_format}",
+    f"rdf/isdb_pos.{output_format}", f"rdf/isdb_neg.{output_format}",
+    f"rdf/sirius_pos.{output_format}", f"rdf/sirius_neg.{output_format}",
+    f"rdf/metadata_enpkg.{output_format}", f"rdf/metadata_module_enpkg.{output_format}",
+    f"rdf/structures_metadata.{output_format}"
+]
 
-# Create enpkgmodule namespace
-module_uri = params_list_full['graph-builder']['module_uri']
-ns_module = rdflib.Namespace(module_uri)
-prefix_module = params_list_full['graph-builder']['prefix_module']
-
-WD = Namespace(params_list_full['graph-builder']['wd_namespace'])
-
-
-path = os.path.normpath(sample_dir_path)
-samples_dir = [directory for directory in os.listdir(path)]
-df_list = []
-
-files = [f"rdf/canopus_pos.{output_format}", f"rdf/canopus_neg.{output_format}", 
-        f"rdf/features_pos.{output_format}", f"rdf/features_neg.{output_format}", 
-        f"rdf/features_spec2vec_pos.{output_format}", f"rdf/features_spec2vec_neg.{output_format}",
-        f"rdf/individual_mn_pos.{output_format}", f"rdf/individual_mn_neg.{output_format}",
-        f"rdf/isdb_pos.{output_format}", f"rdf/isdb_neg.{output_format}",
-        f"rdf/sirius_pos.{output_format}", f"rdf/sirius_neg.{output_format}",
-        f"rdf/metadata_enpkg.{output_format}", f"rdf/metadata_module_enpkg.{output_format}",
-        f"rdf/structures_metadata.{output_format}"]
-
+# Process a single directory
 def process_directory(directory):
-
-    metadata_path = os.path.join(path, directory, directory + '_metadata.tsv')
-    # try:
-    #     metadata = pd.read_csv(metadata_path, sep='\t')
-    # except FileNotFoundError:
-    #     continue
-    # except NotADirectoryError:
-    #     continue
-    # massive_id = metadata['massive_id'][0]
-
     try:
+        metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
         if not os.path.isfile(metadata_path):
-            print(f"Skipping {directory}, missing files.")
-            return f"Skipped {directory} due to missing files."
+            print(f"Skipping {directory}, missing metadata file.")
+            return f"Skipped {directory} due to missing metadata file."
 
         metadata = pd.read_csv(metadata_path, sep='\t')
         massive_id = metadata['massive_id'][0]
-        # Iterate over the files and add their contents to the merged graph
-        exist_files = []
-        for file_path in files:
-            if os.path.isfile(os.path.join(sample_dir_path, directory, file_path)):
-                exist_files.append(os.path.join(sample_dir_path, directory, file_path))
-        if len(exist_files) > 0:
-            merged_graph = Graph()
-            nm = merged_graph.namespace_manager
-            nm.bind(prefix, ns_kg)
-            nm.bind(prefix_module, ns_module)
-            nm.bind("wd", WD)
 
-            for file_path in exist_files:
-                with open(file_path, "r", encoding="utf8") as f:
-                    file_content = f.read()
-                    merged_graph.parse(data=file_content, format=output_format)
+        # Identify existing RDF files
+        existing_files = [
+            os.path.join(sample_dir_path, directory, file_path)
+            for file_path in files if os.path.isfile(os.path.join(sample_dir_path, directory, file_path))
+        ]
 
-            for file in os.listdir(os.path.join(os.path.join(sample_dir_path, directory, 'rdf'))):
-                if file.startswith(massive_id):
-                    os.remove(os.path.join(sample_dir_path, directory, 'rdf', file))
-                    
-            pathout = os.path.join(sample_dir_path, directory, "rdf/")
-            os.makedirs(pathout, exist_ok=True)
-            # Save the merged graph using the format specified by the user
-            pathout_graph = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph.{output_format}'))
-            merged_graph.serialize(destination=pathout_graph, format=output_format, encoding="utf-8")
+        if not existing_files:
+            print(f"No RDF files to merge for {directory}.")
+            return f"Skipped {directory}, no RDF files to merge."
 
-            hash_merged = get_hash(pathout_graph)
-            # Save the merged graph using the format specified by the user
-            
-            pathout_graph_hash = os.path.normpath(os.path.join(pathout, f'{massive_id}_{directory}_merged_graph_{hash_merged}.{output_format}'))
+        # Merge RDF files
+        merged_graph = Graph()
+        merged_graph.namespace_manager.bind(prefix, ns_kg)
+        merged_graph.namespace_manager.bind(prefix_module, ns_module)
+        merged_graph.namespace_manager.bind("wd", WD)
 
-            if os.path.isfile(pathout_graph_hash):
-                os.remove(pathout_graph_hash)
-            os.rename(pathout_graph, pathout_graph_hash)
-            
-            # Save parameters:
-            params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")
-            if os.path.isfile(params_path):
-                with open(params_path, encoding='UTF-8') as file:    
-                    params_list = yaml.load(file, Loader=yaml.FullLoader) 
-            else:
-                params_list = {}  
-                    
-            # params_list.update({f'{directory}_merged_graph':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-            #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+        for file_path in existing_files:
+            with open(file_path, "r", encoding="utf8") as f:
+                file_content = f.read()
+                merged_graph.parse(data=file_content, format=output_format)
 
-            # Retrieve the current Git commit hash
-            git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+        # Remove old merged graphs
+        rdf_dir = os.path.join(sample_dir_path, directory, 'rdf')
+        for file in os.listdir(rdf_dir):
+            if file.startswith(massive_id):
+                os.remove(os.path.join(rdf_dir, file))
 
-            # Update params_list with version information in a dictionary format
-            params_list[f'{directory}_merged_graph'] = {
-                'git_commit': git_commit_hash,
-                'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
-                }
+        # Save the merged graph
+        pathout = os.path.join(sample_dir_path, directory, "rdf")
+        os.makedirs(pathout, exist_ok=True)
+        merged_graph_path = os.path.join(pathout, f"{massive_id}_{directory}_merged_graph.{output_format}")
+        merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")
 
-            params_list['graph-builder'] = {}
-            # Update params_list with the graph-builder parameters
-            params_list['graph-builder'].update(params_list_full['graph-builder'])
+        # Add hash to the filename
+        hash_merged = get_hash(merged_graph_path)
+        hashed_graph_path = os.path.join(pathout, f"{massive_id}_{directory}_merged_graph_{hash_merged}.{output_format}")
+        os.rename(merged_graph_path, hashed_graph_path)
 
+        # Save graph parameters
+        params_path = os.path.join(pathout, "graph_params.yaml")
+        if os.path.isfile(params_path):
+            with open(params_path, encoding='UTF-8') as file:
+                params_list = yaml.load(file, Loader=yaml.FullLoader)
+        else:
+            params_list = {}
 
-            with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
-                yaml.dump(params_list, file)
-            
-            print(f'Results are in : {pathout_graph_hash}')
-    
+        git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+        params_list[f"{directory}_merged_graph"] = {
+            "git_commit": git_commit_hash,
+            "git_commit_link": f"https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}"
+        }
+        params_list["graph-builder"] = params_list_full["graph-builder"]
+
+        with open(params_path, "w", encoding="UTF-8") as file:
+            yaml.dump(params_list, file)
+
+        print(f"Merged graph saved at: {hashed_graph_path}")
+        return f"Processed {directory}"
+
     except Exception as e:
         error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
         print(error_message)
         return error_message
 
-# The main portion of your script would then use a ProcessPoolExecutor
-# to process multiple directories in parallel.
-
-# Assuming 'path' is the directory where all your sample directories are located
-
-path = os.path.normpath(sample_dir_path)
-
-samples_dir = [directory for directory in os.listdir(path) if not directory.startswith('.')]
-
+# Main function
 def main():
+    directories = [d for d in os.listdir(sample_dir_path) if not d.startswith('.') and os.path.isdir(os.path.join(sample_dir_path, d))]
+    if not directories:
+        print(f"No directories found in {sample_dir_path}. Ensure the path is correct and contains directories.")
+        return
+
     with ProcessPoolExecutor(max_workers=32) as executor:
-        results = executor.map(process_directory, samples_dir)
+        results = executor.map(process_directory, directories)
         for result in results:
-            if isinstance(result, str) and "Error processing" in result:
-                print("Stopping script due to an error in a worker process.")
-                executor.shutdown(wait=False)  # Stop all running workers
-                sys.exit(1)  # Exit the main script
+            if result:
+                print(result)
 
-
-# Ensure running main function when the script is executed
 if __name__ == "__main__":
     main()

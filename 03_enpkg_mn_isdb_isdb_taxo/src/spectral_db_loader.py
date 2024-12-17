@@ -42,7 +42,7 @@ def load_clean_spectral_db(path_to_db):
     # Below the loading of external db is modified to accommodate multiple spectral db as input
     
     if type(path_to_db) is str and '.mgf' in path_to_db : 
-        spectrums_db = list(load_from_mgf(db_file_path))
+        spectrums_db = list(load_from_mgf(path_to_db))
     if type(path_to_db) is str and '.pkl' in path_to_db :
         with open(path_to_db, 'rb') as f:
             spectrums_db = pickle.load(f)

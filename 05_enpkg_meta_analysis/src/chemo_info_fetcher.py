@@ -17,26 +17,19 @@ import yaml
 p = Path(__file__).parents[1]
 os.chdir(p)
 
-
 # Loading the parameters from yaml file
-
 if not os.path.exists('../params/user.yml'):
     print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
-with open (r'../params/user.yml') as file:    
+with open(r'../params/user.yml') as file:    
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
-
-sample_dir_path =os.path.normpath(params_list_full['general']['treated_data_path'])
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 sql_db_name = params_list_full['chemo-info-fetching']['sql_db_name']
 sql_db_path = params_list_full['chemo-info-fetching']['sql_db_path']
 sql_path = os.path.join(sql_db_path + sql_db_name)
-
 gnps_id = params_list_full['chemo-info-fetching']['gnps_id']
-
 Path(sql_db_path).mkdir(parents=True, exist_ok=True)
-
 
 """ Functions """
 
@@ -59,7 +52,6 @@ WHERE{
     except JSONDecodeError:
        return None
 
-
 def update_sqldb(dataframe, sql_path):
     """ create a database connection to a SQLite database """
     conn = None
@@ -72,7 +64,7 @@ def update_sqldb(dataframe, sql_path):
         if conn:
             conn.close()
 
-def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npclassifier.ucsd.edu/classify?smiles="):   
+def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api="https://npclassifier.ucsd.edu/classify?smiles="):   
     for sik, smiles in tqdm(short_ik_smiles_query.items(), leave=False):
         if (sik not in processed_ik) & (sik not in db_ik):
             processed_ik[sik] = {}
@@ -98,7 +90,7 @@ def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npcla
                 joined = seperator.join(data['pathway_results'])
                 processed_ik[sik]['npc_pathway'] = joined
             else:
-                processed_ik[sik]['npc_pathway'] ='unknown'
+                processed_ik[sik]['npc_pathway'] = 'unknown'
                 
             if len(data['superclass_results']) > 0:
                 joined = seperator.join(data['superclass_results'])
@@ -111,9 +103,7 @@ def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npcla
                 processed_ik[sik]['npc_class'] = joined
             else:
                 processed_ik[sik]['npc_class'] = 'unknown'
-    return  processed_ik
-    
-
+    return processed_ik
 
 wd_url = 'https://query.wikidata.org/sparql'
 
@@ -127,32 +117,32 @@ if os.path.exists(sql_path):
     print(f'Connected to {sql_path}')
     query = dat.execute("SELECT * From structures_metadata")
     cols = [column[0] for column in query.description]
-    df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
+    df_metadata = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
     short_ik_in_db = list(set(list(df_metadata['short_inchikey'])))
     print(f'{len(short_ik_in_db)} short IK in DB')
     dat.close()
 else:
     print(f'No SQL DB found at {sql_path}')
     short_ik_in_db = []
-    
+
 # First load all unique short IK from ISDB annotation as long as their metadata (smiles 2D, NPC classes)
 metadata_short_ik = {}
 print('Processing ISDB results')
 for directory in tqdm(samples_dir):
-    isdb_path_pos = os.path.join(path, directory, 'pos', 'isdb', directory  + '_isdb_reweighted_flat_pos.tsv')
-    isdb_path_neg = os.path.join(path, directory, 'neg', 'isdb', directory  + '_isdb_reweighted_flat_neg.tsv')
+    isdb_path_pos = os.path.join(path, directory, 'pos', 'isdb', directory + '_isdb_reweighted_flat_pos.tsv')
+    isdb_path_neg = os.path.join(path, directory, 'neg', 'isdb', directory + '_isdb_reweighted_flat_neg.tsv')
     isdb_annotations_pos = None
     isdb_annotations_neg = None
     try:
         isdb_annotations_pos = pd.read_csv(isdb_path_pos, sep='\t')\
-            [['short_inchikey','structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']]
+            [['short_inchikey', 'structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']]
     except FileNotFoundError:
         pass
     except NotADirectoryError:
         pass
     try:
         isdb_annotations_neg = pd.read_csv(isdb_path_neg, sep='\t')\
-            [['short_inchikey','structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']] 
+            [['short_inchikey', 'structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']] 
     except FileNotFoundError:
         pass
     except NotADirectoryError:
@@ -184,53 +174,54 @@ for directory in tqdm(samples_dir):
 # Add unique IK from GNPS annotations
 if gnps_id is not None:
     print('Processing GNPS results')
-
     gnps_file = os.listdir(os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB'))[0]
     gnps_annotations_path = os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB', gnps_file)
     short_ik_smiles_query = {}
     try:
         gnps_annotations = pd.read_csv(gnps_annotations_path, sep='\t', usecols=['Smiles', 'INCHI'])
-        #gnps_annotations.dropna(inplace=True, how='any')
-        #print(f'GNPS job found with {len(gnps_annotations)} annotations')
         for _, row in gnps_annotations.iterrows():
             if (not pd.isna(row["Smiles"])) & (row["Smiles"] != ' '):
                 mol = AllChem.MolFromSmiles(row["Smiles"])
-            elif not pd.isna(row["INCHI"]) :
+            elif not pd.isna(row["INCHI"]):
                 mol = AllChem.MolFromInchi(row["INCHI"])
             if mol is not None:
-                smiles =  AllChem.MolToSmiles(mol)
-                ik_2D =  AllChem.MolToInchiKey(mol)[:14]
+                smiles = AllChem.MolToSmiles(mol)
+                ik_2D = AllChem.MolToInchiKey(mol)[:14]
                 short_ik_smiles_query[ik_2D] = smiles
-        metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
+        metadata_short_ik = get_NPC(short_ik_smiles_query=short_ik_smiles_query, db_ik=short_ik_in_db, processed_ik=metadata_short_ik)
     except FileNotFoundError:
         pass
-else :
+else:
     print('No GNPS job found, skipping this stage.')
 
 # Add unique short IK from Sirius annotations + add NPC metadata
 print('Processing Sirius results')
 
 for directory in tqdm(samples_dir):
-    sirius_path_pos = os.path.join(path, directory, 'pos',  directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
-    sirius_path_neg = os.path.join(path, directory, 'neg',  directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
+    sirius_path_pos = os.path.join(path, directory, 'pos', directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
+    sirius_path_neg = os.path.join(path, directory, 'neg', directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
     sirius_annotations_pos = None
     sirius_annotations_neg = None
+    
+    # Check if the files are non-empty before loading
     try:
-        sirius_annotations_pos = pd.read_csv(sirius_path_pos, sep='\t')\
-            [['InChIkey2D','smiles']]
-    except FileNotFoundError:
-        pass
-    except NotADirectoryError:
-        pass
-    try:
-        sirius_annotations_neg = pd.read_csv(sirius_path_neg, sep='\t')\
-            [['InChIkey2D','smiles']]
-    except FileNotFoundError:
-        pass
-    except NotADirectoryError:
+        if os.path.getsize(sirius_path_pos) > 0:
+            sirius_annotations_pos = pd.read_csv(sirius_path_pos, sep='\t')[['InChIkey2D', 'smiles']]
+        else:
+            print(f"Warning: The file {sirius_path_pos} is empty and will be skipped.")
+    except (FileNotFoundError, NotADirectoryError):
         pass
 
-    if (sirius_annotations_pos is not None) & (sirius_annotations_neg is not None):
+    try:
+        if os.path.getsize(sirius_path_neg) > 0:
+            sirius_annotations_neg = pd.read_csv(sirius_path_neg, sep='\t')[['InChIkey2D', 'smiles']]
+        else:
+            print(f"Warning: The file {sirius_path_neg} is empty and will be skipped.")
+    except (FileNotFoundError, NotADirectoryError):
+        pass
+
+    # Combine Sirius annotations
+    if sirius_annotations_pos is not None and sirius_annotations_neg is not None:
         sirius_annotations = pd.concat([sirius_annotations_pos, sirius_annotations_neg])
         del(sirius_annotations_pos, sirius_annotations_neg)
     elif sirius_annotations_pos is not None:
@@ -242,12 +233,11 @@ for directory in tqdm(samples_dir):
     else:
         continue
     
-    #print(f'Processing sirius results for sample {len(sirius_annotations)}')
-    
+    # Process Sirius annotations if available
     sirius_annotations.drop_duplicates(subset=['InChIkey2D'], inplace=True)        
     short_ik = list(sirius_annotations['InChIkey2D'])
-    short_ik_smiles_query = pd.Series(sirius_annotations.smiles.values,index=sirius_annotations.InChIkey2D).to_dict()
-    metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
+    short_ik_smiles_query = pd.Series(sirius_annotations.smiles.values, index=sirius_annotations.InChIkey2D).to_dict()
+    metadata_short_ik = get_NPC(short_ik_smiles_query=short_ik_smiles_query, db_ik=short_ik_in_db, processed_ik=metadata_short_ik)
      
 df_ik_meta = pd.DataFrame.from_dict(metadata_short_ik, orient='index')\
     .reset_index().rename(columns={'index':'short_inchikey'}).fillna('unknown')
