@@ -1,84 +1,50 @@
+"""Argument parser """
+import argparse
 import os
 import re
+import textwrap
 import yaml
 import pandas as pd
 from pathlib import Path
 
 
-def substitute_variables(config):
-    """Recursively substitute variables in the YAML configuration."""
-    def substitute(value, context):
-        if isinstance(value, str):
-            for key, replacement in context.items():
-                value = value.replace(f"${{{key}}}", replacement)
-        return value
+os.chdir(os.getcwd())
 
-    def recurse_dict(d, context):
-        for key, value in d.items():
-            if isinstance(value, dict):
-                recurse_dict(value, context)
-            else:
-                d[key] = substitute(value, context)
+p = Path(__file__).parents[1]
+os.chdir(p)
 
-    # Context for substitution
-    context = {
-        "general.root_data_path": config["general"]["root_data_path"],
-        "general.treated_data_path": config["general"]["treated_data_path"],
-    }
-    recurse_dict(config, context)
-    return config
+# Loading the parameters from yaml file
+
+if not os.path.exists('../params/user.yml'):
+    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+with open (r'../params/user.yml') as file:    
+    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+
+params_list = params_list_full['massive-id-addition']
+
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
 
-if __name__ == "__main__":
-    os.chdir(os.getcwd())
+sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+massive_id = params_list_full['massive-id-addition']['massive_id']
 
-    p = Path(__file__).parents[1]
-    os.chdir(p)
 
-    # Load YAML configuration
-    if not os.path.exists("../params/user.yml"):
-        print("No ../params/user.yml: copy from ../params/template.yml and modify according to your needs")
-        exit()
+# Check if format of MassIVE ID is correct:
+if not bool(re.match("MSV\d\d\d\d\d\d\d\d\d$", massive_id)):
+    raise ValueError("Invalid MassIVE ID, must be in format MSVXXXXXXXXX")
 
-    with open(r"../params/user.yml") as file:
-        params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+path = os.path.normpath(sample_dir_path)
+samples_dir = [directory for directory in os.listdir(path)]
 
-    # Apply variable substitution
-    params_list_full = substitute_variables(params_list_full)
-
-    # Access parameters
-    sample_dir_path = os.path.normpath(params_list_full["general"]["treated_data_path"])
-    massive_id = params_list_full["massive-id-addition"]["massive_id"]
-
-    # Debug: Print resolved parameters
-    print(f"Resolved Sample Directory Path: {sample_dir_path}")
-    print(f"Resolved MassIVE ID: {massive_id}")
-
-    # Validate MassIVE ID format
-    if not bool(re.match(r"MSV\d{9}$", massive_id)):
-        raise ValueError("Invalid MassIVE ID, must be in format MSVXXXXXXXXX")
-
-    # Process samples
-    path = os.path.normpath(sample_dir_path)
-    samples_dir = [directory for directory in os.listdir(path) if os.path.isdir(os.path.join(path, directory))]
-
-    for sample_directory in samples_dir:
-        metadata_file_path = os.path.join(
-            path, sample_directory, f"{sample_directory}_metadata.tsv"
-        )
-        print(f"Processing metadata file: {metadata_file_path}")
-        try:
-            metadata = pd.read_csv(metadata_file_path, sep="\t")
-            print(f"Before update, metadata:\n{metadata.head()}")
-        except (FileNotFoundError, NotADirectoryError):
-            print(f"Skipping {sample_directory}: Metadata file not found.")
-            continue
-
-        # Add MassIVE ID to metadata
-        metadata["massive_id"] = massive_id
-        metadata.to_csv(metadata_file_path, sep="\t", index=False)
-        print(f"File saved for {sample_directory}: {metadata_file_path}")
-
-        # Reload to verify changes
-        reloaded_metadata = pd.read_csv(metadata_file_path, sep="\t")
-        print(f"Reloaded metadata for {sample_directory}:\n{reloaded_metadata.head()}")
+for sample_directory in samples_dir:
+    metadata_file_path = os.path.join(
+        path, sample_directory, sample_directory + "_metadata.tsv"
+    )
+    try:
+        metadata = pd.read_csv(metadata_file_path, sep="\t")
+    except FileNotFoundError:
+        continue
+    except NotADirectoryError:
+        continue
+    metadata["massive_id"] = massive_id
+    metadata.to_csv(metadata_file_path, sep="\t", index=False)

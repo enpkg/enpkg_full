@@ -1,127 +1,203 @@
 import os
-import sys
-import yaml
-import traceback
-from pathlib import Path
-from rdflib import Graph, Namespace, RDF, RDFS, FOAF, XSD
-from concurrent.futures import ProcessPoolExecutor
+import argparse
+import textwrap
 import pandas as pd
+import rdflib
+from rdflib import Graph
+from rdflib.namespace import RDF, RDFS, XSD, FOAF
 from tqdm import tqdm
-import hashlib  # For get_hash
+from pathlib import Path
+import sys
 import git
+import yaml
+from concurrent.futures import ProcessPoolExecutor
+import traceback
 
-# Hashing functions
-def get_hash(file_path):
-    """Generate a hash for a given file."""
-    hash_obj = hashlib.sha256()
-    with open(file_path, 'rb') as f:
-        while chunk := f.read(8192):  # Read the file in chunks of 8KB
-            hash_obj.update(chunk)
-    return hash_obj.hexdigest()
+sys.path.append(os.path.join(Path(__file__).parents[1], 'functions'))
+from hash_functions import get_hash, get_data
 
-def get_data(file_path):
-    """Read the content of a file as a string."""
-    with open(file_path, 'r', encoding='utf-8') as f:
-        return f.read()
-
-# Substitute variables function
-def substitute_variables(config):
-    """Recursively substitute variables in the YAML configuration."""
-    def substitute(value, context):
-        if isinstance(value, str):
-            for key, replacement in context.items():
-                value = value.replace(f"${{{key}}}", replacement)
-        return value
-
-    def recurse_dict(d, context):
-        for key, value in d.items():
-            if isinstance(value, dict):
-                recurse_dict(value, context)
-            else:
-                d[key] = substitute(value, context)
-
-    # Context for substitution
-    context = {
-        "general.root_data_path": config["general"]["root_data_path"],
-        "general.treated_data_path": config["general"]["treated_data_path"],
-        "general.polarity": config["general"]["polarity"],
-    }
-    recurse_dict(config, context)
-    return config
-
-# Load parameters and substitute variables
 p = Path(__file__).parents[2]
 os.chdir(p)
 
+
+# Loading the parameters from yaml file
+
 if not os.path.exists('../params/user.yml'):
     print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
-    sys.exit(1)
-
-with open('../params/user.yml') as file:
+with open (r'../params/user.yml') as file:    
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-# Apply variable substitution
-params_list_full = substitute_variables(params_list_full)
+params_list = params_list_full['graph-builder']
 
-# Extract parameters
+# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+
+
 sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 output_format = params_list_full['graph-builder']['graph_format']
+
 ionization_mode = params_list_full['general']['polarity']
+
+g = Graph()
+nm = g.namespace_manager
+
 kg_uri = params_list_full['graph-builder']['kg_uri']
-ns_kg = Namespace(kg_uri)
+ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
 
-# Validate the sample directory path
-print(f"Resolved sample_dir_path: {sample_dir_path}")
-if not os.path.exists(sample_dir_path):
-    print(f"Sample directory path not found: {sample_dir_path}")
-    sys.exit(1)
+spectrum_dashboard_prefix = params_list_full['graph-builder']['spectrum_dashboard_prefix']
+spectrum_png_prefix = params_list_full['graph-builder']['spectrum_png_prefix']
+gnps_fast_search_prefix = params_list_full['graph-builder']['gnps_fast_search_prefix']
 
-samples_dir = [directory for directory in os.listdir(sample_dir_path) if not directory.startswith('.')]
 
-# Process a single directory
+
 def process_directory(directory):
+
     try:
-        quant_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_features_quant_{ionization_mode}.csv")
-        metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
 
-        if not os.path.isfile(quant_path) or not os.path.isfile(metadata_path):
-            print(f"The file: {quant_path} or {metadata_path} does not exist, skipping {directory}")
-            return
+        quant_path = os.path.join(path, directory, ionization_mode, directory + '_features_quant_' + ionization_mode + '.csv')
+        metadata_path = os.path.join(path, directory, directory + '_metadata.tsv')
 
-        quant_table = pd.read_csv(quant_path, sep=',')
-        metadata = pd.read_csv(metadata_path, sep='\t')
+        try:
+            if not os.path.isfile(quant_path) or not os.path.isfile(metadata_path):
+                print(f'The file : {quant_path} or {metadata_path} does not exist, skipping {directory}')
 
-        if metadata.sample_type[0] == 'sample':
-            g = Graph()
-            g.namespace_manager.bind(prefix, ns_kg)
+            quant_table = pd.read_csv(quant_path, sep=',')
+            metadata = pd.read_csv(metadata_path, sep='\t')
 
-            # Processing LCMS and hash
-            lcms_processing_params_path = None
-            for file in os.listdir(os.path.join(sample_dir_path, directory, ionization_mode)):
-                if file.startswith(f"{directory}_lcms_processing_params_{ionization_mode}"):
-                    lcms_processing_params_path = os.path.join(sample_dir_path, directory, ionization_mode, file)
+            
+            if metadata.sample_type[0] == 'sample':
+                g = Graph()
+                nm = g.namespace_manager
+                nm.bind(prefix, ns_kg)
 
-            if lcms_processing_params_path:
+                sample = rdflib.term.URIRef(kg_uri + metadata.sample_id[0])
+                area_col = [col for col in quant_table.columns if col.endswith(' Peak area')][0]
+                max_area = quant_table[area_col].max()
+                    
+                # Add feature list object to samples
+                feature_list = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_lcms_feature_list_" + ionization_mode)
+
+                if ionization_mode == 'pos':
+                    lc_ms = rdflib.term.URIRef(kg_uri + metadata['sample_filename_pos'][0])
+                    for file in [directory for directory in os.listdir(os.path.join(path, directory, "pos"))]:
+                        if file.startswith(f'{directory}_lcms_processing_params_pos'):
+                            lcms_processing_params_path = os.path.join(path, directory, "pos", file)       
+                elif ionization_mode == 'neg':
+                    lc_ms = rdflib.term.URIRef(kg_uri + metadata['sample_filename_neg'][0])
+                    for file in [directory for directory in os.listdir(os.path.join(path, directory, "neg"))]:
+                        if file.startswith(f'{directory}_lcms_processing_params_neg'):
+                            lcms_processing_params_path = os.path.join(path, directory, "neg", file)
+
                 hash_1 = get_hash(lcms_processing_params_path)
                 data_1 = get_data(lcms_processing_params_path)
-                # Add the hash and data to the graph as triples
-                # Example: g.add(...)
-                print(f"Processed LCMS parameters for {directory} with hash {hash_1}")
+                has_lcms_feature_list_hash = rdflib.term.URIRef(kg_uri + "has_lcms_feature_list_" + hash_1)
+                g.add((lc_ms, has_lcms_feature_list_hash, feature_list))
+                g.add((has_lcms_feature_list_hash, RDFS.subPropertyOf, rdflib.term.URIRef(kg_uri + 'has_lcms_feature_list')))
+                g.add((has_lcms_feature_list_hash, ns_kg.has_content, rdflib.term.Literal(data_1)))
+                del(hash_1, data_1)
 
-        # Additional processing...
-        print(f"Processed directory: {directory}")
+                g.add((feature_list, RDF.type, ns_kg.LCMSFeatureList))
+                g.add((feature_list, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
+                g.add((feature_list, RDFS.comment, rdflib.term.Literal(f"LCMS feature list in {ionization_mode} ionization mode of {metadata.sample_id[0]}")))
+                # Add feature and their metadat to feature list
+                for _, row in quant_table.iterrows():
+                    usi = 'mzspec:' + metadata['massive_id'][0] + ':' + metadata.sample_id[0] + '_features_ms2_'+ ionization_mode+ '.mgf:scan:' + str(int(row['row ID']))
+                    feature_id = rdflib.term.URIRef(kg_uri + 'lcms_feature_' + usi)
+                    g.add((feature_list, ns_kg.has_lcms_feature, feature_id))
+                    g.add((feature_id, RDF.type, ns_kg.LCMSFeature))
+                    g.add((feature_id, RDFS.label, rdflib.term.Literal(f"lcms_feature {str(int(row['row ID']))} of LCMS feature list in {ionization_mode} ionization mode of {metadata.sample_id[0]}")))
+                    g.add((feature_id, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
+                    # We make sure that the row ID is an integer and not a float
+                    g.add((feature_id, ns_kg.has_row_id, rdflib.term.Literal(int(row['row ID']), datatype=XSD.integer)))
+                    g.add((feature_id, ns_kg.has_parent_mass, rdflib.term.Literal(row['row m/z'], datatype=XSD.float)))
+                    g.add((feature_id, ns_kg.has_retention_time, rdflib.term.Literal(row['row retention time'], datatype=XSD.float)))
+                    g.add((feature_id, ns_kg.has_feature_area, rdflib.term.Literal(row[area_col], datatype=XSD.float)))
+                    g.add((feature_id, ns_kg.has_relative_feature_area, rdflib.term.Literal(row[area_col]/max_area, datatype=XSD.float)))
+                    
+                    g.add((feature_id, ns_kg.has_usi, rdflib.term.Literal(usi)))
+                    link_spectrum = spectrum_dashboard_prefix + usi
+                    g.add((feature_id, ns_kg.gnps_dashboard_view, rdflib.URIRef(link_spectrum)))
 
-    except Exception as e:
-        print(f"Error processing {directory}: {e}\n{traceback.format_exc()}")
+                    # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the index and no analog search
+                    link_fast_search = gnps_fast_search_prefix + usi + '&library_select=gnpsdata_index&analog_select=No'
+                    g.add((feature_id, ns_kg.fast_search_gnpsdata_index_no_analog, rdflib.URIRef(link_fast_search)))
 
-# Main function for processing directories
+                    # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the index and analog search
+                    link_fast_search_analog = gnps_fast_search_prefix + usi + '&library_select=gnpsdata_index&analog_select=Yes'
+                    g.add((feature_id, ns_kg.fast_search_gnpsdata_index_analog, rdflib.URIRef(link_fast_search_analog)))
+
+                    # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the GNPS library and no analog search
+                    link_fast_search_gnps_no_analog = gnps_fast_search_prefix + usi + '&library_select=gnpslibrary&analog_select=No'
+                    g.add((feature_id, ns_kg.fast_search_gnpslibrary_no_analog, rdflib.URIRef(link_fast_search_gnps_no_analog)))
+
+                    # add a fast Search link to the spectrum https://fasst.gnps2.org/fastsearch/ using the GNPS library and analog search
+                    link_fast_search_gnps_analog = gnps_fast_search_prefix + usi + '&library_select=gnpslibrary&analog_select=Yes'
+                    g.add((feature_id, ns_kg.fast_search_gnpslibrary_analog, rdflib.URIRef(link_fast_search_gnps_analog)))
+
+                    link_png = spectrum_png_prefix + usi
+                    g.add((feature_id, FOAF.depiction, rdflib.URIRef(link_png))) 
+                    
+                pathout = os.path.join(sample_dir_path, directory, "rdf/")
+                os.makedirs(pathout, exist_ok=True)
+                pathout = os.path.normpath(os.path.join(pathout, f'features_{ionization_mode}.{output_format}'))
+                g.serialize(destination=pathout, format=output_format, encoding="utf-8")
+                
+                # Save parameters:
+                params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")
+                
+                if os.path.isfile(params_path):
+                    with open(params_path, encoding='UTF-8') as file:    
+                        params_list = yaml.load(file, Loader=yaml.FullLoader) 
+                else:
+                    params_list = {}  
+                        
+                # params_list.update({f'features_{ionization_mode}':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
+                #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+
+                # Retrieve the current Git commit hash
+                git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+
+                # Update params_list with version information in a dictionary format
+                params_list[f'features_{ionization_mode}'] = {
+                    'git_commit': git_commit_hash,
+                    'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
+                    }
+
+                
+                with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
+                    yaml.dump(params_list, file)
+                    
+                print(f'Results are in : {pathout}')
+
+        except KeyError as e:
+            print(f'Error: {e} in {metadata_path} and directory {directory}')
+            sys.exit(1)
+
+    except KeyError as e:
+        print(f'Error: {e} in {metadata_path} and directory {directory}')
+        sys.exit(1)
+        
+# The main portion of your script would then use a ProcessPoolExecutor
+# to process multiple directories in parallel.
+
+# Assuming 'path' is the directory where all your sample directories are located
+
+
+path = os.path.normpath(sample_dir_path)
+
+samples_dir = [directory for directory in os.listdir(path) if not directory.startswith('.')]
+
 def main():
-    print(f"Processing directories in {sample_dir_path}")
-    with ProcessPoolExecutor(max_workers=32) as executor:
-        results = executor.map(process_directory, samples_dir)
-        for result in tqdm(results, desc="Processing directories"):
-            pass
 
+    # Number of max workers (processes) can be adjusted to your machine's capability
+    with ProcessPoolExecutor(max_workers=32) as executor:
+        # The map method can help maintain the order of results
+        results = executor.map(process_directory, samples_dir)
+
+    # # Output or further process your results
+    # for result in results:
+    #     print(result)
+
+# Ensure running main function when the script is executed
 if __name__ == "__main__":
     main()
