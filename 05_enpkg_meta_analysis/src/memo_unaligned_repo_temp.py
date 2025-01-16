@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import yaml
+import shutil
 
 
 def substitute_variables(config):
@@ -24,9 +25,9 @@ def substitute_variables(config):
 
     # Context for substitution
     context = {
-        "general.root_data_path": config["general"]["root_data_path"],
-        "general.treated_data_path": config["general"]["treated_data_path"],
-        "general.polarity": config["general"]["polarity"],
+        "general.root_data_path": config.get("general", {}).get("root_data_path", ""),
+        "general.treated_data_path": config.get("general", {}).get("treated_data_path", ""),
+        "general.polarity": config.get("general", {}).get("polarity", ""),
     }
     recurse_dict(config, context)
     return config
@@ -63,8 +64,13 @@ if __name__ == "__main__":
     output = os.path.normpath(params_list['output'])
     output_path = os.path.normpath(params_list['output_path'])
 
+    # Local temporary save path
+    local_output_path = "/tmp/memo_matrix"
+    os.makedirs(local_output_path, exist_ok=True)
+
     # Debug: Verify resolved paths
     print(f"Resolved output path: {output_path}")
+    print(f"Resolved local temporary path: {local_output_path}")
 
     # Ensure output path is resolved correctly
     if "${" in output_path:
@@ -106,74 +112,31 @@ if __name__ == "__main__":
     )
     table = memo_unaligned.memo_matrix
 
-    # Filter blanks
-    if filter_blanks:
-        samples_dir = [directory for directory in os.listdir(sample_dir_path)]
-        blanks = []
-        for directory in samples_dir:
-            metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
-            try:
-                metadata = pd.read_csv(metadata_path, sep='\t', usecols=['sample_id', 'sample_type'])
-            except IOError:
-                continue
-            if metadata['sample_type'].eq("blank").any():
-                blanks.append(metadata['sample_id'].values[0])
-        blanks = list(set(blanks) & set(table.index))
-        table_matched = table.loc[blanks]
-        table_matched = table_matched.loc[:, (table_matched != 0).any(axis=0)]
-        count_null = table_matched.replace(0, np.nan).isnull().sum()
+    # Export results locally
+    local_resolved_output_file = f"{local_output_path}/{output}.gz"
+    local_resolved_params_file = f"{local_output_path}/{output}_params.csv"
 
-    if word_max_occ_blanks != -1:
-        excluded_features = count_null[count_null < (len(table_matched) - word_max_occ_blanks)].index
-        table = table.drop(excluded_features, axis=1)
-        table = table.drop(blanks, axis=0)
-        table = table.astype(float)
-        table = table.loc[:, (table != 0).any(axis=0)]
+    datatable = dt.Frame(table.reset_index().rename(columns={'index': 'filename'}))
+    datatable.to_csv(local_resolved_output_file, compression="gzip")
 
-    if ionization in ['pos', 'both']:
-        table = table.add_suffix('_pos')
-    elif ionization == 'neg':
-        table = table.add_suffix('_neg')
-
-    table1 = table.reset_index().rename(columns={'index': 'filename'})
-
-    # Process second pattern for 'both' ionization modes
-    if pattern_to_match2:
-        i = sum(
-            1 for root, _, files in os.walk(sample_dir_path, topdown=True)
-            for file in files if file.endswith(pattern_to_match2)
-        )
-        print(f"Generating MEMO matrix from {i} input files.")
-        memo_unaligned.memo_from_unaligned_samples(
-            path_to_samples_dir=sample_dir_path,
-            pattern_to_match=pattern_to_match2,
-            min_relative_intensity=min_relative_intensity,
-            max_relative_intensity=max_relative_intensity,
-            min_peaks_required=min_peaks_required,
-            losses_from=losses_from,
-            losses_to=losses_to,
-            n_decimals=n_decimals,
-        )
-        table = memo_unaligned.memo_matrix
-        table = table.add_suffix('_neg')
-        table2 = table.reset_index().rename(columns={'index': 'filename'})
-        table1 = table1.merge(table2, on='filename')
-
-    # Export results
-    PATH = os.path.normpath(output_path)
-    os.makedirs(PATH, exist_ok=True)
-
-    resolved_output_file = f"{PATH}/{output}.gz"
-    resolved_params_file = f"{PATH}/{output}_params.csv"
-
-    datatable = dt.Frame(table1)
-    datatable.to_csv(resolved_output_file, compression="gzip")
-
-    # Save parameters
+    # Save parameters locally
     params = pd.DataFrame(list(params_list.items()), columns=['parameter', 'value'])
-    included_samples_df = pd.DataFrame({'parameter': ['included_samples'], 'value': [list(table1.filename)]})
+    included_samples_df = pd.DataFrame({'parameter': ['included_samples'], 'value': [list(table.index)]})
     params = pd.concat([params, included_samples_df], ignore_index=True)
-    params.to_csv(resolved_params_file, index=False)
+    params.to_csv(local_resolved_params_file, index=False)
 
-    print(f"Results are saved in: {resolved_output_file}")
-    print(f"Parameters are saved in: {resolved_params_file}")
+    # Attempt to copy results to the network drive
+    try:
+        resolved_output_file = f"{output_path}/{output}.gz"
+        resolved_params_file = f"{output_path}/{output}_params.csv"
+
+        os.makedirs(output_path, exist_ok=True)
+        shutil.copy(local_resolved_output_file, resolved_output_file)
+        shutil.copy(local_resolved_params_file, resolved_params_file)
+
+        print(f"Results successfully copied to: {resolved_output_file}")
+        print(f"Parameters successfully copied to: {resolved_params_file}")
+    except Exception as e:
+        print(f"Error copying files to network drive: {e}")
+        print(f"Results remain saved locally at: {local_resolved_output_file}")
+        print(f"Parameters remain saved locally at: {local_resolved_params_file}")

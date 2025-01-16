@@ -7,11 +7,9 @@ from pathlib import Path
 
 from matchms.importing import load_from_mgf
 from matchms.filtering import add_precursor_mz
-from matchms.filtering.require_minimum_number_of_peaks  import require_minimum_number_of_peaks 
+from matchms.filtering.require_minimum_number_of_peaks import require_minimum_number_of_peaks
 
-from spectral_db_loader import load_spectral_db
 from spectral_db_loader import load_clean_spectral_db
-from spectral_db_loader import save_spectral_db
 from spectral_lib_matcher import spectral_matching
 from molecular_networking import generate_mn
 from ms1_matcher import ms1_matcher
@@ -22,57 +20,82 @@ from formatters import feature_intensity_table_formatter
 
 pd.options.mode.chained_assignment = None
 
-os.chdir(os.getcwd())
 
-p = Path(__file__).parents[1]
-os.chdir(p)
+def substitute_variables(config):
+    """Recursively substitute variables in the YAML configuration."""
+    def substitute(value, context):
+        if isinstance(value, str):
+            for key, replacement in context.items():
+                value = value.replace(f"${{{key}}}", replacement)
+        return value
 
-# you can copy the configs/default/default.yaml to configs/user/user.yaml
+    def recurse_dict(d, context):
+        for key, value in d.items():
+            if isinstance(value, dict):
+                recurse_dict(value, context)
+            else:
+                d[key] = substitute(value, context)
 
-with open (r'../params/user.yml') as file:    
-    params_list_full = yaml.load(file, Loader=yaml.FullLoader)
+    # Context for substitution
+    context = {
+        "general.root_data_path": config['general']['root_data_path'],
+        "general.polarity": config['general']['polarity'],
+    }
+    recurse_dict(config, context)
+    return config
 
-params_list = params_list_full['isdb']
 
-recompute = params_list_full['isdb']['general_params']['recompute']
-ionization_mode = params_list_full['general']['polarity']
+if __name__ == "__main__":
+    os.chdir(os.getcwd())
 
-repository_path = os.path.normpath(params_list_full['general']['treated_data_path'])
-taxo_db_metadata_path = params_list_full['isdb']['paths']['taxo_db_metadata_path']
-spectral_db_pos_path = os.path.normpath(params_list_full['isdb']['paths']['spectral_db_pos_path'])
-spectral_db_neg_path = os.path.normpath(params_list_full['isdb']['paths']['spectral_db_neg_path'])
-adducts_pos_path = os.path.normpath(params_list_full['isdb']['paths']['adducts_pos_path'])
-adducts_neg_path = os.path.normpath(params_list_full['isdb']['paths']['adducts_neg_path'])
+    p = Path(__file__).parents[1]
+    os.chdir(p)
 
-parent_mz_tol = params_list_full['isdb']['spectral_match_params']['parent_mz_tol']
-msms_mz_tol = params_list_full['isdb']['spectral_match_params']['msms_mz_tol']
-min_score = params_list_full['isdb']['spectral_match_params']['min_score']
-min_peaks = params_list_full['isdb']['spectral_match_params']['min_peaks']
+    # Load parameters from YAML file
+    if not os.path.exists('../params/user.yml'):
+        print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
+        exit()
 
-mn_msms_mz_tol = params_list_full['isdb']['networking_params']['mn_msms_mz_tol']
-mn_score_cutoff = params_list_full['isdb']['networking_params']['mn_score_cutoff']
-mn_max_links = params_list_full['isdb']['networking_params']['mn_max_links']
-mn_top_n = params_list_full['isdb']['networking_params']['mn_top_n']
+    with open(r'../params/user.yml') as file:
+        params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-top_to_output= params_list_full['isdb']['reweighting_params']['top_to_output']
-ppm_tol_ms1 = params_list_full['isdb']['reweighting_params']['ppm_tol_ms1']
-use_post_taxo = params_list_full['isdb']['reweighting_params']['use_post_taxo']
-top_N_chemical_consistency = params_list_full['isdb']['reweighting_params']['top_N_chemical_consistency']
-min_score_taxo_ms1 = params_list_full['isdb']['reweighting_params']['min_score_taxo_ms1']
-min_score_chemo_ms1 = params_list_full['isdb']['reweighting_params']['min_score_chemo_ms1']
-msms_weight = params_list_full['isdb']['reweighting_params']['msms_weight']
-taxo_weight = params_list_full['isdb']['reweighting_params']['taxo_weight']
-chemo_weight = params_list_full['isdb']['reweighting_params']['chemo_weight']
+    # Perform variable substitution
+    params_list_full = substitute_variables(params_list_full)
 
-# Retrieve the current Git commit hash
-git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+    # Extract parameters
+    params_list = params_list_full['isdb']
+    recompute = params_list['general_params']['recompute']
+    ionization_mode = params_list_full['general']['polarity']
+    repository_path = os.path.normpath(params_list_full['general']['treated_data_path'])
+    taxo_db_metadata_path = params_list['paths']['taxo_db_metadata_path']
+    spectral_db_pos_path = os.path.normpath(params_list['paths']['spectral_db_pos_path'])
+    spectral_db_neg_path = os.path.normpath(params_list['paths']['spectral_db_neg_path'])
+    adducts_pos_path = os.path.normpath(params_list['paths']['adducts_pos_path'])
+    adducts_neg_path = os.path.normpath(params_list['paths']['adducts_neg_path'])
+    parent_mz_tol = params_list['spectral_match_params']['parent_mz_tol']
+    msms_mz_tol = params_list['spectral_match_params']['msms_mz_tol']
+    min_score = params_list['spectral_match_params']['min_score']
+    min_peaks = params_list['spectral_match_params']['min_peaks']
+    mn_msms_mz_tol = params_list['networking_params']['mn_msms_mz_tol']
+    mn_score_cutoff = params_list['networking_params']['mn_score_cutoff']
+    mn_max_links = params_list['networking_params']['mn_max_links']
+    mn_top_n = params_list['networking_params']['mn_top_n']
+    top_to_output = params_list['reweighting_params']['top_to_output']
+    ppm_tol_ms1 = params_list['reweighting_params']['ppm_tol_ms1']
+    use_post_taxo = params_list['reweighting_params']['use_post_taxo']
+    top_N_chemical_consistency = params_list['reweighting_params']['top_N_chemical_consistency']
+    min_score_taxo_ms1 = params_list['reweighting_params']['min_score_taxo_ms1']
+    min_score_chemo_ms1 = params_list['reweighting_params']['min_score_chemo_ms1']
+    msms_weight = params_list['reweighting_params']['msms_weight']
+    taxo_weight = params_list['reweighting_params']['taxo_weight']
+    chemo_weight = params_list['reweighting_params']['chemo_weight']
 
-# Update params_list with version information in a dictionary format
-params_list['version_info'] = {
-    'git_commit': git_commit_hash,
-    'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
-}
-
+    # Retrieve the current Git commit hash
+    git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+    params_list['version_info'] = {
+        'git_commit': git_commit_hash,
+        'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
+    }
 
 ###### START #####
 
@@ -288,34 +311,76 @@ for sample_dir in samples_dir:
         left=dt_isdb_results, right=db_metadata[cols_to_use], left_on='short_inchikey', right_on='short_inchikey', how='outer')
     dt_isdb_results.dropna(subset=['feature_id'], inplace=True)
             
-    if taxo_metadata is not None:        
-        print('''
-        Taxonomically informed reponderation
-        ''')
-            
-        # If valid taxonomy is present for sample, proceed to taxonomical reweighting
-        taxo_reweight = True
-        cols_att = ['query_otol_domain', 'query_otol_kingdom', 'query_otol_phylum', 'query_otol_class',
-                'query_otol_order', 'query_otol_family', 'query_otol_genus', 'query_otol_species']
-        for col in cols_att:
-            dt_isdb_results[col] = taxo_metadata[col][0]
-        dt_isdb_results = taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1)
+    try:
+        # Initialize taxo_metadata_path
+        taxo_metadata_path = None
 
-        print('''
-        Taxonomically informed reponderation done
-        ''')
-    
-    # Harmonize format of dt_isdb_results to match post-taxonomical reweighting
+        # Check for the presence of the taxo_output directory
+        taxo_output_dir = os.path.join(repository_path, sample_dir, 'taxo_output')
+        if os.path.exists(taxo_output_dir):
+            # Look for a file ending with '_taxo_metadata.tsv' in the directory
+            for file in os.listdir(taxo_output_dir):
+                if file.endswith("_taxo_metadata.tsv"):
+                    taxo_metadata_path = os.path.join(taxo_output_dir, file)
+                    break
+
+        # If taxo_metadata_path is found, load the file
+        if taxo_metadata_path:
+            taxo_metadata = pd.read_csv(taxo_metadata_path, sep='\t')
+            print(f"Taxo metadata found and loaded for {sample_dir}.")
+        else:
+            taxo_metadata = None
+            print(f"No taxo metadata found for {sample_dir}, skipping reponderation.")
+    except Exception as e:
+        # Handle unexpected errors gracefully
+        taxo_metadata = None
+        print(f"Error loading taxo metadata for {sample_dir}: {e}")
+
+
+    # Check if reponderation should be performed
+    if taxo_metadata is not None:
+        try:
+            print('''
+            Taxonomically informed reponderation
+            ''')
+            
+            # Perform taxonomical reponderation
+            taxo_reweight = True
+            cols_att = ['query_otol_domain', 'query_otol_kingdom', 'query_otol_phylum', 'query_otol_class',
+                        'query_otol_order', 'query_otol_family', 'query_otol_genus', 'query_otol_species']
+            
+            # Ensure all required taxonomy columns exist in the taxo_metadata file
+            missing_cols = [col for col in cols_att if col not in taxo_metadata.columns]
+            if missing_cols:
+                raise ValueError(f"Missing required taxonomy columns in taxo_metadata: {', '.join(missing_cols)}")
+            
+            # Add taxonomy metadata to ISDB results
+            for col in cols_att:
+                dt_isdb_results[col] = taxo_metadata[col][0]
+            
+            # Perform taxonomical reponderation
+            dt_isdb_results = taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1)
+            print('''
+            Taxonomically informed reponderation done
+            ''')
+        except (ValueError, KeyError, IndexError) as e:
+            print(f"Taxonomical reponderation skipped due to error: {e}")
+            taxo_reweight = False
+            dt_isdb_results['score_taxo'] = 0
+            dt_isdb_results["score_input_taxo"] = dt_isdb_results['score_input']
     else:
+        print("No valid taxo_metadata found; skipping taxonomical reponderation.")
         taxo_reweight = False
         dt_isdb_results['score_taxo'] = 0
-        dt_isdb_results["score_input"] = pd.to_numeric(dt_isdb_results["score_input"], downcast="float")
-        dt_isdb_results['score_input_taxo'] = dt_isdb_results['score_taxo'] +  dt_isdb_results['score_input']
-        dt_isdb_results['rank_spec_taxo'] = dt_isdb_results.groupby(
-            'feature_id')['score_input_taxo'].rank(method='dense', ascending=False)
-        dt_isdb_results = dt_isdb_results.groupby(["feature_id"]).apply(
-            lambda x: x.sort_values(["rank_spec_taxo"], ascending=True)).reset_index(drop=True)
-    
+        dt_isdb_results["score_input_taxo"] = dt_isdb_results['score_input']
+
+    # Rank and format results for cases without taxonomical reponderation
+    dt_isdb_results['rank_spec_taxo'] = dt_isdb_results.groupby(
+        'feature_id')['score_input_taxo'].rank(method='dense', ascending=False)
+    dt_isdb_results = dt_isdb_results.groupby(["feature_id"]).apply(
+        lambda x: x.sort_values(["rank_spec_taxo"], ascending=True)).reset_index(drop=True)
+
+            
     # Drop all annoations for neg MS1 annotation for samples without taxonomy info    
     # elif (taxo_metadata is None) & (ionization_mode == 'neg'):
     #     taxo_reweight = False

@@ -17,14 +17,39 @@ import traceback
 p = Path(__file__).parents[2]
 os.chdir(p)
 
-# Loading the parameters from yaml file
+# Function to substitute variables in YAML
+def substitute_variables(config):
+    """Recursively substitute placeholders in the YAML configuration."""
+    def substitute(value, context):
+        if isinstance(value, str):
+            for key, replacement in context.items():
+                value = value.replace(f"${{{key}}}", replacement)
+        return value
 
-if not os.path.exists('../params/user.yml'):
-    print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
-with open (r'../params/user.yml') as file:    
+    def recurse_dict(d, context):
+        for key, value in d.items():
+            if isinstance(value, dict):
+                recurse_dict(value, context)
+            else:
+                d[key] = substitute(value, context)
+
+    context = {
+        "general.root_data_path": config["general"]["root_data_path"],
+        "general.treated_data_path": config["general"]["treated_data_path"],
+        "general.polarity": config["general"]["polarity"],
+    }
+    recurse_dict(config, context)
+    return config
+
+# Load parameters from YAML
+if not os.path.exists("../params/user.yml"):
+    raise FileNotFoundError("No ../params/user.yml: copy from ../params/template.yml and modify according to your needs")
+
+with open("../params/user.yml") as file:
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-params_list = params_list_full['graph-builder']
+# Substitute placeholders
+params_list_full = substitute_variables(params_list_full)
 
 # Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
 
@@ -49,21 +74,22 @@ kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
 
+path = os.path.normpath(sample_dir_path)
+samples_dir = [directory for directory in os.listdir(path) if not directory.startswith('.')]
 
-def process_directory(directory):
+def process_directory(args):
+    try:
+        # Unpack arguments
+        directory, path, df_metadata = args
 
-    metadata_path = os.path.join(path, directory, directory + '_metadata.tsv')
-    metadata = pd.read_csv(metadata_path, sep='\t')
+        metadata_path = os.path.join(path, directory, f"{directory}_metadata.tsv")
+        metadata = pd.read_csv(metadata_path, sep='\t')
 
+        if metadata.sample_type[0] == 'qc' or metadata.sample_type[0] == 'blank':
+            print(f'Skipping {directory}, QC or Blank sample.')
+            return f'Skipped {directory} due to QC or Blank sample.'
 
-    if metadata.sample_type[0] == 'qc' or metadata.sample_type[0] == 'blank':
-        print(f'Skipping {directory}, QC or Blank sample.')
-        return f'Skipped {directory} due to QC or Blank sample.'
-
-    elif metadata.sample_type[0] == 'sample':
-
-        try: 
-            
+        elif metadata.sample_type[0] == 'sample':
             paths = []
             isdb_pos_path = os.path.join(path, directory, f'rdf/isdb_pos.{output_format}')
             isdb_neg_path = os.path.join(path, directory, f'rdf/isdb_neg.{output_format}')
@@ -77,8 +103,6 @@ def process_directory(directory):
                     path_exist.append(path_annot)
                 else:
                     pass
-            # if len(path_exist) == 0:
-            #     continue
 
             merged_graph = Graph()
             nm = merged_graph.namespace_manager
@@ -87,16 +111,18 @@ def process_directory(directory):
                 with open(path_annot, "r") as f:
                     file_content = f.read()
                     merged_graph.parse(data=file_content, format=output_format)
-            
+
             sample_short_ik = []
-            for s, p, o in merged_graph.triples((None,  RDF.type, ns_kg.InChIkey2D)):
+            for s, p, o in merged_graph.triples((None, RDF.type, ns_kg.InChIkey2D)):
                 sample_short_ik.append(s[-14:])
 
             sample_specific_db = df_metadata[df_metadata['short_inchikey'].isin(sample_short_ik)]
 
             g = Graph()
             nm = g.namespace_manager
-            nm.bind(prefix, ns_kg)   
+            nm.bind(prefix, ns_kg)
+
+            # Process each row in sample_specific_db
             for _, row in sample_specific_db.iterrows():
                 short_ik = rdflib.term.URIRef(kg_uri + row['short_inchikey'])
                 npc_pathway_list = row['npc_pathway'].replace(" ", "_").replace("(", "").replace(")", "").replace("-", "_").translate(greek2latin).split('|')
@@ -107,108 +133,48 @@ def process_directory(directory):
                 npc_superclass_urilist = []
                 npc_class_urilist = []
 
-                for list, uri_list in zip([npc_pathway_list, npc_superclass_list, npc_class_list],
-                                        [npc_pathway_urilist, npc_superclass_urilist, npc_class_urilist]):
-                    for item in list:
+                for lst, uri_list in zip([npc_pathway_list, npc_superclass_list, npc_class_list],
+                                         [npc_pathway_urilist, npc_superclass_urilist, npc_class_urilist]):
+                    for item in lst:
                         uri_list.append(rdflib.term.URIRef(kg_uri + "npc_" + item))
-                            
+
                 g.add((short_ik, ns_kg.has_smiles, rdflib.term.Literal(row['smiles'])))
 
-                all_npc_pathway = []
-                all_npc_superclass = []
-                all_npc_class = []
-                
                 for uri in npc_pathway_urilist:
                     g.add((short_ik, ns_kg.has_npc_pathway, uri))
-                    if uri not in all_npc_pathway:
-                        g.add((uri, RDF.type, ns_kg.NPCPathway))
-                        all_npc_pathway.append(uri)
+                    g.add((uri, RDF.type, ns_kg.NPCPathway))
                 for uri in npc_superclass_urilist:
                     g.add((short_ik, ns_kg.has_npc_superclass, uri))
-                    if uri not in all_npc_superclass:
-                        g.add((uri, RDF.type, ns_kg.NPCSuperclass))
-                        all_npc_superclass.append(uri)
+                    g.add((uri, RDF.type, ns_kg.NPCSuperclass))
                 for uri in npc_class_urilist:
                     g.add((short_ik, ns_kg.has_npc_class, uri))
-                    if uri not in all_npc_class:
-                        g.add((uri, RDF.type, ns_kg.NPCClass))
-                        all_npc_class.append(uri)
-                
-                if (row['wikidata_id'] != 'no_wikidata_match') & (row['wikidata_id'] != None):
+                    g.add((uri, RDF.type, ns_kg.NPCClass))
+
+                if (row['wikidata_id'] != 'no_wikidata_match') and (row['wikidata_id'] is not None):
                     g.add((short_ik, ns_kg.is_InChIkey2D_of, rdflib.term.URIRef(kg_uri + row['inchikey'])))
                     g.add((rdflib.term.URIRef(kg_uri + row['inchikey']), ns_kg.has_wd_id, rdflib.term.URIRef(row['wikidata_id'])))
                     g.add((rdflib.term.URIRef(kg_uri + row['inchikey']), RDF.type, ns_kg.InChIkey))
 
-                    for uri in npc_pathway_urilist:
-                        g.add((rdflib.term.URIRef(kg_uri + row['inchikey']), ns_kg.has_npc_pathway, uri))
-                    for uri in npc_superclass_urilist:
-                        g.add((rdflib.term.URIRef(kg_uri + row['inchikey']), ns_kg.has_npc_superclass, uri))
-                    for uri in npc_class_urilist:
-                        g.add((rdflib.term.URIRef(kg_uri + row['inchikey']), ns_kg.has_npc_class, uri))
-                        
-                    g.add((rdflib.term.URIRef(kg_uri + row['inchikey']), ns_kg.has_smiles, rdflib.term.Literal(row['isomeric_smiles'])))
-                    g.add((rdflib.term.URIRef(row['wikidata_id']), RDF.type, ns_kg.WDChemical))
-                        
             pathout = os.path.join(sample_dir_path, directory, "rdf/")
             os.makedirs(pathout, exist_ok=True)
             pathout = os.path.normpath(os.path.join(pathout, f'structures_metadata.{output_format}'))
             g.serialize(destination=pathout, format=output_format, encoding="utf-8")
-            
-            # Save parameters:
-            params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")
-            
-            if os.path.isfile(params_path):
-                with open(params_path, encoding='UTF-8') as file:    
-                    params_list = yaml.load(file, Loader=yaml.FullLoader) 
-            else:
-                params_list = {}  
-                    
-            # params_list.update({'structures_metadata':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-            #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'},
-            #                     {'db_structures_metadata':metadata_path}]})
 
-            # Retrieve the current Git commit hash
-            git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+            print(f"Results are in: {pathout}")
 
-            # Update params_list with version information in a dictionary format
-            params_list['structures_metadata'] = {
-                'git_commit': git_commit_hash,
-                'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}',
-                'db_structures_metadata': metadata_path,
-                }
+    except Exception as e:
+        error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
+        print(error_message)
+        return error_message
 
-            
-            with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
-                yaml.dump(params_list, file)
-                
-            print(f'Results are in : {pathout}')  
-
-        except Exception as e:
-            error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
-            print(error_message)
-            return error_message
-
-
-# The main portion of your script would then use a ProcessPoolExecutor
-# to process multiple directories in parallel.
-
-# Assuming 'path' is the directory where all your sample directories are located
-
-path = os.path.normpath(sample_dir_path)
-samples_dir = [directory for directory in os.listdir(path) if not directory.startswith('.')]
-df_list = []
 
 def main():
+    args = [(directory, path, df_metadata) for directory in samples_dir]
     with ProcessPoolExecutor(max_workers=32) as executor:
-        results = executor.map(process_directory, samples_dir)
-        for result in results:
+        for result in executor.map(process_directory, args):
             if isinstance(result, str) and "Error processing" in result:
-                print("Stopping script due to an error in a worker process.")
-                executor.shutdown(wait=False)  # Stop all running workers
-                sys.exit(1)  # Exit the main script
+                print(result)
 
-# Ensure running main function when the script is executed
+
 if __name__ == "__main__":
     main()
-
-

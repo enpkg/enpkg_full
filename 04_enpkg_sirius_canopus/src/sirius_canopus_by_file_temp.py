@@ -5,7 +5,6 @@ import pandas as pd
 import subprocess
 import shutil
 from tqdm import tqdm
-import git
 
 
 def substitute_variables(config):
@@ -33,17 +32,49 @@ def substitute_variables(config):
     return config
 
 
-def compute_sirius(file, output_name, sirius_command_base, my_env):
+def compute_sirius(file, local_output_name, sirius_command_base, my_env):
     """Run SIRIUS computation for a given sample."""
-    sirius_command = sirius_command_base.replace("{file}", file).replace("{output_name}", output_name)
-    print(f"Running command: {sirius_command}")
+    sirius_command = sirius_command_base.replace("{file}", file).replace("{output_name}", local_output_name)
+    print(f"Running SIRIUS command:\n{sirius_command}\n")
+    
     result = subprocess.run(sirius_command, shell=True, env=my_env, capture_output=True, text=True)
-
+    
     if result.returncode != 0:
         print(f"Error in SIRIUS command: {result.stderr}")
+        print(f"Command output: {result.stdout}")
         raise Exception(f"SIRIUS command failed with return code {result.returncode}")
     else:
-        print(f"Command succeeded: {result.stdout}")
+        print(f"SIRIUS command succeeded:\n{result.stdout}")
+
+
+def export_summaries(local_output_folder, sirius_executable, my_env):
+    """Export summaries forcibly if they are missing."""
+    summaries_path = os.path.join(local_output_folder, "summaries")
+    if not os.path.exists(summaries_path):
+        print(f"Summaries missing in {local_output_folder}. Attempting forced export...")
+        try:
+            export_command = f'"{sirius_executable}" export-summaries --input {local_output_folder} --output {summaries_path}'
+            result = subprocess.run(export_command, shell=True, env=my_env, capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"Error in forced summary export: {result.stderr}")
+                raise Exception(f"Summary export failed with return code {result.returncode}")
+            else:
+                print(f"Summaries successfully exported to {summaries_path}.")
+        except Exception as e:
+            print(f"Error exporting summaries: {e}")
+            return
+    else:
+        print(f"Summaries already exist in {summaries_path}.")
+
+    # Ensure summaries_path exists before listing contents
+    if os.path.isdir(summaries_path):
+        exported_files = [f for f in os.listdir(summaries_path) if os.path.isfile(os.path.join(summaries_path, f))]
+        if exported_files:
+            print(f"Exported summaries for {local_output_folder}: {exported_files}")
+        else:
+            print(f"No summary files found in {summaries_path}.")
+    else:
+        print(f"Summary directory {summaries_path} does not exist.")
 
 
 if __name__ == "__main__":
@@ -87,32 +118,10 @@ if __name__ == "__main__":
     os.environ["SIRIUS_USERNAME"] = params_list_full["sirius"]["options"]["sirius_user_env"]
     os.environ["SIRIUS_PASSWORD"] = params_list_full["sirius"]["options"]["sirius_password_env"]
 
-    # Login to SIRIUS
-    sirius_login_command = [
-        path_to_sirius, "login",
-        "--user-env=SIRIUS_USERNAME", "--password-env=SIRIUS_PASSWORD"
-    ]
-    result = subprocess.run(sirius_login_command, capture_output=True, text=True)
-
-    if result.returncode == 0:
-        print("Sirius login successful.")
-    else:
-        print(f"Error during Sirius login: {result.stderr}")
-
-    # Capture SIRIUS version information
-    sirius_version_str = subprocess.check_output([path_to_sirius, "--version"]).decode().split("\n")
-
-    # Retrieve Git commit hash
-    git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
-
-    # Update params_list with version information
-    params_list_full["sirius"]["version_info"] = {
-        "git_commit": git_commit_hash,
-        "git_commit_link": f"https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}",
-        "SIRIUS": sirius_version_str[0],
-        "SIRIUS lib": sirius_version_str[1],
-        "CSI:FingerID lib": sirius_version_str[2],
-    }
+    # Temporary local output directory
+    local_tmp_dir = "/tmp/sirius_outputs"
+    os.makedirs(local_tmp_dir, exist_ok=True)
+    print(f"Temporary local directory: {local_tmp_dir}")
 
     # List sample directories
     path = os.path.normpath(path_to_data)
@@ -132,34 +141,61 @@ if __name__ == "__main__":
                 path, directory, ionization, f"{directory}_sirius_{ionization}.mgf"
             )
             output_folder = os.path.join(path, directory, ionization, f"{directory}_WORKSPACE_SIRIUS")
+            local_output_folder = os.path.join(local_tmp_dir, f"{directory}_WORKSPACE_SIRIUS")
+
+            # Debug information
+            print(f"Processing sample: {directory}")
+            print(f"Input file path: {sirius_mgf_path}")
+            print(f"Local output folder: {local_output_folder}")
+            print(f"Expected output folder: {output_folder}")
+
+            # Check if the input file exists
+            if not os.path.exists(sirius_mgf_path):
+                print(f"Error: Input file {sirius_mgf_path} does not exist. Skipping sample {directory}.")
+                continue
 
             # Check if recompute is needed
             if not recompute and os.path.isdir(output_folder):
                 print(f"Skipped already computed sample: {directory}")
                 continue
             else:
-                if os.path.isdir(output_folder):
-                    shutil.rmtree(output_folder)
+                if os.path.isdir(local_output_folder):
+                    shutil.rmtree(local_output_folder)
 
                 # Compute SIRIUS
-                print(f"Computing Sirius on sample: {directory}")
-                compute_sirius(sirius_mgf_path, output_folder, sirius_command_base, os.environ)
+                try:
+                    compute_sirius(sirius_mgf_path, local_output_folder, sirius_command_base, os.environ)
+                except Exception as e:
+                    print(f"Error processing sample {directory}: {e}")
+                    continue
 
-                # Check if output folder was created
-                if not os.path.exists(output_folder):
-                    print(f"Error: Sirius did not create the output folder for {directory}.")
+                # Check if output folder was created locally
+                if not os.path.exists(local_output_folder):
+                    print(f"Error: Sirius did not create the local output folder for {directory}.")
                     continue  # Skip this sample
+
+                # Check and export summaries if missing
+                try:
+                    export_summaries(local_output_folder, path_to_sirius, os.environ)
+                except Exception as e:
+                    print(f"Error exporting summaries for {directory}: {e}")
+                    continue
 
                 # Zip the outputs if requested
                 if zip_output:
-                    for dir in os.listdir(output_folder):
-                        dir_path = os.path.join(output_folder, dir)
+                    for dir in os.listdir(local_output_folder):
+                        dir_path = os.path.join(local_output_folder, dir)
                         if os.path.isdir(dir_path):
                             shutil.make_archive(dir_path, "zip", dir_path)
                             shutil.rmtree(dir_path)
 
-                # Save parameters to a YAML file
-                with open(os.path.join(output_folder, "params.yml"), "w") as file:
-                    yaml.dump(params_list_full, file)
+                # Transfer the results to the final output directory
+                try:
+                    os.makedirs(os.path.dirname(output_folder), exist_ok=True)
+                    shutil.move(local_output_folder, output_folder)
+                    print(f"Results for {directory} successfully moved to: {output_folder}")
+                except Exception as e:
+                    print(f"Error moving results for {directory}: {e}")
+                    print(f"Results remain in local temporary directory: {local_output_folder}")
 
                 print(f"Sample: {directory} done.")

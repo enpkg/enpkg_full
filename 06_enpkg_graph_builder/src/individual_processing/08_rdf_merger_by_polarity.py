@@ -1,27 +1,31 @@
-from rdflib import Graph, Namespace
-import pandas as pd
 from pathlib import Path
 import os
-from concurrent.futures import ProcessPoolExecutor
+import shutil
+from tqdm import tqdm
 import yaml
-import git
+from rdflib import Graph, Namespace
+import pandas as pd
 import sys
+from concurrent.futures import ProcessPoolExecutor
+import git
 import traceback
 
-sys.path.append(os.path.join(Path(__file__).parents[1], 'functions'))
+# Import custom functions
+sys.path.append(os.path.join(Path(__file__).parents[1], "functions"))
 from hash_functions import get_hash
 
-# Change to the appropriate working directory
-p = Path(__file__).parents[2]
-os.chdir(p)
+# Set working directory to the repository root
+repo_root = Path(__file__).parents[2]
+os.chdir(repo_root)
 
 # Function to substitute variables in YAML
 def substitute_variables(config):
     """Recursively substitute placeholders in the YAML configuration."""
     def substitute(value, context):
         if isinstance(value, str):
-            for key, replacement in context.items():
-                value = value.replace(f"${{{key}}}", replacement)
+            while any(f"${{{key}}}" in value for key in context):
+                for key, replacement in context.items():
+                    value = value.replace(f"${{{key}}}", str(replacement))
         return value
 
     def recurse_dict(d, context):
@@ -31,26 +35,30 @@ def substitute_variables(config):
             else:
                 d[key] = substitute(value, context)
 
+    # Context for substitution
     context = {
-        "general.root_data_path": config["general"]["root_data_path"],
-        "general.treated_data_path": config["general"]["treated_data_path"],
+        "general.root_data_path": config.get("general", {}).get("root_data_path", ""),
+        "general.treated_data_path": config.get("general", {}).get("treated_data_path", ""),
+        "general.polarity": config.get("general", {}).get("polarity", ""),
     }
     recurse_dict(config, context)
     return config
 
 # Load parameters
-if not os.path.exists("../params/user.yml"):
-    raise FileNotFoundError("No ../params/user.yml: copy from ../params/template.yml and modify according to your needs")
+user_yaml_path = "../params/user.yml"
+if not os.path.exists(user_yaml_path):
+    raise FileNotFoundError(f"No {user_yaml_path}: copy from ../params/template.yml and modify according to your needs")
 
-with open("../params/user.yml") as file:
+with open(user_yaml_path) as file:
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-# Substitute placeholders
+# Substitute placeholders in the YAML parameters
 params_list_full = substitute_variables(params_list_full)
 
 # Extract relevant paths and settings
 sample_dir_path = os.path.normpath(params_list_full["general"]["treated_data_path"])
 output_format = params_list_full["graph-builder"]["graph_format"]
+polarity = params_list_full["general"]["polarity"]
 kg_uri = params_list_full["graph-builder"]["kg_uri"]
 ns_kg = Namespace(kg_uri)
 prefix = params_list_full["graph-builder"]["prefix"]
@@ -64,30 +72,57 @@ WD = Namespace(wd_namespace)
 if not os.path.exists(sample_dir_path):
     raise FileNotFoundError(f"Sample directory path not found: {sample_dir_path}")
 
-# Define RDF files to merge
-files = [
-    f"rdf/canopus_pos.{output_format}", f"rdf/canopus_neg.{output_format}",
-    f"rdf/features_pos.{output_format}", f"rdf/features_neg.{output_format}",
-    f"rdf/features_spec2vec_pos.{output_format}", f"rdf/features_spec2vec_neg.{output_format}",
-    f"rdf/individual_mn_pos.{output_format}", f"rdf/individual_mn_neg.{output_format}",
-    f"rdf/isdb_pos.{output_format}", f"rdf/isdb_neg.{output_format}",
-    f"rdf/sirius_pos.{output_format}", f"rdf/sirius_neg.{output_format}",
-    f"rdf/metadata_enpkg.{output_format}", f"rdf/metadata_module_enpkg.{output_format}",
-    f"rdf/structures_metadata.{output_format}"
-]
+# Define RDF files to merge for each polarity
+polarity_files = {
+    "pos": [
+        f"rdf/canopus_pos.{output_format}",
+        f"rdf/features_pos.{output_format}",
+        f"rdf/features_spec2vec_pos.{output_format}",
+        f"rdf/individual_mn_pos.{output_format}",
+        f"rdf/isdb_pos.{output_format}",
+        f"rdf/sirius_pos.{output_format}",
+        f"rdf/metadata_enpkg.{output_format}",
+        f"rdf/metadata_module_enpkg.{output_format}",
+        f"rdf/structures_metadata.{output_format}",
+    ],
+    "neg": [
+        f"rdf/canopus_neg.{output_format}",
+        f"rdf/features_neg.{output_format}",
+        f"rdf/features_spec2vec_neg.{output_format}",
+        f"rdf/individual_mn_neg.{output_format}",
+        f"rdf/isdb_neg.{output_format}",
+        f"rdf/sirius_neg.{output_format}",
+        f"rdf/metadata_enpkg.{output_format}",
+        f"rdf/metadata_module_enpkg.{output_format}",
+        f"rdf/structures_metadata.{output_format}",
+    ],
+}
 
-# Process a single directory
+files = polarity_files.get(polarity)
+if not files:
+    raise ValueError(f"Invalid polarity: {polarity}. Must be 'pos' or 'neg'.")
+
+# Ensure target directory exists
+#target_path = os.path.normpath(params_list_full["graph-builder"]["graph_output_dir_path"])
+#target_path = Path(target_path).resolve()
+#if "${" in str(target_path):
+#    raise ValueError(f"Target path contains unresolved variables: {target_path}")
+#os.makedirs(target_path, exist_ok=True)
+
+# Process individual directories
 def process_directory(directory):
+    """Process a single sample directory."""
+    #rdf_dir = sample_dir_path / directory / "rdf"
     try:
         metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
         if not os.path.isfile(metadata_path):
-            print(f"Skipping {directory}, missing metadata file.")
+            print(f"Skipping {directory}: Missing metadata file.")
             return f"Skipped {directory} due to missing metadata file."
 
-        metadata = pd.read_csv(metadata_path, sep='\t')
-        massive_id = metadata['massive_id'][0]
+        metadata = pd.read_csv(metadata_path, sep="\t")
+        massive_id = metadata["massive_id"].iloc[0]
 
-        # Identify existing RDF files
+        #identify existing files
         existing_files = [
             os.path.join(sample_dir_path, directory, file_path)
             for file_path in files if os.path.isfile(os.path.join(sample_dir_path, directory, file_path))
@@ -107,22 +142,26 @@ def process_directory(directory):
             with open(file_path, "r", encoding="utf8") as f:
                 file_content = f.read()
                 merged_graph.parse(data=file_content, format=output_format)
-
+     
         # Remove old merged graphs
         rdf_dir = os.path.join(sample_dir_path, directory, 'rdf')
         for file in os.listdir(rdf_dir):
             if file.startswith(massive_id):
                 os.remove(os.path.join(rdf_dir, file))
-
-        # Save the merged graph
+                
+        # Save merged graph
         pathout = os.path.join(sample_dir_path, directory, "rdf")
-        os.makedirs(pathout, exist_ok=True)
-        merged_graph_path = os.path.join(pathout, f"{massive_id}_{directory}_merged_graph.{output_format}")
+        merged_graph_path = os.path.join(
+            pathout, f"{massive_id}_{directory}_merged_graph_{polarity}.{output_format}"
+        )
+
         merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")
 
-        # Add hash to the filename
+        # Add hash to filename
         hash_merged = get_hash(merged_graph_path)
-        hashed_graph_path = os.path.join(pathout, f"{massive_id}_{directory}_merged_graph_{hash_merged}.{output_format}")
+        hashed_graph_path = os.path.join(
+            pathout, f"{massive_id}_{directory}_merged_graph_{polarity}_{hash_merged}.{output_format}"
+        )
         os.rename(merged_graph_path, hashed_graph_path)
 
         # Save graph parameters
@@ -133,6 +172,11 @@ def process_directory(directory):
         else:
             params_list = {}
 
+    # Copy to target path
+       # shutil.copy(hashed_merged_file, target_path)
+       # print(f"Copied: {hashed_merged_file} to {target_path}")
+       # return f"Processed {directory}"
+     
         git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
         params_list[f"{directory}_merged_graph"] = {
             "git_commit": git_commit_hash,
@@ -145,7 +189,7 @@ def process_directory(directory):
 
         print(f"Merged graph saved at: {hashed_graph_path}")
         return f"Processed {directory}"
-
+    
     except Exception as e:
         error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
         print(error_message)

@@ -1,0 +1,1 @@
+python ./04_enpkg_sirius_canopus/src/sirius6_canopus_by_file.py
