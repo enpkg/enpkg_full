@@ -64,7 +64,7 @@ for directory in tqdm(samples_dir, desc="Processing directories"):
     rdf_dir = os.path.join(sample_dir_path, directory, "rdf")
     if os.path.isdir(rdf_dir):
         for file in os.listdir(rdf_dir):
-            if f'merged_graph_{polarity}' in file:
+            if f'{polarity}_merged_graph' in file:
                 file_name = file
                 src = os.path.join(rdf_dir, file_name)
                 if os.path.isfile(src):

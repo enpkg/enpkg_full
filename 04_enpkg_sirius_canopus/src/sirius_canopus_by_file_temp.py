@@ -5,6 +5,7 @@ import pandas as pd
 import subprocess
 import shutil
 from tqdm import tqdm
+import time  # Added for sleep functionality
 
 
 def substitute_variables(config):
@@ -65,6 +66,9 @@ def export_summaries(local_output_folder, sirius_executable, my_env):
             return
     else:
         print(f"Summaries already exist in {summaries_path}.")
+
+    # Wait for 2 seconds to ensure the "summaries" folder is created
+    time.sleep(2)
 
     # Ensure summaries_path exists before listing contents
     if os.path.isdir(summaries_path):
@@ -143,18 +147,15 @@ if __name__ == "__main__":
             output_folder = os.path.join(path, directory, ionization, f"{directory}_WORKSPACE_SIRIUS")
             local_output_folder = os.path.join(local_tmp_dir, f"{directory}_WORKSPACE_SIRIUS")
 
-            # Debug information
             print(f"Processing sample: {directory}")
             print(f"Input file path: {sirius_mgf_path}")
             print(f"Local output folder: {local_output_folder}")
             print(f"Expected output folder: {output_folder}")
 
-            # Check if the input file exists
             if not os.path.exists(sirius_mgf_path):
                 print(f"Error: Input file {sirius_mgf_path} does not exist. Skipping sample {directory}.")
                 continue
 
-            # Check if recompute is needed
             if not recompute and os.path.isdir(output_folder):
                 print(f"Skipped already computed sample: {directory}")
                 continue
@@ -162,26 +163,22 @@ if __name__ == "__main__":
                 if os.path.isdir(local_output_folder):
                     shutil.rmtree(local_output_folder)
 
-                # Compute SIRIUS
                 try:
                     compute_sirius(sirius_mgf_path, local_output_folder, sirius_command_base, os.environ)
                 except Exception as e:
                     print(f"Error processing sample {directory}: {e}")
                     continue
 
-                # Check if output folder was created locally
                 if not os.path.exists(local_output_folder):
                     print(f"Error: Sirius did not create the local output folder for {directory}.")
-                    continue  # Skip this sample
+                    continue
 
-                # Check and export summaries if missing
                 try:
                     export_summaries(local_output_folder, path_to_sirius, os.environ)
                 except Exception as e:
                     print(f"Error exporting summaries for {directory}: {e}")
                     continue
 
-                # Zip the outputs if requested
                 if zip_output:
                     for dir in os.listdir(local_output_folder):
                         dir_path = os.path.join(local_output_folder, dir)
@@ -189,7 +186,6 @@ if __name__ == "__main__":
                             shutil.make_archive(dir_path, "zip", dir_path)
                             shutil.rmtree(dir_path)
 
-                # Transfer the results to the final output directory
                 try:
                     os.makedirs(os.path.dirname(output_folder), exist_ok=True)
                     shutil.move(local_output_folder, output_folder)

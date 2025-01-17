@@ -1,12 +1,11 @@
 # Parameters
 general:
-  root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/PF_tubes_collection_Exploris
-   # Common root directory for raw and treated data
+  root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/PF200_collection_Exploris   # Common root directory for raw and treated data
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
   treated_data_path: ${general.root_data_path}/ind_files
   # Path to the treated data (or output data) folder, required=True
-  polarity: pos # Ionization mode to treat: pos, neg, or both, required=True
+  polarity: neg # Ionization mode to treat: pos, neg, or both, required=True
 
 massive-id-addition:
   massive_id: MSV000096367
@@ -139,7 +138,7 @@ memo:
   # Minimum number of peaks to keep a spectrum, default 10
   losses_from: 10
   # Minimal m/z value for losses
-  losses_to: 200
+  losses_to: 400
   # Maximal m/z value for losses
   n_decimals: 2
   # Number of decimals for peaks/losses, default 2

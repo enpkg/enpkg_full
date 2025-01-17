@@ -4,9 +4,6 @@
 #echo "Launching 01_1_workflow_create_architecture.sh"
 #sh ./workflow/01_1_workflow_create_architecture.sh
 
-#echo "Launching 01_1_workflow_create_architecture.sh"
-#sh ./workflow/01_1_workflow_create_architecture.sh
-
 #echo "Launching 02_massive_id.sh"
 #sh ./workflow/02_workflow_massive_id.sh
 
@@ -32,6 +29,6 @@
 #sh ./workflow/09_workflow_memo.sh
 
 echo "Launching 10_workflow_graph_builder.sh"
-sh ./workflow/10_workflow_graph_builder.sh
+sh ./workflow/10_workflow_graph_builder_LQ.sh
 
 echo "Done !"

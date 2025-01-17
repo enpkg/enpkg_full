@@ -81,8 +81,8 @@ polarity_files = {
         f"rdf/individual_mn_pos.{output_format}",
         f"rdf/isdb_pos.{output_format}",
         f"rdf/sirius_pos.{output_format}",
-        f"rdf/metadata_enpkg.{output_format}",
-        f"rdf/metadata_module_enpkg.{output_format}",
+        f"rdf/metadata_enpkg_pos.{output_format}",
+        f"rdf/metadata_module_enpkg_pos.{output_format}",
         f"rdf/structures_metadata.{output_format}",
     ],
     "neg": [
@@ -92,8 +92,8 @@ polarity_files = {
         f"rdf/individual_mn_neg.{output_format}",
         f"rdf/isdb_neg.{output_format}",
         f"rdf/sirius_neg.{output_format}",
-        f"rdf/metadata_enpkg.{output_format}",
-        f"rdf/metadata_module_enpkg.{output_format}",
+        f"rdf/metadata_enpkg_neg.{output_format}",
+        f"rdf/metadata_module_enpkg_neg.{output_format}",
         f"rdf/structures_metadata.{output_format}",
     ],
 }
@@ -143,16 +143,18 @@ def process_directory(directory):
                 file_content = f.read()
                 merged_graph.parse(data=file_content, format=output_format)
      
-        # Remove old merged graphs
+        # Remove old merged graphs matching massive_id and polarity
         rdf_dir = os.path.join(sample_dir_path, directory, 'rdf')
         for file in os.listdir(rdf_dir):
-            if file.startswith(massive_id):
+            # Check if the file starts with massive_id and includes the polarity
+            if file.startswith(f"{massive_id}_{polarity}"):
                 os.remove(os.path.join(rdf_dir, file))
+                print(f"Deleted old RDF file: {file}")
                 
         # Save merged graph
         pathout = os.path.join(sample_dir_path, directory, "rdf")
         merged_graph_path = os.path.join(
-            pathout, f"{massive_id}_{directory}_merged_graph_{polarity}.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}.{output_format}"
         )
 
         merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")
@@ -160,7 +162,7 @@ def process_directory(directory):
         # Add hash to filename
         hash_merged = get_hash(merged_graph_path)
         hashed_graph_path = os.path.join(
-            pathout, f"{massive_id}_{directory}_merged_graph_{polarity}_{hash_merged}.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}{hash_merged}.{output_format}"
         )
         os.rename(merged_graph_path, hashed_graph_path)
 
