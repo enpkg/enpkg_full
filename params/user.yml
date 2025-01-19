@@ -11,6 +11,18 @@ massive-id-addition:
   massive_id: MSV000096367
   # MassIVE dataset ID, required=True
 
+assay-batch: 
+  batch_comment: LCMS of Combretaceae collection POS
+  # Batch short description, required=True
+  batch_instrument: Q Exactive #Exploris
+  # Batch acquisition instrument, required=True
+  batch_date: 2022-07
+  # Batch date Year-Month, required=True
+  batch_operator: Olivier_Kirchhoffer
+  # Batch operator, required=True
+  batch_url: <ftp://MSV000096326@massive.ucsd.edu/> 
+  # MassIVE url, required=True
+
 data-organization:
   source_path: ${general.root_data_path}/ms_data/${general.polarity}
   # Path to the folder containing the mass spec data, required=True
@@ -22,6 +34,7 @@ data-organization:
   # Name of the LCMS method parameters file, required=True
   lcms_processing_params_filename: NEG_lcms_processing_params.mzbatch
   # Name of the LCMS processing parameters file, required=True
+
 sirius: #define the path and the version of Sirius you are using
   paths:
     path_to_sirius: /home/quirosgu/Desktop/sirius5/bin/sirius #/Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
