@@ -45,7 +45,13 @@ sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_pat
 output_format = "ttl"
 
 # Define namespaces
+<<<<<<< Updated upstream
 JLW = Namespace("http://example.org/jlw#")
+=======
+kg_uri = params_list_full['graph-builder']['kg_uri']
+ns_kg = Namespace(kg_uri)
+prefix = params_list_full['graph-builder']['prefix']
+>>>>>>> Stashed changes
 PROV = Namespace("http://www.w3.org/ns/prov#")
 DCAT = Namespace("http://www.w3.org/ns/dcat#")
 XSD = Namespace("http://www.w3.org/2001/XMLSchema#")
@@ -59,9 +65,16 @@ samples_dir = [directory for directory in os.listdir(sample_dir_path) if not dir
 
 def process_directory(directory):
     g = Graph()
+<<<<<<< Updated upstream
     g.namespace_manager.bind("jlw", JLW)
     g.namespace_manager.bind("prov", PROV)
     g.namespace_manager.bind("dcat", DCAT)
+=======
+    nm = g.namespace_manager
+    nm.bind("prov", PROV)
+    nm.bind("dcat", DCAT)
+    nm.bind(prefix, ns_kg)
+>>>>>>> Stashed changes
 
     try:
         batch_polarity = params_list_full['general']['polarity']
@@ -72,6 +85,7 @@ def process_directory(directory):
         batch_url = params_list_full['assay-batch']['batch_url']
 
         batch_id = f"assay_batch_{batch_polarity.lower()}"
+<<<<<<< Updated upstream
         batch_node = JLW[batch_id]
 
         g.add((batch_node, RDF.type, JLW.AssayBatch))
@@ -80,6 +94,16 @@ def process_directory(directory):
         g.add((batch_node, JLW.has_instrument_type, Literal(batch_instrument)))
         g.add((batch_node, DCAT.accessURL, URIRef(batch_url)))
         g.add((batch_node, JLW.has_operator, JLW[batch_operator.replace(' ', '_')]))
+=======
+        batch_node = ns_kg[batch_id]
+
+        g.add((batch_node, RDF.type, JLW.AssayBatch))
+        g.add((batch_node, RDFS.label, Literal(batch_label)))
+        g.add((batch_node, ns_kg.generatedAtTime, Literal(batch_date, datatype=XSD.gYearMonth)))
+        g.add((batch_node, ns_kg.has_instrument_type, Literal(batch_instrument)))
+        g.add((batch_node, DCAT.accessURL, URIRef(batch_url)))
+        g.add((batch_node, ns_kg.has_operator, JLW[batch_operator.replace(' ', '_')]))
+>>>>>>> Stashed changes
 
         # Write to file
         pathout = os.path.join(sample_dir_path, directory, "rdf/")
@@ -99,4 +123,8 @@ def main():
         process_directory(directory)
 
 if __name__ == "__main__":
+<<<<<<< Updated upstream
     main()
+=======
+    main()
+>>>>>>> Stashed changes
