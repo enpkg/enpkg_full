@@ -8,6 +8,7 @@ import yaml
 import git
 from concurrent.futures import ProcessPoolExecutor
 import traceback
+import sys
 
 
 def substitute_variables(config):
@@ -89,6 +90,7 @@ def process_directory(directory):
         g.namespace_manager.bind(prefix, ns_kg)
 
         for _, row in isdb_annotations.iterrows():
+<<<<<<< Updated upstream
             feature_id = row['feature_id']
             usi = f"mzspec:{metadata['massive_id'][0]}:{metadata.sample_id[0]}_features_ms2_{ionization_mode}.mgf:scan:{feature_id}"
             feature_uri = rdflib.URIRef(kg_uri + f"lcms_feature_{usi}")
@@ -126,6 +128,47 @@ def process_directory(directory):
         error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
         print(error_message)
 
+=======
+            feature_id = rdflib.URIRef(kg_uri + f"lcms_feature_{row['feature_id']}")
+            usi = f"mzspec:{metadata['massive_id'][0]}:{metadata.sample_id[0]}_features_ms2_{ionization_mode}.mgf:scan:{row['feature_id']}"
+            isdb_annotation_id = rdflib.URIRef(kg_uri + f"isdb_{usi}")
+            InChIkey2D = rdflib.URIRef(kg_uri + row['short_inchikey'])
+
+            # Link feature to ISDB annotation
+            g.add((feature_id, ns_kg.has_isdb_annotation, isdb_annotation_id))
+
+            isdb_params_path = os.path.join(sample_dir_path, directory, ionization_mode, 'isdb', 'config.yaml')
+            hash_1 = get_hash(isdb_params_path)
+            data_1 = get_data(isdb_params_path)
+            has_isdb_annotation_hash = rdflib.URIRef(kg_uri + "has_isdb_annotation_" + hash_1)
+
+            g.add((feature_id, has_isdb_annotation_hash, isdb_annotation_id))
+            g.add((has_isdb_annotation_hash, RDFS.subPropertyOf, rdflib.URIRef(kg_uri + 'has_isdb_annotation')))
+            g.add((has_isdb_annotation_hash, ns_kg.has_content, rdflib.term.Literal(data_1)))
+            del hash_1, data_1
+
+            g.add((isdb_annotation_id, RDFS.label, rdflib.term.Literal(f"isdb annotation of {usi}")))
+            g.add((isdb_annotation_id, ns_kg.has_InChIkey2D, InChIkey2D))
+            g.add((isdb_annotation_id, ns_kg.has_spectral_score, rdflib.term.Literal(row['score_input'], datatype=XSD.float)))
+            g.add((isdb_annotation_id, ns_kg.has_taxo_score, rdflib.term.Literal(row['score_taxo'], datatype=XSD.float)))
+            g.add((isdb_annotation_id, ns_kg.has_consistency_score, rdflib.term.Literal(row['score_max_consistency'], datatype=XSD.float)))
+            g.add((isdb_annotation_id, ns_kg.has_final_score, rdflib.term.Literal(row['final_score'], datatype=XSD.float)))        
+            g.add((isdb_annotation_id, ns_kg.has_adduct, rdflib.term.Literal(row['adduct'])))
+            g.add((InChIkey2D, RDF.type, ns_kg.InChIkey2D))
+            g.add((isdb_annotation_id, RDF.type, ns_kg.IsdbAnnotation))
+        
+        # Save RDF graph
+        rdf_output_dir = os.path.join(sample_dir_path, directory, "rdf")
+        os.makedirs(rdf_output_dir, exist_ok=True)
+        rdf_output_file = os.path.join(rdf_output_dir, f"isdb_{ionization_mode}.{output_format}")
+        g.serialize(destination=rdf_output_file, format=output_format, encoding="utf-8")
+        print(f"Results saved in: {rdf_output_file}")
+
+    except Exception as e:
+        error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
+        print(error_message)
+
+>>>>>>> Stashed changes
 
 def main():
     directories = [d for d in os.listdir(sample_dir_path) if os.path.isdir(os.path.join(sample_dir_path, d))]

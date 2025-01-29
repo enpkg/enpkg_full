@@ -68,6 +68,7 @@ if not os.path.exists(sample_dir_path):
     sys.exit(1)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # Define spectra filtering functions
 def load_and_filter_from_mgf(path) -> list:
     """Load and filter spectra from MGF file."""
@@ -97,6 +98,54 @@ def process_directory(directory):
 def process_directory(directory):
     """Process a directory and encode spectra as ms2_list."""
 >>>>>>> Stashed changes
+=======
+def load_and_filter_from_mgf(path) -> list:
+    """Load spectra from MGF file and retain metadata and peaks for encoding."""
+    def apply_filters(spectrum):
+        spectrum = add_precursor_mz(spectrum)
+        spectrum = reduce_to_number_of_peaks(spectrum, n_required=1, n_max=100)
+        spectrum = remove_peaks_around_precursor_mz(spectrum, mz_tolerance=17.0)  # Filter peaks around parent mass with tol in Da
+        return spectrum
+
+    spectra = load_from_mgf(path)
+    spectra_list = [apply_filters(s) for s in spectra]
+    spectra_list = [s for s in spectra_list if s is not None]
+
+    # Construct raw MGF chunks
+    for spectrum in spectra_list:
+        metadata = spectrum.metadata
+        mz_values = spectrum.peaks.mz
+        intensity_values = spectrum.peaks.intensities
+
+        # Normalize intensities
+        max_intensity = max(intensity_values) if intensity_values.size > 0 else 1
+        normalized_intensities = [i / max_intensity for i in intensity_values]
+
+        # Construct the raw MGF text for each spectrum
+        spectrum.raw_mgf = "\n".join([
+            "BEGIN IONS",
+            f"FEATURE_ID={metadata.get('feature_id', 'unknown')}",
+            f"PEPMASS={metadata.get('precursor_mz', 'unknown')}",
+            f"SCANS={metadata.get('scans', 'unknown')}",
+            f"RTINSECONDS={metadata.get('retention_time', 'unknown')}",
+            f"CHARGE={metadata.get('charge', 'unknown')}",
+            f"MSLEVEL=2",
+            *[
+                f"{mz:.4f} {intensity:.4e}"
+                for mz, intensity in zip(mz_values, intensity_values)
+            ],
+            "END IONS"
+        ])
+        
+        # Add normalized intensities to spectrum
+        spectrum.normalized_intensities = normalized_intensities
+        
+    return spectra_list
+
+
+def process_directory(directory):
+    """Process a directory and encode spectra as ms2_list."""
+>>>>>>> Stashed changes
     mgf_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_features_ms2_{ionization_mode}.mgf")
     metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
 
@@ -105,13 +154,20 @@ def process_directory(directory):
             print(f"Skipping {directory}, missing files.")
             return f"Skipped {directory} due to missing files."
 
+<<<<<<< Updated upstream
         metadata = pd.read_csv(metadata_path, sep='\t')
 
         if metadata.sample_type[0] == 'sample':
+=======
+        metadata_sample = pd.read_csv(metadata_path, sep='\t')
+
+        if metadata_sample.sample_type[0] == 'sample':
+>>>>>>> Stashed changes
             g = Graph()
             g.namespace_manager.bind(prefix, ns_kg)
 
             spectra_list = load_and_filter_from_mgf(mgf_path)
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
             #reference_documents = [SpectrumDocument(s, n_decimals=n_decimals) for s in spectra_list]
             #list_peaks_losses = list(doc.words for doc in reference_documents)
@@ -142,11 +198,51 @@ def process_directory(directory):
                         g.add((loss, ns_kg.has_value, rdflib.term.Literal(word.split('_')[1], datatype=XSD.float)))
                         g.add((loss, RDFS.label, rdflib.term.Literal(f"Spec2vec loss of value {word.split('_')[1]}")))
                         g.add((loss, RDF.type, ns_kg.Spec2VecLoss))
+=======
+
+            for spectrum in spectra_list:
+                metadata = spectrum.metadata
+                usi = f"mzspec:{metadata_sample['massive_id'][0]}:{metadata_sample['sample_id'][0]}_features_ms2_{ionization_mode}.mgf:scan:{int(spectrum.metadata['feature_id'])}"
+                feature_id = rdflib.term.URIRef(f"{kg_uri}lcms_feature_{usi}")
+                #ms2_list_id = rdflib.term.URIRef(f"{kg_uri}ms2_list_{usi}")
+
+                # Store the raw MGF content in the RDF graph
+                g.add((feature_id, ns_kg.has_raw_spectrum, rdflib.term.Literal(spectrum.raw_mgf)))
+                #g.add((feature_id, ns_kg.has_ms2_list, ms2_list_id))
+                #g.add((ms2_list_id, RDF.type, ns_kg.MS2List))
+                #g.add((ms2_list_id, RDFS.label, rdflib.term.Literal(f"MS2 list of feature {spectrum.metadata['feature_id']} from sample {metadata_sample.sample_id[0]} in {ionization_mode} mode")))
+
+                # Encode peaks
+                for mz, intensity, normalized_intensity in zip(spectrum.peaks.mz, spectrum.peaks.intensities, spectrum.normalized_intensities):
+                    ion = rdflib.term.URIRef(f"{feature_id}:ion_{mz:.4f}")
+                    #g.add((ms2_list_id, ns_kg.has_ion, ion)
+                    g.add((feature_id, ns_kg.has_ion, ion))
+                    g.add((ion, ns_kg.has_mz, rdflib.term.Literal(mz, datatype=XSD.float)))
+                    g.add((ion, ns_kg.has_intensity, rdflib.term.Literal(intensity, datatype=XSD.float)))
+                    g.add((ion, ns_kg.has_relative_intensity, rdflib.term.Literal(normalized_intensity, datatype=XSD.float)))
+                    g.add((ion, RDF.type, ns_kg.ion))
+                    g.add((ion, RDFS.label, rdflib.term.Literal(f"MS2 peak with m/z {mz:.4f} and intensity {intensity:.4f}")))
+
+                # Encode losses if present
+                #if spectrum.losses:
+                #    for loss_mz, loss_intensity in zip(spectrum.losses.mz, spectrum.losses.intensities):
+                #        loss = rdflib.term.URIRef(f"{kg_uri}loss_{loss_mz:.4f}")
+                #        g.add((ms2_list_id, ns_kg.has_ms2_loss, loss))
+                #        g.add((loss, ns_kg.has_value, rdflib.term.Literal(loss_mz, datatype=XSD.float)))
+                #        g.add((loss, ns_kg.has_intensity, rdflib.term.Literal(loss_intensity, datatype=XSD.float)))
+                #       g.add((loss, RDF.type, ns_kg.ms2_loss))
+                #       g.add((loss, RDFS.label, rdflib.term.Literal(f"Loss with m/z {loss_mz:.4f} and intensity {loss_intensity:.4f}")))
+
+>>>>>>> Stashed changes
 
             # Save the graph
             pathout = os.path.join(sample_dir_path, directory, "rdf/")
             os.makedirs(pathout, exist_ok=True)
+<<<<<<< Updated upstream
             pathout = os.path.join(pathout, f"features_spec2vec_{ionization_mode}.{output_format}")
+=======
+            pathout = os.path.join(pathout, f"features_ms2_list_{ionization_mode}.{output_format}")
+>>>>>>> Stashed changes
             g.serialize(destination=pathout, format=output_format, encoding="utf-8")
             print(f"Results are in: {pathout}")
             return f"Processed {directory}"
@@ -155,6 +251,7 @@ def process_directory(directory):
         error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
         print(error_message)
         return error_message
+<<<<<<< Updated upstream
 =======
             reference_ms2_lists = spectra_list  # Use spectra directly
 
@@ -204,6 +301,8 @@ def process_directory(directory):
     except Exception as e:
         print(f"Error processing {directory}: {e}")
         return f"Error processing {directory}: {e}"
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 # Main function

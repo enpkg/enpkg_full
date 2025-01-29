@@ -1,6 +1,11 @@
 # Parameters
 general:
+<<<<<<< Updated upstream
   root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/PF200_collection_Exploris   # Common root directory for raw and treated data
+=======
+  root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
+
+>>>>>>> Stashed changes
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
   treated_data_path: ${general.root_data_path}/ind_files
@@ -8,6 +13,7 @@ general:
   polarity: neg # Ionization mode to treat: pos, neg, or both, required=True
 
 massive-id-addition:
+<<<<<<< Updated upstream
   massive_id: MSV000096367
   # MassIVE dataset ID, required=True
 
@@ -22,6 +28,23 @@ assay-batch:
   # Batch operator, required=True
   batch_url: <ftp://MSV000096326@massive.ucsd.edu/> 
   # MassIVE url, required=True
+=======
+  massive_id: MSV000087970
+  # MassIVE dataset ID, required=True
+  massive_doi: doi:10.25345/C5PJ9N
+  # MassIVE dataset doi, required=True
+
+assay-batch: 
+  batch_comment: LCMS of Celastraceae collection NEG
+  # Batch short description, required=True
+  batch_instrument: Exploris #Q Exactive #Exploris
+  # Batch acquisition instrument, required=True
+  batch_date: 2023-04  # Batch date Year-Month, required=True
+  batch_operator: Luis-Manuel_Quiros-Guerrero #Pierre-Marie_Allard #Olivier_Kirchhoffer #Louis-Felix_Nothias
+  # Batch operator, required=True
+  batch_reference: doi:10.1021/acscentsci.3c00800
+  # Batch protocol references, required = True
+>>>>>>> Stashed changes
 
 data-organization:
   source_path: ${general.root_data_path}/ms_data/${general.polarity}
@@ -32,9 +55,14 @@ data-organization:
   # Name of the sample metadata file, required=True
   lcms_method_params_filename: lcms_method_params.txt
   # Name of the LCMS method parameters file, required=True
+<<<<<<< Updated upstream
   lcms_processing_params_filename: NEG_lcms_processing_params.mzbatch
   # Name of the LCMS processing parameters file, required=True
 
+=======
+  lcms_processing_params_filename: NEG_lcms_processing_params.mzbatch #lcms_processing_params.mzbatch
+  # Name of the LCMS processing parameters file, required=True
+>>>>>>> Stashed changes
 sirius: #define the path and the version of Sirius you are using
   paths:
     path_to_sirius: /home/quirosgu/Desktop/sirius5/bin/sirius #/Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
@@ -55,7 +83,11 @@ sirius: #define the path and the version of Sirius you are using
         --input {file} --project {output_name} --maxmz 800 config --IsotopeSettings.filter=true --FormulaSearchDB=BIO --Timeout.secondsPerTree=0 --FormulaSettings.enforced=H,C,N,O,P --Timeout.secondsPerInstance=0 --AdductSettings.detectable="[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-" --UseHeuristic.useOnlyHeuristicAboveMz=650 --AlgorithmProfile=orbitrap --IsotopeMs2Settings=IGNORE --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIonization=1 --UseHeuristic.useHeuristicAboveMz=300 --FormulaSettings.detectable=B,Cl,Br,S --NumberOfCandidates=10 --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10 --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 --ZodiacNumberOfConsideredCandidatesAt800Mz=50 --ZodiacEpochs.iterations=20000 --AdductSettings.enforced= --AdductSettings.fallback="[M-H]-,[M-H2O-H]-,[M-CO2-H]-,[2M-H]-" --FormulaResultThreshold=true --ExpansiveSearchConfidenceMode.confidenceScoreSimilarityMode=APPROXIMATE --StructureSearchDB=BIO --RecomputeResults=false formulas zodiac fingerprints structures classes write-summaries --output {output_name}
 
     recompute: True
+<<<<<<< Updated upstream
     # Recompute files for which output directory already exists: True or False
+=======
+    # Recompute filess for which output directory already exists: True or False
+>>>>>>> Stashed changes
     zip_output: True
     # Zip individual features outputs to save disk space: True or False
     sirius_user_env: SIRIUS_USERNAME
@@ -187,7 +219,11 @@ graph-builder:
   # Prefix of the spectrum PNG
   gnps_fast_search_prefix: 'https://fasst.gnps2.org/fastsearch/?usi1='
   # Prefix of the GNPS fast search
+<<<<<<< Updated upstream
   source_taxon_header: source_taxon
+=======
+  source_taxon_header: source_taxon #source_taxon
+>>>>>>> Stashed changes
   # Header of the source taxon, required=True
   source_id_header: organism_pf_code #unique identifier (raw material)
   # Header of the source ID, required=True

@@ -81,7 +81,11 @@ def process_directory(directory):
 
     try:
         metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
+<<<<<<< Updated upstream
         metadata = pd.read_csv(metadata_path, sep='\t')
+=======
+        metadata = pd.read_csv(metadata_path, sep='\t', engine='python')
+>>>>>>> Stashed changes
 
         sample = Namespace(kg_uri)[metadata.sample_id[0]]
 

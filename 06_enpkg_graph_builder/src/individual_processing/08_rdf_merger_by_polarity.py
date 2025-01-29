@@ -77,24 +77,42 @@ polarity_files = {
     "pos": [
         f"rdf/canopus_pos.{output_format}",
         f"rdf/features_pos.{output_format}",
+<<<<<<< Updated upstream
         f"rdf/features_spec2vec_pos.{output_format}",
+=======
+        f"rdf/features_ms2_list_pos.{output_format}",
+        #f"rdf/features_spec2vec_pos.{output_format}",
+>>>>>>> Stashed changes
         f"rdf/individual_mn_pos.{output_format}",
         f"rdf/isdb_pos.{output_format}",
         f"rdf/sirius_pos.{output_format}",
         f"rdf/metadata_enpkg_pos.{output_format}",
         f"rdf/metadata_module_enpkg_pos.{output_format}",
         f"rdf/structures_metadata.{output_format}",
+<<<<<<< Updated upstream
+=======
+        f"rdf/assay_batch_pos.{output_format}",
+>>>>>>> Stashed changes
     ],
     "neg": [
         f"rdf/canopus_neg.{output_format}",
         f"rdf/features_neg.{output_format}",
+<<<<<<< Updated upstream
         f"rdf/features_spec2vec_neg.{output_format}",
+=======
+        #f"rdf/features_spec2vec_neg.{output_format}",
+        f"rdf/features_ms2_list_neg.{output_format}",
+>>>>>>> Stashed changes
         f"rdf/individual_mn_neg.{output_format}",
         f"rdf/isdb_neg.{output_format}",
         f"rdf/sirius_neg.{output_format}",
         f"rdf/metadata_enpkg_neg.{output_format}",
         f"rdf/metadata_module_enpkg_neg.{output_format}",
         f"rdf/structures_metadata.{output_format}",
+<<<<<<< Updated upstream
+=======
+        f"rdf/assay_batch_neg.{output_format}",
+>>>>>>> Stashed changes
     ],
 }
 
@@ -102,12 +120,15 @@ files = polarity_files.get(polarity)
 if not files:
     raise ValueError(f"Invalid polarity: {polarity}. Must be 'pos' or 'neg'.")
 
+<<<<<<< Updated upstream
 # Ensure target directory exists
 #target_path = os.path.normpath(params_list_full["graph-builder"]["graph_output_dir_path"])
 #target_path = Path(target_path).resolve()
 #if "${" in str(target_path):
 #    raise ValueError(f"Target path contains unresolved variables: {target_path}")
 #os.makedirs(target_path, exist_ok=True)
+=======
+>>>>>>> Stashed changes
 
 # Process individual directories
 def process_directory(directory):
@@ -162,7 +183,11 @@ def process_directory(directory):
         # Add hash to filename
         hash_merged = get_hash(merged_graph_path)
         hashed_graph_path = os.path.join(
+<<<<<<< Updated upstream
             pathout, f"{massive_id}_{polarity}_merged_graph_{directory}{hash_merged}.{output_format}"
+=======
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_{hash_merged}.{output_format}"
+>>>>>>> Stashed changes
         )
         os.rename(merged_graph_path, hashed_graph_path)
 
@@ -173,11 +198,14 @@ def process_directory(directory):
                 params_list = yaml.load(file, Loader=yaml.FullLoader)
         else:
             params_list = {}
+<<<<<<< Updated upstream
 
     # Copy to target path
        # shutil.copy(hashed_merged_file, target_path)
        # print(f"Copied: {hashed_merged_file} to {target_path}")
        # return f"Processed {directory}"
+=======
+>>>>>>> Stashed changes
      
         git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
         params_list[f"{directory}_merged_graph"] = {
