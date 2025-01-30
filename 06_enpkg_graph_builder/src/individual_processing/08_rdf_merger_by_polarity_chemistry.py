@@ -78,27 +78,21 @@ polarity_files = {
         f"rdf/canopus_pos.{output_format}",
         f"rdf/features_pos.{output_format}",
         f"rdf/features_ms2_list_pos.{output_format}",
-        #f"rdf/features_spec2vec_pos.{output_format}",
+        f"rdf/features_spec2vec_pos.{output_format}",
         f"rdf/individual_mn_pos.{output_format}",
         f"rdf/isdb_pos.{output_format}",
         f"rdf/sirius_pos.{output_format}",
-        f"rdf/metadata_enpkg_pos.{output_format}",
-        f"rdf/metadata_module_enpkg_pos.{output_format}",
-        f"rdf/structures_metadata.{output_format}",
-        f"rdf/assay_batch_pos.{output_format}",
+        f"rdf/structures_metadata_pos.{output_format}",
     ],
     "neg": [
         f"rdf/canopus_neg.{output_format}",
         f"rdf/features_neg.{output_format}",
-        #f"rdf/features_spec2vec_neg.{output_format}",
+        f"rdf/features_spec2vec_neg.{output_format}",
         f"rdf/features_ms2_list_neg.{output_format}",
         f"rdf/individual_mn_neg.{output_format}",
         f"rdf/isdb_neg.{output_format}",
         f"rdf/sirius_neg.{output_format}",
-        f"rdf/metadata_enpkg_neg.{output_format}",
-        f"rdf/metadata_module_enpkg_neg.{output_format}",
-        f"rdf/structures_metadata.{output_format}",
-        f"rdf/assay_batch_neg.{output_format}",
+        f"rdf/structures_metadata_neg.{output_format}",
     ],
 }
 
@@ -152,7 +146,7 @@ def process_directory(directory):
         # Save merged graph
         pathout = os.path.join(sample_dir_path, directory, "rdf")
         merged_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_chemistry.{output_format}"
         )
 
         merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")
@@ -160,7 +154,7 @@ def process_directory(directory):
         # Add hash to filename
         hash_merged = get_hash(merged_graph_path)
         hashed_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_{hash_merged}.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_{hash_merged}_chemistry.{output_format}"
         )
         os.rename(merged_graph_path, hashed_graph_path)
 

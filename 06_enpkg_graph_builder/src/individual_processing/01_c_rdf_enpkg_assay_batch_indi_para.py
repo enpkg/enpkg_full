@@ -3,11 +3,8 @@ from pathlib import Path
 import yaml
 from rdflib import Graph, Namespace, RDF, RDFS, Literal, URIRef
 from tqdm import tqdm
-<<<<<<< Updated upstream
-=======
 import pandas as pd
 import sys
->>>>>>> Stashed changes
 
 def substitute_variables(config):
     """Recursively substitute variables in the YAML configuration."""
@@ -50,20 +47,10 @@ sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_pat
 output_format = "ttl"
 
 # Define namespaces
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-JLW = Namespace("http://example.org/jlw#")
-=======
-kg_uri = params_list_full['graph-builder']['kg_uri']
-ns_kg = Namespace(kg_uri)
-prefix = params_list_full['graph-builder']['prefix']
->>>>>>> Stashed changes
-=======
 #kg_uri = params_list_full['graph-builder']['kg_uri']
 prefix = params_list_full['graph-builder']['prefix']
 #ns_kg = Namespace(kg_uri)
 JLW = Namespace('https://sinergiawolfender.org/graph/db')
->>>>>>> Stashed changes
 PROV = Namespace("http://www.w3.org/ns/prov#")
 DCAT = Namespace("http://www.w3.org/ns/dcat#")
 XSD = Namespace("http://www.w3.org/2001/XMLSchema#")
@@ -77,29 +64,6 @@ samples_dir = [directory for directory in os.listdir(sample_dir_path) if not dir
 
 def process_directory(directory):
     g = Graph()
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    g.namespace_manager.bind("jlw", JLW)
-    g.namespace_manager.bind("prov", PROV)
-    g.namespace_manager.bind("dcat", DCAT)
-=======
-    nm = g.namespace_manager
-    nm.bind("prov", PROV)
-    nm.bind("dcat", DCAT)
-    nm.bind(prefix, ns_kg)
->>>>>>> Stashed changes
-
-    try:
-        batch_polarity = params_list_full['general']['polarity']
-        batch_label = params_list_full['assay-batch']['batch_comment']
-        batch_instrument = params_list_full['assay-batch']['batch_instrument']
-        batch_date = params_list_full['assay-batch']['batch_date']
-        batch_operator = params_list_full['assay-batch']['batch_operator']
-        batch_url = params_list_full['assay-batch']['batch_url']
-
-        batch_id = f"assay_batch_{batch_polarity.lower()}"
-<<<<<<< Updated upstream
-=======
     nm = g.namespace_manager
     nm.bind("prov", PROV)
     nm.bind("dcat", DCAT)
@@ -120,7 +84,6 @@ def process_directory(directory):
         batch_FTP = f"ftp://massive.ucsd.edu/v07/{batch_massive_id}/"
 
         batch_id = f"assay_batch_MASSIVE_{batch_massive_id}_{batch_polarity.lower()}"
->>>>>>> Stashed changes
         batch_node = JLW[batch_id]
 
         g.add((batch_node, RDF.type, JLW.AssayBatch))
@@ -128,24 +91,6 @@ def process_directory(directory):
         g.add((batch_node, PROV.generatedAtTime, Literal(batch_date, datatype=XSD.gYearMonth)))
         g.add((batch_node, JLW.has_instrument_type, Literal(batch_instrument)))
         g.add((batch_node, DCAT.accessURL, URIRef(batch_url)))
-<<<<<<< Updated upstream
-        g.add((batch_node, JLW.has_operator, JLW[batch_operator.replace(' ', '_')]))
-=======
-        batch_node = ns_kg[batch_id]
-
-        g.add((batch_node, RDF.type, JLW.AssayBatch))
-        g.add((batch_node, RDFS.label, Literal(batch_label)))
-        g.add((batch_node, ns_kg.generatedAtTime, Literal(batch_date, datatype=XSD.gYearMonth)))
-        g.add((batch_node, ns_kg.has_instrument_type, Literal(batch_instrument)))
-        g.add((batch_node, DCAT.accessURL, URIRef(batch_url)))
-        g.add((batch_node, ns_kg.has_operator, JLW[batch_operator.replace(' ', '_')]))
->>>>>>> Stashed changes
-
-        # Write to file
-        pathout = os.path.join(sample_dir_path, directory, "rdf/")
-        os.makedirs(pathout, exist_ok=True)
-        pathout = os.path.join(pathout, f"{batch_id}.{output_format}")
-=======
         g.add((batch_node, DCAT.ftpURL, URIRef(batch_FTP)))
         g.add((batch_node, JLW.usedArticle, URIRef(batch_ref_url)))
         g.add((batch_node, JLW.has_operator, JLW[batch_operator.replace(' ', '_')]))
@@ -183,7 +128,6 @@ def process_directory(directory):
         pathout = os.path.join(sample_dir_path, directory, "rdf/")
         os.makedirs(pathout, exist_ok=True)
         pathout = os.path.join(pathout, f"assay_batch_{batch_polarity}.{output_format}")
->>>>>>> Stashed changes
         g.serialize(destination=pathout, format=output_format, encoding="utf-8")
         print(f"Results are in: {pathout}")
 
@@ -192,21 +136,9 @@ def process_directory(directory):
         print(error_message)
         return error_message
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 def main():
     for directory in tqdm(samples_dir, desc="Processing directories"):
         process_directory(directory)
 
 if __name__ == "__main__":
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     main()
-=======
-    main()
->>>>>>> Stashed changes
-=======
-    main()
->>>>>>> Stashed changes

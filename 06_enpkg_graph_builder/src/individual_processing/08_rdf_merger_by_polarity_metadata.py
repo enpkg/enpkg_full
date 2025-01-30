@@ -75,29 +75,13 @@ if not os.path.exists(sample_dir_path):
 # Define RDF files to merge for each polarity
 polarity_files = {
     "pos": [
-        f"rdf/canopus_pos.{output_format}",
-        f"rdf/features_pos.{output_format}",
-        f"rdf/features_ms2_list_pos.{output_format}",
-        #f"rdf/features_spec2vec_pos.{output_format}",
-        f"rdf/individual_mn_pos.{output_format}",
-        f"rdf/isdb_pos.{output_format}",
-        f"rdf/sirius_pos.{output_format}",
         f"rdf/metadata_enpkg_pos.{output_format}",
         f"rdf/metadata_module_enpkg_pos.{output_format}",
-        f"rdf/structures_metadata.{output_format}",
         f"rdf/assay_batch_pos.{output_format}",
     ],
     "neg": [
-        f"rdf/canopus_neg.{output_format}",
-        f"rdf/features_neg.{output_format}",
-        #f"rdf/features_spec2vec_neg.{output_format}",
-        f"rdf/features_ms2_list_neg.{output_format}",
-        f"rdf/individual_mn_neg.{output_format}",
-        f"rdf/isdb_neg.{output_format}",
-        f"rdf/sirius_neg.{output_format}",
         f"rdf/metadata_enpkg_neg.{output_format}",
         f"rdf/metadata_module_enpkg_neg.{output_format}",
-        f"rdf/structures_metadata.{output_format}",
         f"rdf/assay_batch_neg.{output_format}",
     ],
 }
@@ -105,7 +89,6 @@ polarity_files = {
 files = polarity_files.get(polarity)
 if not files:
     raise ValueError(f"Invalid polarity: {polarity}. Must be 'pos' or 'neg'.")
-
 
 # Process individual directories
 def process_directory(directory):
@@ -152,17 +135,11 @@ def process_directory(directory):
         # Save merged graph
         pathout = os.path.join(sample_dir_path, directory, "rdf")
         merged_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_metadata.{output_format}"
         )
 
         merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")
 
-        # Add hash to filename
-        hash_merged = get_hash(merged_graph_path)
-        hashed_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_{hash_merged}.{output_format}"
-        )
-        os.rename(merged_graph_path, hashed_graph_path)
 
         # Save graph parameters
         params_path = os.path.join(pathout, "graph_params.yaml")
@@ -172,17 +149,11 @@ def process_directory(directory):
         else:
             params_list = {}
      
-        git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
-        params_list[f"{directory}_merged_graph"] = {
-            "git_commit": git_commit_hash,
-            "git_commit_link": f"https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}"
-        }
         params_list["graph-builder"] = params_list_full["graph-builder"]
 
         with open(params_path, "w", encoding="UTF-8") as file:
             yaml.dump(params_list, file)
 
-        print(f"Merged graph saved at: {hashed_graph_path}")
         return f"Processed {directory}"
     
     except Exception as e:

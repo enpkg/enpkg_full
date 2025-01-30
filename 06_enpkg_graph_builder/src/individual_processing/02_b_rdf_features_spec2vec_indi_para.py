@@ -109,11 +109,7 @@ def process_directory(directory):
                 document_id = rdflib.term.URIRef(f"{kg_uri}spec2vec_doc_{usi}")
 
                 # Add peak intensities as feature attributes
-<<<<<<< Updated upstream
-                g.add((feature_id, ns_kg.has_raw_spectrum, rdflib.term.Literal(tuple(zip(spectrum.mz, spectrum.intensities)))))
-=======
                 #g.add((feature_id, ns_kg.has_raw_spectrum, rdflib.term.Literal(tuple(zip(spectrum.mz, spectrum.intensities)))))
->>>>>>> Stashed changes
                 g.add((feature_id, ns_kg.has_spec2vec_doc, document_id))
                 g.add((document_id, RDF.type, ns_kg.Spec2VecDoc))
                 g.add((document_id, RDFS.label, rdflib.term.Literal(f"Spec2vec document of feature {spectrum.metadata['feature_id']} from sample {metadata.sample_id[0]} in {ionization_mode} mode")))
