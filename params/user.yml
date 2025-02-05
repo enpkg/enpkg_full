@@ -1,7 +1,12 @@
 # Parameters
 general:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/PF200_collection_Exploris   # Common root directory for raw and treated data
+=======
+  root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
+
+>>>>>>> Stashed changes
 =======
   root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
 
@@ -13,6 +18,7 @@ general:
   polarity: neg # Ionization mode to treat: pos, neg, or both, required=True
 
 massive-id-addition:
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   massive_id: MSV000096367
   # MassIVE dataset ID, required=True
@@ -29,6 +35,8 @@ assay-batch:
   batch_url: <ftp://MSV000096326@massive.ucsd.edu/> 
   # MassIVE url, required=True
 =======
+=======
+>>>>>>> Stashed changes
   massive_id: MSV000087970
   # MassIVE dataset ID, required=True
   massive_doi: doi:10.25345/C5PJ9N
@@ -44,6 +52,9 @@ assay-batch:
   # Batch operator, required=True
   batch_reference: doi:10.1021/acscentsci.3c00800
   # Batch protocol references, required = True
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 data-organization:
@@ -56,9 +67,14 @@ data-organization:
   lcms_method_params_filename: lcms_method_params.txt
   # Name of the LCMS method parameters file, required=True
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   lcms_processing_params_filename: NEG_lcms_processing_params.mzbatch
   # Name of the LCMS processing parameters file, required=True
 
+=======
+  lcms_processing_params_filename: NEG_lcms_processing_params.mzbatch #lcms_processing_params.mzbatch
+  # Name of the LCMS processing parameters file, required=True
+>>>>>>> Stashed changes
 =======
   lcms_processing_params_filename: NEG_lcms_processing_params.mzbatch #lcms_processing_params.mzbatch
   # Name of the LCMS processing parameters file, required=True
@@ -84,7 +100,11 @@ sirius: #define the path and the version of Sirius you are using
 
     recompute: True
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     # Recompute files for which output directory already exists: True or False
+=======
+    # Recompute filess for which output directory already exists: True or False
+>>>>>>> Stashed changes
 =======
     # Recompute filess for which output directory already exists: True or False
 >>>>>>> Stashed changes
@@ -220,7 +240,11 @@ graph-builder:
   gnps_fast_search_prefix: 'https://fasst.gnps2.org/fastsearch/?usi1='
   # Prefix of the GNPS fast search
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   source_taxon_header: source_taxon
+=======
+  source_taxon_header: source_taxon #source_taxon
+>>>>>>> Stashed changes
 =======
   source_taxon_header: source_taxon #source_taxon
 >>>>>>> Stashed changes
