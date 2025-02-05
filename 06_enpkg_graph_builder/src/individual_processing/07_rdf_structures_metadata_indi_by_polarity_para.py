@@ -89,11 +89,9 @@ polarity_files = {
     ],
 }
 
-# Ensure polarity is valid
-if polarity not in polarity_files:
-    raise ValueError(f"Invalid polarity: {polarity}. Must be 'pos' or 'neg'.")
-
-files = polarity_files[polarity]
+files = polarity_files.get(polarity)
+if not files:
+   raise ValueError(f"Invalid polarity: {polarity}. Must be 'pos' or 'neg'.")
 
 # Function to process each directory
 def process_directory(args):
@@ -114,10 +112,9 @@ def process_directory(args):
         # Check available annotation files
         rdf_dir = os.path.join(path, directory, "rdf")
         existing_files = [
-            os.path.join(rdf_dir, file_path)
-            for file_path in files if os.path.isfile(os.path.join(rdf_dir, file_path))
+            os.path.join(rdf_dir, os.path.basename(file_path))
+            for file_path in files if os.path.isfile(os.path.join(rdf_dir, os.path.basename(file_path)))
         ]
-
         if not existing_files:
             print(f"No relevant RDF files found for {directory}.")
             return f"Skipped {directory}, no relevant RDF files."

@@ -78,7 +78,7 @@ polarity_files = {
         f"rdf/canopus_pos.{output_format}",
         f"rdf/features_pos.{output_format}",
         f"rdf/features_ms2_list_pos.{output_format}",
-        #f"rdf/features_spec2vec_pos.{output_format}",
+        f"rdf/features_spec2vec_pos.{output_format}",
         f"rdf/individual_mn_pos.{output_format}",
         f"rdf/isdb_pos.{output_format}",
         f"rdf/sirius_pos.{output_format}",
@@ -90,7 +90,7 @@ polarity_files = {
     "neg": [
         f"rdf/canopus_neg.{output_format}",
         f"rdf/features_neg.{output_format}",
-        #f"rdf/features_spec2vec_neg.{output_format}",
+        f"rdf/features_spec2vec_neg.{output_format}",
         f"rdf/features_ms2_list_neg.{output_format}",
         f"rdf/individual_mn_neg.{output_format}",
         f"rdf/isdb_neg.{output_format}",

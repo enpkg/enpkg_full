@@ -133,34 +133,18 @@ def process_directory(directory):
                 metadata = spectrum.metadata
                 usi = f"mzspec:{metadata_sample['massive_id'][0]}:{metadata_sample['sample_id'][0]}_features_ms2_{ionization_mode}.mgf:scan:{int(spectrum.metadata['feature_id'])}"
                 feature_id = rdflib.term.URIRef(f"{kg_uri}lcms_feature_{usi}")
-                #ms2_list_id = rdflib.term.URIRef(f"{kg_uri}ms2_list_{usi}")
 
-                # Store the raw MGF content in the RDF graph
                 g.add((feature_id, ns_kg.has_raw_spectrum, rdflib.term.Literal(spectrum.raw_mgf)))
-                #g.add((feature_id, ns_kg.has_ms2_list, ms2_list_id))
-                #g.add((ms2_list_id, RDF.type, ns_kg.MS2List))
-                #g.add((ms2_list_id, RDFS.label, rdflib.term.Literal(f"MS2 list of feature {spectrum.metadata['feature_id']} from sample {metadata_sample.sample_id[0]} in {ionization_mode} mode")))
 
                 # Encode peaks
                 for mz, intensity, normalized_intensity in zip(spectrum.peaks.mz, spectrum.peaks.intensities, spectrum.normalized_intensities):
                     ion = rdflib.term.URIRef(f"{feature_id}:ion_{mz:.4f}")
-                    #g.add((ms2_list_id, ns_kg.has_ion, ion)
                     g.add((feature_id, ns_kg.has_ion, ion))
                     g.add((ion, ns_kg.has_mz, rdflib.term.Literal(mz, datatype=XSD.float)))
                     g.add((ion, ns_kg.has_intensity, rdflib.term.Literal(intensity, datatype=XSD.float)))
-                    g.add((ion, ns_kg.has_relative_intensity, rdflib.term.Literal(normalized_intensity, datatype=XSD.float)))
+                   # g.add((ion, ns_kg.has_relative_intensity, rdflib.term.Literal(normalized_intensity, datatype=XSD.float)))
                     g.add((ion, RDF.type, ns_kg.ion))
                     g.add((ion, RDFS.label, rdflib.term.Literal(f"MS2 peak with m/z {mz:.4f} and intensity {intensity:.4f}")))
-
-                # Encode losses if present
-                #if spectrum.losses:
-                #    for loss_mz, loss_intensity in zip(spectrum.losses.mz, spectrum.losses.intensities):
-                #        loss = rdflib.term.URIRef(f"{kg_uri}loss_{loss_mz:.4f}")
-                #        g.add((ms2_list_id, ns_kg.has_ms2_loss, loss))
-                #        g.add((loss, ns_kg.has_value, rdflib.term.Literal(loss_mz, datatype=XSD.float)))
-                #        g.add((loss, ns_kg.has_intensity, rdflib.term.Literal(loss_intensity, datatype=XSD.float)))
-                #       g.add((loss, RDF.type, ns_kg.ms2_loss))
-                #       g.add((loss, RDFS.label, rdflib.term.Literal(f"Loss with m/z {loss_mz:.4f} and intensity {loss_intensity:.4f}")))
 
 
             # Save the graph

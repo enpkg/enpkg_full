@@ -1,10 +1,10 @@
 # Parameters
 general:
-  root_data_path: /mnt/j/FASIE_LAB/LuisQ/Mycomedix/Ind_files/Graph_P03P18 # Common root directory for raw and treated data
+  root_data_path: /mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris # Common root directory for raw and treated data
 
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
-  treated_data_path: ${general.root_data_path} #/ind_files
+  treated_data_path: ${general.root_data_path}/ind_files
   # Path to the treated data (or output data) folder, required=True
   polarity: pos # Ionization mode to treat: pos, neg, or both, required=True
 
@@ -19,7 +19,7 @@ assay-batch:
   # Batch short description, required=True
   batch_instrument: Exploris #QExactive #Exploris
   # Batch acquisition instrument, required=True
-  batch_date: 2023-12 # Batch date Year-Month, required=True
+  batch_date: 2024-03 # Batch date Year-Month, required=True
   batch_operator: Luis-Manuel_Quiros-Guerrero #Pierre-Marie_Allard #Olivier_Kirchhoffer #Louis-Felix_Nothias
   # Batch operator, required=True
   batch_reference: doi:10.1021/acscentsci.3c00800
@@ -190,7 +190,7 @@ graph-builder:
   # Prefix of the GNPS fast search
   source_taxon_header: source_taxon #source_taxon
   # Header of the source taxon, required=True
-  source_id_header: source_MYC_ID #organism_pf_code #unique identifier (raw material)
+  source_id_header: organism_pf_code #unique identifier (raw material)
   # Header of the source ID, required=True
   peak_loss_params:
     n_decimals: 1

@@ -139,7 +139,7 @@ def process_directory(directory):
         rdf_dir = os.path.join(sample_dir_path, directory, 'rdf')
         for file in os.listdir(rdf_dir):
             # Check if the file starts with massive_id and includes the polarity
-            if file.startswith(f"{massive_id}_{polarity}"):
+            if file.endswith(f"{directory}_chemistry.{output_format}"):
                 os.remove(os.path.join(rdf_dir, file))
                 print(f"Deleted old RDF file: {file}")
                 
