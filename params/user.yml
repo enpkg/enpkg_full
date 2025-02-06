@@ -1,15 +1,15 @@
 # Parameters
 general:
-  root_data_path: /mnt/j/FASIE_LAB/LuisQ/Mycomedix/Ind_files/Graph_P03P18 # Common root directory for raw and treated data
+  root_data_path: /home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
 
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
-  treated_data_path: ${general.root_data_path} #/ind_files
+  treated_data_path: ${general.root_data_path}/ind_files
   # Path to the treated data (or output data) folder, required=True
-  polarity: pos # Ionization mode to treat: pos, neg, or both, required=True
+  polarity: neg # Ionization mode to treat: pos, neg, or both, required=True
 
 massive-id-addition:
-  massive_id: MSV000095812
+  massive_id: MSV000087970
   # MassIVE dataset ID, required=True
   massive_doi: doi:10.25345/C55D8NS2C
   # MassIVE dataset doi, required=True
@@ -38,9 +38,9 @@ data-organization:
   # Name of the LCMS processing parameters file, required=True
 sirius: #define the path and the version of Sirius you are using
   paths:
-    path_to_sirius: /home/quirosgu/Desktop/sirius5/bin/sirius #/Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
+    path_to_sirius: /opt/sirius/bin/sirius  #/home/quirosgu/Desktop/sirius5/bin/sirius #/Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
   options:
-    sirius_version: 5  # Set to 5 for SIRIUS 5
+    sirius_version: 6  # Set to 5 for SIRIUS 5
     ionization: ${general.polarity}  # Dynamically set ionization mode based on general polarity
 
     sirius_5_command_args:
@@ -51,9 +51,27 @@ sirius: #define the path and the version of Sirius you are using
        
     sirius_6_command_args:
       pos: >
-        --input {file} --project {output_name} --maxmz 800 config --IsotopeSettings.filter=true --FormulaSearchDB=BIO --Timeout.secondsPerTree=0 --FormulaSettings.enforced=H,C,N,O,P,S --Timeout.secondsPerInstance=0 --AdductSettings.detectable="[M+Na]+,[M+H3N+H]+,[M-H4O2+H]+,[M+K]+,[M+H]+,[M-H2O+H]+" --UseHeuristic.mzToUseHeuristicOnly=650 --AlgorithmProfile=orbitrap --IsotopeMs2Settings=IGNORE --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIon=1 --UseHeuristic.mzToUseHeuristic=300 --FormulaSettings.detectable=B,Cl,Br,Se,S --NumberOfCandidates=10 --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10 --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 --ZodiacNumberOfConsideredCandidatesAt800Mz=50 --ZodiacEpochs.iterations=20000 --AdductSettings.enforced= --AdductSettings.fallback="[M+Na]+,[M+H3N+H]+,[M+K]+,[M+H]+,[M-H2O+H]+" --FormulaResultThreshold=true --InjectElGordoCompounds=true --StructureSearchDB=BIO --RecomputeResults=false formulas zodiac fingerprints structures classes write-summaries --output {output_name}
+        --input {file} --project {output_name} --maxmz 800 --IsotopeSettings.filter=true --FormulaSearchDB=ALL 
+        --FormulaSettings.enforced=H,C,N,O,P,S --AdductSettings.detectable="[M+Na]+,[M+H3N+H]+,[M+K]+,[M+H]+,[M-H2O+H]+"
+        --UseHeuristic.useHeuristicAboveMz=300 --AlgorithmProfile=orbitrap --IsotopeMs2Settings=IGNORE 
+        --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIon=1 --NumberOfCandidates=10 
+        --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10
+        --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 
+        --ZodiacNumberOfConsideredCandidatesAt800Mz=50 --ZodiacEpochs.iterations=20000 --AdductSettings.fallback="[M+Na]+,[M+H3N+H]+,[M+K]+,[M+H]+,[M-H2O+H]+" 
+        --FormulaResultThreshold=true --StructureSearchDB=ALL --RecomputeResults=false formulas zodiac fingerprints structures classes write-summaries --output {output_name}
       neg: >
-        --input {file} --project {output_name} --maxmz 800 config --IsotopeSettings.filter=true --FormulaSearchDB=BIO --Timeout.secondsPerTree=0 --FormulaSettings.enforced=H,C,N,O,P --Timeout.secondsPerInstance=0 --AdductSettings.detectable="[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-" --UseHeuristic.useOnlyHeuristicAboveMz=650 --AlgorithmProfile=orbitrap --IsotopeMs2Settings=IGNORE --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIonization=1 --UseHeuristic.useHeuristicAboveMz=300 --FormulaSettings.detectable=B,Cl,Br,S --NumberOfCandidates=10 --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10 --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 --ZodiacNumberOfConsideredCandidatesAt800Mz=50 --ZodiacEpochs.iterations=20000 --AdductSettings.enforced= --AdductSettings.fallback="[M-H]-,[M-H2O-H]-,[M-CO2-H]-,[2M-H]-" --FormulaResultThreshold=true --ExpansiveSearchConfidenceMode.confidenceScoreSimilarityMode=APPROXIMATE --StructureSearchDB=BIO --RecomputeResults=false formulas zodiac fingerprints structures classes write-summaries --output {output_name}
+        --input {file} --project {output_name} formulas zodiac fingerprints classes structures write-summaries --output {output_name}
+
+      #neg: >
+      #  --input {file} --project {output_name} --maxmz 800 --IsotopeSettings.filter=true --FormulaSearchDB=ALL
+      #  --FormulaSettings.enforced=H,C,N,O,P,S --AdductSettings.detectable="[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-"
+      #  --UseHeuristic.useHeuristicAboveMz=300 --AlgorithmProfile=orbitrap --IsotopeMs2Settings=IGNORE 
+      #  --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIonization=1 --NumberOfCandidates=10 
+      # --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10 
+      #  --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 
+      #  --ZodiacNumberOfConsideredCandidatesAt800Mz=50 --ZodiacEpochs.iterations=20000 --AdductSettings.fallback="[M-H]-,[M-H2O-H]-,[M-CO2-H]-,[2M-H]-"
+      #  --FormulaResultThreshold=true --ExpansiveSearchConfidenceMode.confidenceScoreSimilarityMode=APPROXIMATE 
+      #  --StructureSearchDB=ALL --RecomputeResults=false formulas zodiac fingerprints structures classes write-summaries --output {output_name}
 
     recompute: True
     # Recompute filess for which output directory already exists: True or False
@@ -190,7 +208,7 @@ graph-builder:
   # Prefix of the GNPS fast search
   source_taxon_header: source_taxon #source_taxon
   # Header of the source taxon, required=True
-  source_id_header: source_MYC_ID #organism_pf_code #unique identifier (raw material)
+  source_id_header: organism_pf_code #unique identifier (raw material)
   # Header of the source ID, required=True
   peak_loss_params:
     n_decimals: 1

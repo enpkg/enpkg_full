@@ -131,7 +131,7 @@ if __name__ == "__main__":
             sirius_mgf_path = os.path.join(
                 path, directory, ionization, f"{directory}_sirius_{ionization}.mgf"
             )
-            output_folder = os.path.join(path, directory, ionization, f"{directory}_WORKSPACE_SIRIUS")
+            output_folder = os.path.join(path, directory, ionization, f"{directory}_WORKSPACE_SIRIUS")#, f"{directory}_{ionization}.sirius")
 
             # Check if recompute is needed
             if not recompute and os.path.isdir(output_folder):
