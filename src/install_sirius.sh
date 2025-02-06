@@ -1,28 +1,31 @@
 #!/bin/bash
 
+
 # Exit on error
 set -e
 
-# Confirm that necessary commands are available
-for cmd in wget jq unzip curl; do
-    if ! command -v "$cmd" &> /dev/null; then
-        echo "Error: $cmd is required but not installed. Please install it and try again." >&2
-        exit 1
-    fi
-done
+# Check if version argument is provided
+version=$1
 
-echo "Fetching the latest version of Sirius for Linux..."
-
-# GitHub's API URL for the latest release
-api_url="https://api.github.com/repos/boecker-lab/sirius/releases/latest"
+# Default to latest version if no argument is provided
+if [ -z "$version" ]; then
+    echo "No version provided, fetching the latest version of Sirius."
+    api_url="https://api.github.com/repos/sirius-ms/sirius/releases/latest"
+else
+    echo "Fetching version $version of Sirius."
+    api_url="https://api.github.com/repos/sirius-ms/sirius/releases/tags/$version"
+fi
 
 # Fetch release information
 release_info=$(curl -s "$api_url")
 
+# Debug: Print release_info to check if we get a valid response from GitHub
+echo "Release info: $release_info"
+
 # Check if assets are available
 assets=$(echo "$release_info" | jq '.assets')
-if [[ $assets == "null" ]] || [[ $assets == "[]" ]]; then
-    echo "Error: No assets found for the latest release. The release might be a draft or pre-release."
+if [ "$assets" == "null" ] || [ "$assets" == "[]" ]; then
+    echo "Error: No assets found for the release. The release might not exist or be a draft."
     exit 1
 fi
 
@@ -30,7 +33,7 @@ fi
 download_url=$(echo "$release_info" | jq -r '.assets[] | select(.name | test("linux.*\\.zip$")) | .browser_download_url')
 
 if [ -z "$download_url" ]; then
-    echo "Error: Could not find a Linux zip version of the latest release."
+    echo "Error: Could not find a Linux zip version of the release."
     exit 1
 fi
 
@@ -46,7 +49,7 @@ else
 fi
 
 # Unzip the downloaded file
-if [[ $filename == *.zip ]]; then
+if [ "${filename: -4}" == ".zip" ]; then
     unzip "$filename"
     echo 'Extraction complete.'
 else
