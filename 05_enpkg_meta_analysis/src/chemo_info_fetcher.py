@@ -8,30 +8,52 @@ from tqdm import tqdm
 import sqlite3
 from sqlite3 import Error
 from pathlib import Path
-import argparse
-import textwrap
-from pathlib import Path
-from rdkit.Chem import AllChem
 import yaml
 
-p = Path(__file__).parents[1]
-os.chdir(p)
+# Function to substitute variables in YAML configuration
+def substitute_variables(config):
+    """Recursively substitute variables in the YAML configuration."""
+    def substitute(value, context):
+        if isinstance(value, str):
+            for key, replacement in context.items():
+                value = value.replace(f"${{{key}}}", replacement)
+        return value
 
-# Loading the parameters from yaml file
+    def recurse_dict(d, context):
+        for key, value in d.items():
+            if isinstance(value, dict):
+                recurse_dict(value, context)
+            else:
+                d[key] = substitute(value, context)
+
+    # Context for substitution
+    context = {
+        "general.root_data_path": config['general']['root_data_path'],
+        "general.polarity": config['general']['polarity'],
+    }
+    recurse_dict(config, context)
+    return config
+
+# Load parameters from YAML file
 if not os.path.exists('../params/user.yml'):
     print('No ../params/user.yml: copy from ../params/template.yml and modify according to your needs')
-with open(r'../params/user.yml') as file:    
+    exit()
+
+with open('../params/user.yml') as file:
     params_list_full = yaml.load(file, Loader=yaml.FullLoader)
 
-# Parameters can now be accessed using params_list['level1']['level2'] e.g. params_list['options']['download_gnps_job']
+# Substitute variables in YAML configuration
+params_list_full = substitute_variables(params_list_full)
+
+# Extract relevant parameters
 sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 sql_db_name = params_list_full['chemo-info-fetching']['sql_db_name']
 sql_db_path = params_list_full['chemo-info-fetching']['sql_db_path']
-sql_path = os.path.join(sql_db_path + sql_db_name)
+sql_path = os.path.join(sql_db_path, sql_db_name)
 gnps_id = params_list_full['chemo-info-fetching']['gnps_id']
 Path(sql_db_path).mkdir(parents=True, exist_ok=True)
 
-""" Functions """
+# Remaining functions remain unchanged...
 
 def get_all_ik(url):
     query = '''
@@ -41,16 +63,16 @@ WHERE{
     ?wd wdt:P235 ?ik .
     optional { ?wd wdt:P2017 ?isomeric_smiles } 
 }
-  '''
+    '''
     r = requests.get(url, params={'format': 'json', 'query': query})
     try:
-      data = r.json()
-      results = pd.DataFrame.from_dict(data).results.bindings
-      df = json_normalize(results)
-      df.rename(columns={'wd.value':'wikidata_id', 'ik.value':'inchikey', 'isomeric_smiles.value': 'isomeric_smiles'}, inplace=True)
-      return df[['wikidata_id', 'inchikey', 'isomeric_smiles']]
+        data = r.json()
+        results = pd.DataFrame.from_dict(data).results.bindings
+        df = json_normalize(results)
+        df.rename(columns={'wd.value':'wikidata_id', 'ik.value':'inchikey', 'isomeric_smiles.value': 'isomeric_smiles'}, inplace=True)
+        return df[['wikidata_id', 'inchikey', 'isomeric_smiles']]
     except JSONDecodeError:
-       return None
+        return None
 
 def update_sqldb(dataframe, sql_path):
     """ create a database connection to a SQLite database """
