@@ -29,6 +29,6 @@ sh ./workflow/07_workflow_annotate_sirius.sh
 #sh ./workflow/09_workflow_memo.sh
 
 #echo "Launching 10_workflow_graph_builder.sh"
-#sh ./workflow/10_workflow_graph_builder_LQ.sh
+#sh ./workflow/10_workflow_graph_builder_assay_batch.sh
 
 echo "Done !"

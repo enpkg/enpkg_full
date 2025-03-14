@@ -1,5 +1,6 @@
 # Parameters
 general:
+  root_data_path: /home/quirosgu/Desktop/Celastraceae_collection_QExactive  #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
   root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Chemodiverse_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
 
   raw_data_path: ${general.root_data_path}
@@ -7,8 +8,10 @@ general:
   treated_data_path: ${general.root_data_path}/ind_files
   # Path to the treated data (or output data) folder, required=True
   polarity: pos # Ionization mode to treat: pos, neg, or both, required=True
+  polarity: pos # Ionization mode to treat: pos, neg, or both, required=True
 
 massive-id-addition:
+  massive_id: MSV000095812
   massive_id: MSV000096366
   # MassIVE dataset ID, required=True
   massive_doi: doi:10.25345/C55D8NS2C
@@ -52,7 +55,20 @@ sirius: #define the path and the version of Sirius you are using
     sirius_6_command_args:
       pos: >
         --input {file} --project {output_name} formulas -p orbitrap zodiac fingerprints classes structures write-summaries --output {output_name}
+        --input {file} --project {output_name} formulas -p orbitrap zodiac fingerprints classes structures write-summaries --output {output_name}
       neg: >
+        --input {file} --project {output_name} formulas zodiac fingerprints structures classes write-summaries --output {output_name}
+
+      #neg: >
+      #  --input {file} --project {output_name} --maxmz 800 --IsotopeSettings.filter=true --FormulaSearchDB=ALL
+      #  --FormulaSettings.enforced=H,C,N,O,P,S --AdductSettings.detectable="[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-"
+      #  --UseHeuristic.useHeuristicAboveMz=300 --AlgorithmProfile=orbitrap --IsotopeMs2Settings=IGNORE 
+      #  --MS2MassDeviation.allowedMassDeviation=10.0ppm --NumberOfCandidatesPerIonization=1 --NumberOfCandidates=10 
+      # --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10 
+      #  --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 
+      #  --ZodiacNumberOfConsideredCandidatesAt800Mz=50 --ZodiacEpochs.iterations=20000 --AdductSettings.fallback="[M-H]-,[M-H2O-H]-,[M-CO2-H]-,[2M-H]-"
+      #  --FormulaResultThreshold=true --ExpansiveSearchConfidenceMode.confidenceScoreSimilarityMode=APPROXIMATE 
+      #  --StructureSearchDB=ALL --RecomputeResults=false formulas zodiac fingerprints structures classes write-summaries --output {output_name}
         --input {file} --project {output_name} formulas -p orbitrap zodiac fingerprints classes structures write-summaries --output {output_name}
 
     recompute: False
@@ -190,7 +206,7 @@ graph-builder:
   # Prefix of the GNPS fast search
   source_taxon_header: source_taxon #source_taxon
   # Header of the source taxon, required=True
-  source_id_header: organism_pf_code #unique identifier (raw material)
+  source_id_header: source_MYC_ID #organism_pf_code #unique identifier (raw material)
   # Header of the source ID, required=True
   peak_loss_params:
     n_decimals: 1
