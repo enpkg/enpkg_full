@@ -60,7 +60,10 @@ output_format = params_list_full['graph-builder']['graph_format']
 kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
-n_decimals = params_list_full['graph-builder']['peak_loss_params']['n_decimals']
+n_max_peaks = params_list_full['ms2-encoding']['n_max_peaks']
+n_min_peaks = params_list_full['ms2-encoding']['n_min_peaks']
+mz_tolerance = params_list_full['ms2-encoding']['mz_tolerance']
+
 
 print(f"Resolved sample_dir_path: {sample_dir_path}")
 if not os.path.exists(sample_dir_path):
@@ -71,8 +74,8 @@ def load_and_filter_from_mgf(path) -> list:
     """Load spectra from MGF file and retain metadata and peaks for encoding."""
     def apply_filters(spectrum):
         spectrum = add_precursor_mz(spectrum)
-        spectrum = reduce_to_number_of_peaks(spectrum, n_required=1, n_max=100)
-        spectrum = remove_peaks_around_precursor_mz(spectrum, mz_tolerance=17.0)  # Filter peaks around parent mass with tol in Da
+        spectrum = reduce_to_number_of_peaks(spectrum, n_required=n_min_peaks, n_max=n_max_peaks)
+        spectrum = remove_peaks_around_precursor_mz(spectrum, mz_tolerance=mz_tolerance)  # Filter peaks around parent mass with tol in Da
         return spectrum
 
     spectra = load_from_mgf(path)
@@ -86,8 +89,8 @@ def load_and_filter_from_mgf(path) -> list:
         intensity_values = spectrum.peaks.intensities
 
         # Normalize intensities
-        max_intensity = max(intensity_values) if intensity_values.size > 0 else 1
-        normalized_intensities = [i / max_intensity for i in intensity_values]
+        # max_intensity = max(intensity_values) if intensity_values.size > 0 else 1
+        # normalized_intensities = [i / max_intensity for i in intensity_values]
 
         # Construct the raw MGF text for each spectrum
         spectrum.raw_mgf = "\n".join([
