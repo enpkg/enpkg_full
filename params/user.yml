@@ -36,6 +36,7 @@ data-organization:
   # Name of the LCMS method parameters file, required=True
   lcms_processing_params_filename: P03_P18_lcms_processing_params.xml #lcms_processing_params.mzbatch
   # Name of the LCMS processing parameters file, required=True
+
 sirius: #define the path and the version of Sirius you are using
   paths:
     path_to_sirius: /opt/sirius/bin/sirius  #/home/quirosgu/Desktop/sirius5/bin/sirius #/Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius').
@@ -141,6 +142,8 @@ isdb:
     chemo_weight: 0.5
     # Weight attributed to the chemical consistency score
 
+#add Ms2 encoding params
+#blab kba
 
 chemo-info-fetching:
   sql_db_name: structures_metadata.db

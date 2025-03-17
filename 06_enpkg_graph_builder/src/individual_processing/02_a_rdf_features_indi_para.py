@@ -92,6 +92,7 @@ def process_directory(directory):
             max_area = quant_table[area_col].max()
 
             feature_list = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + f"_lcms_feature_list_{ionization_mode}")
+            #TO ADD#g.add((feature_id, RDF.type, ns_kg.LCMSFeatureList))
 
             # Handle LC-MS parameters
             lc_ms = None
@@ -118,8 +119,13 @@ def process_directory(directory):
                 g.add((has_lcms_feature_list_hash, ns_kg.has_content, rdflib.term.Literal(data_1)))
 
                 del hash_1, data_1
-
+                
+                g.add((feature_list, RDF.type, ns_kg.LCMSFeatureList))
+                g.add((feature_list, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
+                g.add((feature_list, RDFS.comment, rdflib.term.Literal(f"LCMS feature list in {ionization_mode} ionization mode of {metadata.sample_id[0]}")))
+               
             # Process features and add to graph
+
             for _, row in quant_table.iterrows():
                 usi = (f"mzspec:{metadata['massive_id'][0]}:{metadata.sample_id[0]}"
                        f"_features_ms2_{ionization_mode}.mgf:scan:{int(row['row ID'])}")
