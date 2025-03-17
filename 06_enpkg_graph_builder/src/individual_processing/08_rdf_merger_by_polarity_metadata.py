@@ -59,6 +59,7 @@ params_list_full = substitute_variables(params_list_full)
 sample_dir_path = os.path.normpath(params_list_full["general"]["treated_data_path"])
 output_format = params_list_full["graph-builder"]["graph_format"]
 polarity = params_list_full["general"]["polarity"]
+version = params_list_full["assay-batch"]["version"]
 kg_uri = params_list_full["graph-builder"]["kg_uri"]
 ns_kg = Namespace(kg_uri)
 prefix = params_list_full["graph-builder"]["prefix"]
@@ -135,7 +136,7 @@ def process_directory(directory):
         # Save merged graph
         pathout = os.path.join(sample_dir_path, directory, "rdf")
         merged_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_metadata.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_metadata_{version}.{output_format}"
         )
 
         merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")

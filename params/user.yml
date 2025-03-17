@@ -1,6 +1,6 @@
 # Parameters
 general:
-  root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Chemodiverse_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
+  root_data_path: /mnt/j/FASIE_LAB/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
   # Root directory for raw and treated data, required=True
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
@@ -24,6 +24,7 @@ assay-batch:
   # Batch operator, required=True
   batch_reference: doi:10.1021/acscentsci.3c00800
   # Batch protocol references, required = True
+  version: V01
 
 data-organization:
   source_path: ${general.root_data_path}/ms_data/${general.polarity}

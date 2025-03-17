@@ -60,6 +60,7 @@ sample_dir_path = os.path.normpath(params_list_full["general"]["treated_data_pat
 output_format = params_list_full["graph-builder"]["graph_format"]
 polarity = params_list_full["general"]["polarity"]
 kg_uri = params_list_full["graph-builder"]["kg_uri"]
+version = params_list_full["assay-batch"]["version"]
 ns_kg = Namespace(kg_uri)
 prefix = params_list_full["graph-builder"]["prefix"]
 module_uri = params_list_full["graph-builder"]["module_uri"]
@@ -146,17 +147,10 @@ def process_directory(directory):
         # Save merged graph
         pathout = os.path.join(sample_dir_path, directory, "rdf")
         merged_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_chemistry.{output_format}"
+            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_chemistry_{version}.{output_format}"
         )
 
         merged_graph.serialize(destination=merged_graph_path, format=output_format, encoding="utf-8")
-
-        # Add hash to filename
-        hash_merged = get_hash(merged_graph_path)
-        hashed_graph_path = os.path.join(
-            pathout, f"{massive_id}_{polarity}_merged_graph_{directory}_{hash_merged}_chemistry.{output_format}"
-        )
-        os.rename(merged_graph_path, hashed_graph_path)
 
         # Save graph parameters
         params_path = os.path.join(pathout, "graph_params.yaml")
