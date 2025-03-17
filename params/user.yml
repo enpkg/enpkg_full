@@ -1,6 +1,6 @@
 # Parameters
 general:
-   root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Chemodiverse_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
+  root_data_path: /mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Chemodiverse_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
   # Root directory for raw and treated data, required=True
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
