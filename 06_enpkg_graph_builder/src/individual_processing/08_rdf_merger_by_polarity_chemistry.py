@@ -12,7 +12,6 @@ import traceback
 
 # Import custom functions
 sys.path.append(os.path.join(Path(__file__).parents[1], "functions"))
-from hash_functions import get_hash
 
 # Set working directory to the repository root
 repo_root = Path(__file__).parents[2]
@@ -160,17 +159,9 @@ def process_directory(directory):
         else:
             params_list = {}
      
-        git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
-        params_list[f"{directory}_merged_graph"] = {
-            "git_commit": git_commit_hash,
-            "git_commit_link": f"https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}"
-        }
-        params_list["graph-builder"] = params_list_full["graph-builder"]
-
         with open(params_path, "w", encoding="UTF-8") as file:
             yaml.dump(params_list, file)
 
-        print(f"Merged graph saved at: {hashed_graph_path}")
         return f"Processed {directory}"
     
     except Exception as e:

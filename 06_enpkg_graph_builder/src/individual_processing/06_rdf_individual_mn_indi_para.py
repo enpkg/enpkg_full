@@ -100,10 +100,7 @@ def process_directory(directory):
             t = node[1]
             cosine = node[2]['weight']
 
-            mass_diff = abs(
-                float(graph_metadata.loc[graph_metadata.feature_id == int(s), 'precursor_mz'].values[0] -
-                      graph_metadata.loc[graph_metadata.feature_id == int(t), 'precursor_mz'].values[0])
-            )
+            mass_diff = abs(float(graph_metadata.loc[graph_metadata.feature_id == int(s), 'precursor_mz'].values[0] - graph_metadata.loc[graph_metadata.feature_id == int(t), 'precursor_mz'].values[0]))
             component_index = graph_metadata.loc[graph_metadata.feature_id == int(s), 'component_id'].values[0]
 
             usi_s = f"mzspec:{metadata['massive_id'][0]}:{metadata.sample_id[0]}_features_ms2_{ionization_mode}.mgf:scan:{s}"
@@ -113,7 +110,7 @@ def process_directory(directory):
 
             ci_node = rdflib.term.URIRef(kg_uri + f"{metadata.sample_id[0]}_fbmn_{ionization_mode}_componentindex_{component_index}")
             g.add((s_feature_id, ns_kg.has_fbmn_ci, ci_node))
-            g.add((t_feature_id, ns_kg.has_fbmn_ci, ci_node))
+            #g.add((t_feature_id, ns_kg.has_fbmn_ci, ci_node))
 
             link_node = rdflib.term.URIRef(kg_uri + f"lcms_feature_pair_{usi_s}_{usi_t}")
             g.add((link_node, RDF.type, ns_kg.LFpair))

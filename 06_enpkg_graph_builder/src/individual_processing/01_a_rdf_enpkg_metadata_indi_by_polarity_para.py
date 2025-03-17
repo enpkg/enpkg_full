@@ -123,25 +123,38 @@ def process_directory(directory):
                         g.add((Namespace(kg_uri)[filename], ns_kg.has_massive_doi, Literal(link_to_massive)))
                         g.add((Namespace(kg_uri)[filename], ns_kg.has_massive_license, Literal("https://creativecommons.org/publicdomain/zero/1.0/")))
                         g.add((Namespace(kg_uri)[filename], FOAF.depiction, Literal(gnps_tic_pic)))
+        
             # Add WD taxonomy link to substance
+
             metadata_taxo_path = os.path.join(sample_dir_path, directory, 'taxo_output', f"{directory}_taxo_metadata.tsv")
             taxo_params_path = os.path.join(sample_dir_path, directory, 'taxo_output', 'params.yaml')
+
             try:
                 metadata_taxo = pd.read_csv(metadata_taxo_path, sep='\t')
-                if not pd.isna(metadata_taxo['wd.value'][0]):
-                    wd_id = Namespace(WD)[metadata_taxo['wd.value'][0][31:]]               
+
+                wd_series = metadata_taxo['wd.value'].dropna().str.strip()
+
+                if not wd_series.empty:
+                    wd_url = wd_series.iloc[0]
+                    wd_id_value = wd_url.split('/')[-1]  # Extracts 'Q-ID' safely
+                    wd_id = Namespace(WD)[wd_id_value]
+
                     hash_2 = get_hash(taxo_params_path)
                     data_2 = get_data(taxo_params_path)
+
                     has_wd_id_hash = Namespace(kg_uri)[f"has_wd_id_{hash_2}"]
                     g.add((material_id, has_wd_id_hash, wd_id))
                     g.add((has_wd_id_hash, RDFS.subPropertyOf, Namespace(kg_uri).has_wd_id))
                     g.add((has_wd_id_hash, ns_kg.has_content, Literal(data_2)))
                     g.add((wd_id, RDF.type, ns_kg.WDTaxon))
+
                     del hash_2, data_2
                 else:
-                    g.add((material_id, ns_kg.has_unresolved_taxon, Namespace(kg_uri).unresolved_taxon))              
+                    g.add((material_id, ns_kg.has_unresolved_taxon, Namespace(kg_uri).unresolved_taxon))
+
             except FileNotFoundError:
                 g.add((material_id, ns_kg.has_unresolved_taxon, Namespace(kg_uri).unresolved_taxon))
+
 
         elif metadata.sample_type[0] == 'blank':
             g.add((sample, RDF.type, ns_kg.LabBlank))

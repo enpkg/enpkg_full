@@ -1,6 +1,6 @@
 # Parameters
 general:
-  root_data_path: /mnt/j/FASIE_LAB/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
+  root_data_path: /mnt/j/FASIE_LAB/SINERGIA_Project/knowledge_graph/processed_data/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
   # Root directory for raw and treated data, required=True
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
@@ -9,7 +9,7 @@ general:
   polarity: pos # Ionization mode to treat: pos, neg, or both, required=True
 
 massive-id-addition:
-  massive_id: MSV000095812
+  massive_id: MSV000087728
   # MassIVE dataset ID, required=True
   massive_doi: doi:10.25345/C55D8NS2C
   # MassIVE dataset doi, required=True
@@ -197,9 +197,9 @@ graph-builder:
   # Prefix of the spectrum PNG
   gnps_fast_search_prefix: 'https://fasst.gnps2.org/fastsearch/?usi1='
   # Prefix of the GNPS fast search
-  source_taxon_header: source_taxon #source_taxon
+  source_taxon_header: source_taxon #source_taxon #PF1600 is organism_species
   # Header of the source taxon, required=True
-  source_id_header: source_MYC_ID #organism_pf_code #unique identifier (raw material)
+  source_id_header: organism_pf_code #unique identifier (raw material) #
   # Header of the source ID, required=True
  
   graph_format: ttl
