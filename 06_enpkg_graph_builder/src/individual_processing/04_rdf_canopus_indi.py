@@ -38,10 +38,6 @@ greek_alphabet = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠ
 latin_alphabet = 'AaBbGgDdEeZzHhJjIiKkLlMmNnXxOoPpRrSssTtUuFfQqYyWwI2Iu'
 greek2latin = str.maketrans(greek_alphabet, latin_alphabet)
 
-path = os.path.normpath(sample_dir_path)
-samples_dir = [directory for directory in os.listdir(path)]
-df_list = []
-
 g = Graph()
 nm = g.namespace_manager
 kg_uri = params_list_full['graph-builder']['kg_uri']
@@ -49,8 +45,9 @@ ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
 nm.bind(prefix, ns_kg)
 
-# For debug purposes only !!!
-directory = 'VGF138_A02'
+path = os.path.normpath(sample_dir_path)
+samples_dir = [directory for directory in os.listdir(path)]
+df_list = []
 
 for directory in tqdm(samples_dir):
     g = Graph()
@@ -163,28 +160,16 @@ for directory in tqdm(samples_dir):
     pathout = os.path.normpath(os.path.join(pathout, f'canopus_{ionization_mode}.{output_format}'))
     g.serialize(destination=pathout, format=output_format, encoding="utf-8")
     
-    # Save parameters:
-    params_path = os.path.join(sample_dir_path, directory, "rdf", "graph_params.yaml")
+def main():
+    directories = [d for d in os.listdir(sample_dir_path) if os.path.isdir(os.path.join(sample_dir_path, d))]
     
-    if os.path.isfile(params_path):
-        with open(params_path, encoding='UTF-8') as file:    
-            params_list = yaml.load(file, Loader=yaml.FullLoader) 
-    else:
-        params_list = {}  
-            
-    # params_list.update({f'canopus_{ionization_mode}':[{'git_commit':git.Repo(search_parent_directories=True).head.object.hexsha},
-    #                     {'git_commit_link':f'https://github.com/enpkg/enpkg_full/tree/{git.Repo(search_parent_directories=True).head.object.hexsha}'}]})
+    with ProcessPoolExecutor(max_workers=32) as executor:
+        futures = {executor.submit(process_directory, d): d for d in directories}
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"Error processing {futures[future]}: {e}")
 
-    # Retrieve the current Git commit hash
-    git_commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
-
-    # Update params_list with version information in a dictionary format
-    params_list[f'canopus_{ionization_mode}'] = {
-        'git_commit': git_commit_hash,
-        'git_commit_link': f'https://github.com/enpkg/enpkg_full/tree/{git_commit_hash}'
-        }
-
-    with open(os.path.join(params_path), 'w', encoding='UTF-8') as file:
-        yaml.dump(params_list, file)
-        
-    print(f'Results are in : {pathout}')   
+if __name__ == "__main__":
+    main()

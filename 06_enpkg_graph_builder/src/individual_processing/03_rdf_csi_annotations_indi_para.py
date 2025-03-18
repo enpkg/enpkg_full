@@ -5,9 +5,8 @@ import rdflib
 from rdflib import Graph
 from rdflib.namespace import RDF, RDFS, XSD
 from pathlib import Path
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import yaml
-import git
 import traceback
 
 # Function to substitute variables in YAML
@@ -52,6 +51,7 @@ params_list_full = substitute_variables(params_list_full)
 sample_dir_path = os.path.normpath(params_list_full['general']['treated_data_path'])
 ionization_mode = params_list_full['general']['polarity']
 output_format = params_list_full['graph-builder']['graph_format']
+sirius_version = params_list_full['sirius']['options']['sirius_version']
 kg_uri = params_list_full['graph-builder']['kg_uri']
 ns_kg = rdflib.Namespace(kg_uri)
 prefix = params_list_full['graph-builder']['prefix']
@@ -69,43 +69,83 @@ def process_directory(directory):
     g = Graph()
     g.namespace_manager.bind(prefix, ns_kg)
 
-    csi_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_WORKSPACE_SIRIUS", 'compound_identifications.tsv')
-    metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
-
     try:
-        if not os.path.exists(csi_path) or not os.path.exists(metadata_path):
-            print(f"Skipping {directory}, missing files.")
-            return f"Skipped {directory} due to missing files."
+        metadata_path = os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv")
+        if not os.path.exists(metadata_path):
+            print(f"Skipping {directory}, missing metadata file.")
+            return f"Skipped {directory} due to missing metadata."
+        metadata = pd.read_csv(metadata_path, sep='\t')
+
+        if sirius_version in [4, 5]:
+            csi_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_WORKSPACE_SIRIUS", 'compound_identifications.tsv')
+        elif sirius_version == 6:
+            csi_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_WORKSPACE_SIRIUS", 'structure_identifications.tsv')
+        else:
+            print(f"Unsupported Sirius version: {sirius_version}")
+            return
+
+        if not os.path.exists(csi_path):
+            print(f"Skipping {directory}, missing {csi_path}.")
+            return f"Skipped {directory} due to missing identification file."
 
         csi_annotations = pd.read_csv(csi_path, sep='\t')
-        metadata = pd.read_csv(metadata_path, sep='\t')
         csi_annotations.replace({"adduct": adducts_dic}, inplace=True)
 
-        for _, row in csi_annotations.iterrows():
-            feature_id_int = row['id'].rsplit('_', 1)[1]
-            usi = f"mzspec:{metadata['massive_id'][0]}:{metadata['sample_id'][0]}_features_ms2_{ionization_mode}.mgf:scan:{int(feature_id_int)}"
-            feature_id = rdflib.term.URIRef(f"{kg_uri}lcms_feature_{usi}")
-            sirius_annotation_id = rdflib.term.URIRef(f"{kg_uri}sirius_{usi}")
-            InChIkey2D = rdflib.term.URIRef(f"{kg_uri}{row['InChIkey2D']}")
+        if sirius_version in [4, 5]:
+            # Processing logic for Sirius 4 & 5
+            for _, row in csi_annotations.iterrows():
+                feature_id_int = row['id'].rsplit('_', 1)[1]
+                usi = f"mzspec:{metadata['massive_id'][0]}:{metadata['sample_id'][0]}_features_ms2_{ionization_mode}.mgf:scan:{int(feature_id_int)}"
+                feature_id = rdflib.term.URIRef(f"{kg_uri}lcms_feature_{usi}")
+                sirius_annotation_id = rdflib.term.URIRef(f"{kg_uri}sirius_{usi}")
+                InChIkey2D = rdflib.term.URIRef(f"{kg_uri}{row['InChIkey2D']}")
 
-            sirius_params_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_WORKSPACE_SIRIUS", 'params.yml')
-            hash_1 = hash(sirius_params_path)
-            data_1 = open(sirius_params_path).read() if os.path.exists(sirius_params_path) else "No data"
+                sirius_params_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_WORKSPACE_SIRIUS", 'params.yml')
+                hash_1 = hash(sirius_params_path)
+                data_1 = open(sirius_params_path).read() if os.path.exists(sirius_params_path) else "No data"
 
-            has_sirius_annotation_hash = rdflib.term.URIRef(f"{kg_uri}has_sirius_annotation_{hash_1}")
-            g.add((feature_id, has_sirius_annotation_hash, sirius_annotation_id))
-            g.add((has_sirius_annotation_hash, RDFS.subPropertyOf, rdflib.term.URIRef(f"{kg_uri}has_sirius_annotation")))
-            g.add((has_sirius_annotation_hash, ns_kg.has_content, rdflib.term.Literal(data_1)))
+                has_sirius_annotation_hash = rdflib.term.URIRef(f"{kg_uri}has_sirius_annotation_{hash_1}")
+                g.add((feature_id, has_sirius_annotation_hash, sirius_annotation_id))
+                g.add((has_sirius_annotation_hash, RDFS.subPropertyOf, rdflib.term.URIRef(f"{kg_uri}has_sirius_annotation")))
+                g.add((has_sirius_annotation_hash, ns_kg.has_content, rdflib.term.Literal(data_1)))
 
-            g.add((sirius_annotation_id, ns_kg.has_InChIkey2D, InChIkey2D))
-            g.add((sirius_annotation_id, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
-            g.add((sirius_annotation_id, RDFS.label, rdflib.term.Literal(f"Sirius annotation of {usi}")))
-            g.add((sirius_annotation_id, ns_kg.has_sirius_adduct, rdflib.term.Literal(row['adduct'])))
-            g.add((sirius_annotation_id, ns_kg.has_sirius_score, rdflib.term.Literal(row['SiriusScore'], datatype=XSD.float)))
-            g.add((sirius_annotation_id, ns_kg.has_zodiac_score, rdflib.term.Literal(row['ZodiacScore'], datatype=XSD.float)))
-            g.add((sirius_annotation_id, ns_kg.has_cosmic_score, rdflib.term.Literal(row['ConfidenceScore'], datatype=XSD.float)))
-            g.add((InChIkey2D, RDF.type, ns_kg.InChIkey2D))
-            g.add((sirius_annotation_id, RDF.type, ns_kg.SiriusStructureAnnotation))
+                g.add((sirius_annotation_id, ns_kg.has_InChIkey2D, InChIkey2D))
+                g.add((sirius_annotation_id, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
+                g.add((sirius_annotation_id, RDFS.label, rdflib.term.Literal(f"Sirius annotation of {usi}")))
+                g.add((sirius_annotation_id, ns_kg.has_sirius_adduct, rdflib.term.Literal(row['adduct'])))
+                g.add((sirius_annotation_id, ns_kg.has_sirius_score, rdflib.term.Literal(row['SiriusScore'], datatype=XSD.float)))
+                g.add((sirius_annotation_id, ns_kg.has_zodiac_score, rdflib.term.Literal(row['ZodiacScore'], datatype=XSD.float)))
+                g.add((sirius_annotation_id, ns_kg.has_cosmic_score, rdflib.term.Literal(row['ConfidenceScore'], datatype=XSD.float)))
+                g.add((InChIkey2D, RDF.type, ns_kg.InChIkey2D))
+                g.add((sirius_annotation_id, RDF.type, ns_kg.SiriusStructureAnnotation))
+
+        elif sirius_version == 6:
+            # Processing logic for Sirius 6
+            for _, row in csi_annotations.iterrows():
+                feature_id_int = row['mappingFeatureId']
+                usi = f"mzspec:{metadata['massive_id'][0]}:{metadata['sample_id'][0]}_features_ms2_{ionization_mode}.mgf:scan:{int(feature_id_int)}"
+                feature_id = rdflib.term.URIRef(f"{kg_uri}lcms_feature_{usi}")
+                sirius_annotation_id = rdflib.term.URIRef(f"{kg_uri}sirius_{usi}")
+                InChIkey2D = rdflib.term.URIRef(f"{kg_uri}{row['InChIkey2D']}")
+
+                sirius_params_path = os.path.join(sample_dir_path, directory, ionization_mode, f"{directory}_WORKSPACE_SIRIUS", 'params.yml')
+                hash_1 = hash(sirius_params_path)
+                data_1 = open(sirius_params_path).read() if os.path.exists(sirius_params_path) else "No data"
+
+                has_sirius_annotation_hash = rdflib.term.URIRef(f"{kg_uri}has_sirius_annotation_{hash_1}")
+                g.add((feature_id, has_sirius_annotation_hash, sirius_annotation_id))
+                g.add((has_sirius_annotation_hash, RDFS.subPropertyOf, rdflib.term.URIRef(f"{kg_uri}has_sirius_annotation")))
+                g.add((has_sirius_annotation_hash, ns_kg.has_content, rdflib.term.Literal(data_1)))
+
+                g.add((sirius_annotation_id, ns_kg.has_InChIkey2D, InChIkey2D))
+                g.add((sirius_annotation_id, ns_kg.has_ionization, rdflib.term.Literal(ionization_mode)))
+                g.add((sirius_annotation_id, RDFS.label, rdflib.term.Literal(f"Sirius annotation of {usi}")))
+                g.add((sirius_annotation_id, ns_kg.has_sirius_adduct, rdflib.term.Literal(row['adduct'])))
+                g.add((sirius_annotation_id, ns_kg.has_sirius_score, rdflib.term.Literal(row['SiriusScore'], datatype=XSD.float)))
+                g.add((sirius_annotation_id, ns_kg.has_zodiac_score, rdflib.term.Literal(row['ZodiacScore'], datatype=XSD.float)))
+                g.add((sirius_annotation_id, ns_kg.has_cosmic_score, rdflib.term.Literal(row['ConfidenceScoreExact'], datatype=XSD.float)))
+                g.add((InChIkey2D, RDF.type, ns_kg.InChIkey2D))
+                g.add((sirius_annotation_id, RDF.type, ns_kg.SiriusStructureAnnotation))
 
         pathout = os.path.join(sample_dir_path, directory, "rdf/")
         os.makedirs(pathout, exist_ok=True)
@@ -114,7 +154,6 @@ def process_directory(directory):
 
         print(f"Results are in: {pathout}")
         return f"Processed {directory}"
-
     except Exception as e:
         error_message = f"Error processing {directory}: {str(e)}\n{traceback.format_exc()}"
         print(error_message)
@@ -122,11 +161,14 @@ def process_directory(directory):
 
 # Main function
 def main():
-    samples_dir = [directory for directory in os.listdir(sample_dir_path) if not directory.startswith('.')]
+    samples_dir = [directory for directory in os.listdir(sample_dir_path) if os.path.isdir(os.path.join(sample_dir_path, directory))]
     with ProcessPoolExecutor(max_workers=32) as executor:
-        results = executor.map(process_directory, samples_dir)
-    for result in results:
-        print(result)
+        futures = {executor.submit(process_directory, d): d for d in samples_dir}
+        for future in as_completed(futures):
+            try:
+                print(future.result())
+            except Exception as e:
+                print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
