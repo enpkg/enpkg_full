@@ -1,6 +1,6 @@
 # Parameters
 general:
-  root_data_path: /mnt/j/FASIE_LAB/SINERGIA_Project/knowledge_graph/processed_data/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
+  root_data_path: /mnt/j/FASIE_LAB/SINERGIA_Project/knowledge_graph/processed_data/PF1600_collection_QExactive #/mnt/j/FASIE_LAB/Mycomedix/Processed_data/P03P18_Exploris #/home/quirosgu/Desktop/Celastraceae_collection_QExactive #/mnt/j/FASIE_LAB/LuisQ/SINERGIA_Project/Processed_data/Celastraceae_collection_QExactive # Common root directory for raw and treated data
   # Root directory for raw and treated data, required=True
   raw_data_path: ${general.root_data_path}
   # Path to the raw data (or input data) folder, required=True
@@ -11,16 +11,16 @@ general:
 massive-id-addition:
   massive_id: MSV000087728
   # MassIVE dataset ID, required=True
-  massive_doi: doi:10.25345/C55D8NS2C
+  massive_doi: doi:10.25345/C59J97
   # MassIVE dataset doi, required=True
 
 assay-batch: 
-  batch_comment: LCMS of Combretaceae collection POS
+  batch_comment: LCMS of PF1600 collection POS
   # Batch short description, required=True
   batch_instrument: QExactive #Exploris
   # Batch acquisition instrument, required=True
-  batch_date: 2023-12 # Batch date Year-Month, required=True
-  batch_operator: Luis-Manuel_Quiros-Guerrero #Pierre-Marie_Allard #Olivier_Kirchhoffer #Louis-Felix_Nothias
+  batch_date: 2017-01 # Batch date Year-Month, required=True
+  batch_operator: Pierre-Marie_Allard #Luis-Manuel_Quiros-Guerrero #Pierre-Marie_Allard #Olivier_Kirchhoffer #Louis-Felix_Nothias
   # Batch operator, required=True
   batch_reference: doi:10.1021/acscentsci.3c00800
   # Batch protocol references, required = True
@@ -31,11 +31,11 @@ data-organization:
   # Path to the folder containing the mass spec data, required=True
   source_metadata_path: ${general.root_data_path}/ms_data/metadata
   # Path to the folder containing the metadata, required=True
-  sample_metadata_filename: P03_P18_metadata.tsv
+  sample_metadata_filename: metadata.tsv
   # Name of the sample metadata file, required=True
-  lcms_method_params_filename: P03_P18_lcms_method_params.txt
+  lcms_method_params_filename: POS_lcms_method_params.txt
   # Name of the LCMS method parameters file, required=True
-  lcms_processing_params_filename: P03_P18_lcms_processing_params.xml #lcms_processing_params.mzbatch
+  lcms_processing_params_filename: POS_lcms_processing_params.mzbatch #.xml #lcms_processing_params.mzbatch
   # Name of the LCMS processing parameters file, required=True
 
 sirius: #define the path and the version of Sirius you are using
@@ -197,7 +197,7 @@ graph-builder:
   # Prefix of the spectrum PNG
   gnps_fast_search_prefix: 'https://fasst.gnps2.org/fastsearch/?usi1='
   # Prefix of the GNPS fast search
-  source_taxon_header: source_taxon #source_taxon #PF1600 is organism_species
+  source_taxon_header: organism_species #source_taxon #PF1600 is organism_species
   # Header of the source taxon, required=True
   source_id_header: organism_pf_code #unique identifier (raw material) #
   # Header of the source ID, required=True

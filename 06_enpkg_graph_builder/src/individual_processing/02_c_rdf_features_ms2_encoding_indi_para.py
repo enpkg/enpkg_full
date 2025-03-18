@@ -88,9 +88,9 @@ def load_and_filter_from_mgf(path) -> list:
         mz_values = spectrum.peaks.mz
         intensity_values = spectrum.peaks.intensities
 
-        # Normalize intensities
-        # max_intensity = max(intensity_values) if intensity_values.size > 0 else 1
-        # normalized_intensities = [i / max_intensity for i in intensity_values]
+        #Normalize intensities
+        max_intensity = max(intensity_values) if intensity_values.size > 0 else 1
+        normalized_intensities = [i / max_intensity for i in intensity_values]
 
         # Construct the raw MGF text for each spectrum
         spectrum.raw_mgf = "\n".join([

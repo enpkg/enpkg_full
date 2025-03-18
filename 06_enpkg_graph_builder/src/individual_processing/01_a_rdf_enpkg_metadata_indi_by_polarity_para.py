@@ -132,7 +132,7 @@ def process_directory(directory):
             try:
                 metadata_taxo = pd.read_csv(metadata_taxo_path, sep='\t')
 
-                wd_series = metadata_taxo['wd.value'].dropna().str.strip()
+                wd_series = metadata_taxo['wd.value'].dropna().apply(lambda x: str(x).strip())
 
                 if not wd_series.empty:
                     wd_url = wd_series.iloc[0]
