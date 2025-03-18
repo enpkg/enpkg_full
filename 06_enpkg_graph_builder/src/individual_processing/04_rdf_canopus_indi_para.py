@@ -3,6 +3,7 @@ import sys
 import yaml
 import traceback
 from pathlib import Path
+import rdflib
 from rdflib import Graph, Namespace, RDF, RDFS, XSD, Literal
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
@@ -115,8 +116,8 @@ def process_directory(directory):
         elif sirius_version == 5:
                 # Canopus NPC results integration for sirius 5
                 try:
-                    canopus_npc_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_compound_summary.tsv')
-                    canopus_annotations = pd.read_csv(canopus_npc_path, encoding="utf-8").fillna('Unknown')
+                    canopus_npc_path = os.path.join(sample_dir_path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_compound_summary.tsv')
+                    canopus_annotations = pd.read_csv(canopus_npc_path, encoding="utf-8", sep='\t').fillna('Unknown')
 
                     for _, row in canopus_annotations.iterrows():
                         
@@ -148,8 +149,8 @@ def process_directory(directory):
         elif sirius_version == 6:
                 # Canopus NPC results integration for sirius 5
                 try:
-                    canopus_npc_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_structure_summary.tsv')
-                    canopus_annotations = pd.read_csv(canopus_npc_path, encoding="utf-8").fillna('Unknown')
+                    canopus_npc_path = os.path.join(sample_dir_path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_structure_summary.tsv')
+                    canopus_annotations = pd.read_csv(canopus_npc_path, encoding="utf-8", sep='\t').fillna('Unknown')
 
                     for _, row in canopus_annotations.iterrows():
                         
