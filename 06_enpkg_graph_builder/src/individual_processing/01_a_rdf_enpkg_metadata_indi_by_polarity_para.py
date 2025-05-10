@@ -71,7 +71,11 @@ if not os.path.exists(sample_dir_path):
     print(f"Sample directory path not found: {sample_dir_path}")
     sys.exit(1)
 
-samples_dir = [directory for directory in os.listdir(sample_dir_path) if not directory.startswith('.')]
+samples_dir = [
+    directory for directory in os.listdir(sample_dir_path)
+    if not directory.startswith('.')
+    and os.path.isfile(os.path.join(sample_dir_path, directory, f"{directory}_metadata.tsv"))
+]
 
 def process_directory(directory):
     g = Graph()
