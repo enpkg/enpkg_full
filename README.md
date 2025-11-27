@@ -31,38 +31,27 @@ cd enpkg_full
 
 ### Install the required environment
 
-We offer both `Mamba` or `Poetry` installation solutions, see below:
-
-#### Mamba
-
-Start your journey by setting up the required environment. It's a breeze (or not) with Mamba! See the [Mamba documentation](https://mamba.readthedocs.io/en/latest/) for more details.
+Dependency management is now handled with [uv](https://github.com/astral-sh/uv). It will both provision the expected Python version (3.10–3.11) and install everything declared in `pyproject.toml`.
 
 ```bash
-mamba env create -f environment.yml
-```
+# Optionally ensure the matching interpreter is cached
+uv python install 3.11
 
-#### Poetry
+# Install runtime dependencies defined in pyproject.toml
+uv sync
 
-First, see the [Poetry documentation](https://python-poetry.org/docs/) for more details.
-
-```bash
-poetry install
+# Include developer/test tooling as well
+uv sync --dev
 ```
 
 ### Activate the environment
 
-#### Mamba
-
-Once the environment is ready, bring it to life with this simple command:
+`uv sync` creates a local `.venv` directory. Either activate it manually or run commands through `uv`:
 
 ```bash
-conda activate enpkg_full
-```
-
-#### Poetry
-
-```bash
-poetry shell
+source .venv/bin/activate
+# or
+uv run python monolith/monolith/pipeline/default_pipeline.py
 ```
 
 ## 🌐 Install Sirius Locally
