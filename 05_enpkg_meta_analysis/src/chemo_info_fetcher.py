@@ -148,18 +148,22 @@ samples_dir = [directory for directory in os.listdir(path)]
 
 # Check if sql DB of metadata already exist and load short IK if yes
 print('Connecting to SQL DB')
+short_ik_in_db = []
 if os.path.exists(sql_path):
     dat = sqlite3.connect(sql_path)
     print(f'Connected to {sql_path}')
-    query = dat.execute("SELECT * From structures_metadata")
-    cols = [column[0] for column in query.description]
-    df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
-    short_ik_in_db = list(set(list(df_metadata['short_inchikey'])))
-    print(f'{len(short_ik_in_db)} short IK in DB')
-    dat.close()
+    try:
+        query = dat.execute("SELECT * From structures_metadata")
+        cols = [column[0] for column in query.description]
+        df_metadata = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+        short_ik_in_db = list(set(df_metadata['short_inchikey']))
+        print(f'{len(short_ik_in_db)} short IK in DB')
+    except sqlite3.OperationalError:
+        print('structures_metadata table not found, starting a fresh database.')
+    finally:
+        dat.close()
 else:
     print(f'No SQL DB found at {sql_path}')
-    short_ik_in_db = []
     
 # First load all unique short IK from ISDB annotation as long as their metadata (smiles 2D, NPC classes)
 metadata_short_ik = {}
