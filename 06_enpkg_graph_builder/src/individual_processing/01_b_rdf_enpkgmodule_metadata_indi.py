@@ -77,7 +77,7 @@ for directory in tqdm(samples_dir):
         if metadata.sample_type[0] == 'sample':
             material_id = rdflib.term.URIRef(kg_uri + metadata[source_id_header][0])
             plant_parts = metadata[['organism_organe', 'organism_broad_organe', 'organism_tissue', 'organism_subsystem']].copy()
-            plant_parts.fillna('unkown', inplace=True)
+            plant_parts = plant_parts.fillna('unkown')
             plant_parts.replace(' ', '_', regex=True, inplace=True)
             
             g.add((material_id, ns_module.has_organe, rdflib.term.URIRef(module_uri + plant_parts['organism_organe'][0])))

@@ -82,7 +82,7 @@ for directory in tqdm(samples_dir):
         try:
             canopus_npc_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'npc_summary.csv')
             canopus_annotations = pd.read_csv(canopus_npc_path, encoding="utf-8")
-            canopus_annotations.fillna('Unknown', inplace=True)
+            canopus_annotations = canopus_annotations.fillna('Unknown')
             for _, row in canopus_annotations.iterrows():        
                 # feature_id = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_feature_" + str(row['name']) + '_' + ionization_mode)
                 # canopus_annotation_id = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_canopus_annotation_" + str(row['name'])+ '_' + ionization_mode)
@@ -126,7 +126,7 @@ for directory in tqdm(samples_dir):
         try:
             canopus_npc_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_compound_summary.tsv')
             canopus_annotations = pd.read_csv(canopus_npc_path, sep='\t', encoding="utf-8")
-            canopus_annotations.fillna('Unknown', inplace=True)
+            canopus_annotations = canopus_annotations.fillna('Unknown')
             for _, row in canopus_annotations.iterrows():
                 
                 feature_id = row['id'].rsplit('_', 1)[1]

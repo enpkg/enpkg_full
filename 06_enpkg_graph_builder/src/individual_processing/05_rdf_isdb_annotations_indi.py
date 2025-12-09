@@ -62,7 +62,7 @@ for directory in tqdm(samples_dir):
     try:
         isdb_annotations = pd.read_csv(isdb_path, sep='\t')
         metadata = pd.read_csv(metadata_path, sep='\t')
-        isdb_annotations.adduct.fillna('[M+H]+', inplace=True)
+        isdb_annotations['adduct'] = isdb_annotations['adduct'].fillna('[M+H]+')
         isdb_annotations.replace({"adduct": adducts_dic},inplace=True)
     except FileNotFoundError:
         continue

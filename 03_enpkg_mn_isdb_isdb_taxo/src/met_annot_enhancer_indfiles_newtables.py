@@ -543,8 +543,8 @@ for sample_dir in repository_path_list:
 
             col_prev = None
             for col_ref, col_att, col_match in zip(cols_ref, cols_att, cols_match):
-                    dt_isdb_results[col_ref].fillna('unknown', inplace=True)
-                    dt_isdb_results[col_att].fillna('unknown', inplace=True)
+                    dt_isdb_results[col_ref] = dt_isdb_results[col_ref].fillna('unknown')
+                    dt_isdb_results[col_att] = dt_isdb_results[col_att].fillna('unknown')
                     dt_isdb_results[col_ref] = dt_isdb_results[col_ref].apply(lambda x: [x])
                     dt_isdb_results[col_att] = dt_isdb_results[col_att].apply(lambda x: [x])
                     dt_isdb_results[col_match] = [list(set(a).intersection(set(b))) for a, b in zip(dt_isdb_results[col_ref], dt_isdb_results[col_att])] # Allows to compare 2 lists
@@ -684,7 +684,7 @@ for sample_dir in repository_path_list:
             col_matched = ['matched_genus', 'matched_family', 'matched_order', 'matched_order', 'matched_phylum', 'matched_kingdom', 'matched_domain']
             for col in col_matched:
                 dt_isdb_results_chem_rew[col] = dt_isdb_results_chem_rew[col].replace('nan', np.NaN)  
-                dt_isdb_results_chem_rew['lowest_matched_taxon'].fillna(dt_isdb_results_chem_rew[col], inplace=True)
+                dt_isdb_results_chem_rew['lowest_matched_taxon'] = dt_isdb_results_chem_rew['lowest_matched_taxon'].fillna(dt_isdb_results_chem_rew[col])
 
             annot_attr = ['rank_spec', 'score_input', 'libname', 'short_inchikey', 'structure_smiles_2D', 'structure_molecular_formula', 'adduct',
                         'structure_exact_mass', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class',

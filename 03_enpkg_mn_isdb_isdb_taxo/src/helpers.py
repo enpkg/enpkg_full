@@ -66,10 +66,8 @@ def annotation_table_formatter_taxo(input_df, min_score_taxo_ms1, min_score_chem
     col_matched = ['matched_genus', 'matched_family', 'matched_order',
                     'matched_order', 'matched_phylum', 'matched_kingdom', 'matched_domain']
     for col in col_matched:
-        input_df[col] = input_df[col].replace(
-            'nan', np.NaN)
-        input_df['lowest_matched_taxon'].fillna(
-            input_df[col], inplace=True)
+        input_df[col] = input_df[col].replace('nan', np.NaN)
+        input_df['lowest_matched_taxon'] = input_df['lowest_matched_taxon'].fillna(input_df[col])
 
     annot_attr = ['rank_spec', 'score_input', 'libname', 'short_inchikey', 'structure_smiles_2D', 'structure_molecular_formula', 'adduct',
                     'structure_exact_mass', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass',
@@ -152,5 +150,4 @@ def annotation_table_formatter_no_taxo(input_df, min_score_taxo_ms1, min_score_c
     dt_output_cyto.reset_index(inplace=True)
 
     return dt_output_flat, dt_output_cyto
-
 

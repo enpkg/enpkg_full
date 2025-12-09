@@ -26,7 +26,7 @@ def taxonomical_reponderator(dt_isdb_results, min_score_taxo_ms1):
     col_prev = None
 
     for col_ref, col_att, col_match in zip(cols_ref, cols_att, cols_match):
-        df[col_ref].fillna('Unknown', inplace=True)
+        df[col_ref] = df[col_ref].fillna('Unknown')
         df[col_ref] = df[col_ref].apply(lambda x: [x])
         df[col_att] = df[col_att].apply(lambda x: [x])
         df[col_match] = [list(set(a).intersection(set(b))) for a, b in zip(df[col_ref], df[col_att])] # Allows to compare 2 lists
@@ -154,6 +154,5 @@ def chemical_reponderator(clusterinfo_summary_file, dt_isdb_results, top_N_chemi
           str(len(dt_isdb_results[(dt_isdb_results['structure_taxonomy_npclassifier_03class_score'] == 3)])))
 
     return dt_isdb_results
-
 
 
