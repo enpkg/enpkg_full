@@ -71,25 +71,13 @@ uv run pytest
 
 Check details at https://boecker-lab.github.io/docs.sirius.github.io/install/
 
-To get the latest version for your platform, run the `install_sirius.sh` script specifying the path chosen for the installation. For example, from the root of the repository:
+Run `src/install_sirius.sh <install_dir>` to download and unpack the latest release for your platform, e.g.:
 
 ```bash
-bash src/install_sirius.sh /home/username/sirius
+bash src/install_sirius.sh /opt/sirius
 ```
 
-The script auto-detects your OS/CPU, but you can override them via optional arguments, e.g. for an Intel Mac:
-
-```bash
-bash src/install_sirius.sh /home/username/sirius macos x64
-```
-
-On macOS, the zip contains `sirius.app`; launch it with:
-
-```bash
-/home/username/sirius/sirius.app/Contents/MacOS/sirius
-```
-
-Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#-editing-config-files).
+The script auto-detects the OS/CPU, but you can override them (e.g. `macos x64`) if needed. After installation, identify the full path to the `sirius` binary (`/opt/sirius/sirius/bin/sirius` on Linux, `/opt/sirius/sirius.app/Contents/MacOS/sirius` on macOS, etc.) and store it in `.env` as `PATH_TO_SIRIUS`. The workflow reads that variable when launching Sirius.
 
 
 ## 🔐 Environment Variables (.env)
