@@ -2,6 +2,8 @@ from urllib.error import HTTPError
 import pandas as pd 
 from pandas import json_normalize
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import os
 from json import JSONDecodeError
 from tqdm import tqdm
@@ -40,6 +42,25 @@ Path(sql_db_path).mkdir(parents=True, exist_ok=True)
 
 """ Functions """
 
+def _build_session(max_retries=3, backoff_factor=1.0):
+    retry_cfg = Retry(
+        total=max_retries,
+        read=max_retries,
+        connect=max_retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=(500, 502, 503, 504),
+        allowed_methods=frozenset(['GET'])
+    )
+    session = requests.Session()
+    adapter = HTTPAdapter(max_retries=retry_cfg)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
+
+session = _build_session()
+
+
 def get_all_ik(url):
     query = '''
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -49,7 +70,12 @@ WHERE{
     optional { ?wd wdt:P2017 ?isomeric_smiles } 
 }
   '''
-    r = requests.get(url, params={'format': 'json', 'query': query})
+    try:
+        r = session.get(url, params={'format': 'json', 'query': query}, timeout=60)
+        r.raise_for_status()
+    except requests.RequestException as exc:
+        print(f'Failed to retrieve Wikidata records: {exc}')
+        return None
     try:
       data = r.json()
       results = pd.DataFrame.from_dict(data).results.bindings
@@ -256,11 +282,18 @@ print('Getting WD identifiers and formatting results')
 
 if len(df_ik_meta) > 0:
     wd_all = get_all_ik(wd_url)
-    wd_all['short_inchikey'] = wd_all['inchikey'].str[:14]
-    wd_filtred = wd_all[wd_all['short_inchikey'].isin(list(metadata_short_ik.keys()))]
-    
-    df_total = wd_filtred.merge(df_ik_meta, on='short_inchikey', how='outer')
-    df_total['isomeric_smiles'] = df_total['isomeric_smiles'].fillna(df_total['smiles'])
-    df_total = df_total.fillna('no_wikidata_match')
-                
+    if wd_all is not None:
+        wd_all['short_inchikey'] = wd_all['inchikey'].str[:14]
+        wd_filtred = wd_all[wd_all['short_inchikey'].isin(list(metadata_short_ik.keys()))]
+        df_total = wd_filtred.merge(df_ik_meta, on='short_inchikey', how='outer')
+        df_total['isomeric_smiles'] = df_total['isomeric_smiles'].fillna(df_total['smiles'])
+        df_total = df_total.fillna('no_wikidata_match')
+    else:
+        print('Skipping Wikidata enrichment due to request failures.')
+        df_total = df_ik_meta.copy()
+        df_total['wikidata_id'] = 'no_wikidata_match'
+        df_total['inchikey'] = df_total['short_inchikey']
+        df_total['isomeric_smiles'] = df_total['smiles']
+        df_total = df_total.fillna('no_wikidata_match')
+
     update_sqldb(df_total, sql_path)
