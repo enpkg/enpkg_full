@@ -59,21 +59,32 @@ def process_directory(directory):
     g = Graph()
     nm = g.namespace_manager
 
-    csi_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
+    csi_dir = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS')
+    csi_candidates = [
+        os.path.join(csi_dir, 'compound_identifications.tsv'),
+        os.path.join(csi_dir, 'structure_identifications.tsv')
+    ]
+    csi_path = next((f for f in csi_candidates if os.path.exists(f)), None)
     metadata_path = os.path.join(path, directory, directory + '_metadata.tsv')
 
     try:
-        if not os.path.exists(csi_path) or not os.path.exists(metadata_path):
+        if csi_path is None or not os.path.exists(metadata_path):
             print(f'No CSI or metadata file for {directory}')
             return f'Skipped {directory} due to missing files.'
-            raise FileNotFoundError
 
         csi_annotations = pd.read_csv(csi_path, sep='\t')
         metadata = pd.read_csv(metadata_path, sep='\t')
         csi_annotations.replace({"adduct": adducts_dic},inplace=True)
 
         for _, row in csi_annotations.iterrows():
-            feature_id_int = row['id'].rsplit('_', 1)[1]
+            raw_identifier = row.get('id')
+            if isinstance(raw_identifier, str):
+                feature_id_int = raw_identifier.rsplit('_', 1)[1]
+            else:
+                mapping_id = row.get('mappingFeatureId')
+                if pd.isna(mapping_id):
+                    raise KeyError("No feature identifier column ('id' or 'mappingFeatureId') in CSI summary.")
+                feature_id_int = str(int(mapping_id))
             # feature_id = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_feature_" + str(feature_id_int) + '_' + ionization_mode)
             # sirius_annotation_id = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_sirius_annotation_" + str(feature_id_int)  + '_' + ionization_mode)
             
@@ -99,7 +110,11 @@ def process_directory(directory):
             g.add((sirius_annotation_id, ns_kg.has_sirius_adduct, rdflib.term.Literal(row['adduct'])))
             g.add((sirius_annotation_id, ns_kg.has_sirius_score, rdflib.term.Literal(row['SiriusScore'], datatype=XSD.float)))
             g.add((sirius_annotation_id, ns_kg.has_zodiac_score, rdflib.term.Literal(row['ZodiacScore'], datatype=XSD.float)))
-            g.add((sirius_annotation_id, ns_kg.has_cosmic_score, rdflib.term.Literal(row['ConfidenceScore'], datatype=XSD.float)))       
+            if 'ConfidenceScore' in row:
+                confidence_value = row['ConfidenceScore']
+            else:
+                confidence_value = row.get('ConfidenceScoreExact')
+            g.add((sirius_annotation_id, ns_kg.has_cosmic_score, rdflib.term.Literal(confidence_value, datatype=XSD.float)))       
             g.add((InChIkey2D, RDF.type, ns_kg.InChIkey2D))
             g.add((sirius_annotation_id, RDF.type, ns_kg.SiriusStructureAnnotation))
 

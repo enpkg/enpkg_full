@@ -130,15 +130,29 @@ def process_directory(directory):
             elif sirius_version in (5, 6):
                 # Canopus NPC results integration for sirius 5
                 try:
-                    canopus_npc_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_compound_summary.tsv')
+                    canopus_dir = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS')
+                    canopus_candidates = [
+                        os.path.join(canopus_dir, 'canopus_compound_summary.tsv'),
+                        os.path.join(canopus_dir, 'canopus_structure_summary.tsv')
+                    ]
+                    canopus_npc_path = next((f for f in canopus_candidates if os.path.exists(f)), None)
+                    if canopus_npc_path is None:
+                        raise FileNotFoundError('No CANOPUS summary file found (expected canopus_compound_summary.tsv or canopus_structure_summary.tsv)')
                     canopus_annotations = pd.read_csv(canopus_npc_path, sep='\t', encoding="utf-8")
                     canopus_annotations = canopus_annotations.fillna('Unknown')
                     for _, row in canopus_annotations.iterrows():
                         
-                        feature_id = row['id'].rsplit('_', 1)[1]
+                        feature_identifier = row.get('id')
+                        if isinstance(feature_identifier, str):
+                            feature_id_raw = feature_identifier.rsplit('_', 1)[1]
+                        else:
+                            mapping_id = row.get('mappingFeatureId')
+                            if pd.isna(mapping_id):
+                                raise KeyError("No feature identifier column ('id' or 'mappingFeatureId') in CANOPUS summary.")
+                            feature_id_raw = str(mapping_id)
                         # canopus_annotation_id = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_canopus_annotation_" + str(feature_id)+ '_' + ionization_mode)                
                         # feature_id = rdflib.term.URIRef(kg_uri + metadata.sample_id[0] + "_feature_" + str(feature_id)+ '_' + ionization_mode)             
-                        usi = 'mzspec:' + metadata['massive_id'][0] + ':' + metadata.sample_id[0] + '_features_ms2_'+ ionization_mode+ '.mgf:scan:' + str(feature_id)
+                        usi = 'mzspec:' + metadata['massive_id'][0] + ':' + metadata.sample_id[0] + '_features_ms2_'+ ionization_mode+ '.mgf:scan:' + str(feature_id_raw)
                         feature_id = rdflib.term.URIRef(kg_uri + 'lcms_feature_' + usi)
                         canopus_annotation_id = rdflib.term.URIRef(kg_uri + "canopus_" + usi)
                         
