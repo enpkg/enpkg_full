@@ -103,14 +103,14 @@ Because `.env` is ignored by git, you can safely customize it without leaking cr
 
 You will need to edit the following parameters files:
 
-- Parameters at [user.yaml](https://github.com/enpkg/enpkg_full/blob/c8e649290ee72f000c3385e7669b5da2215abad8/params/user.yml)
+- Parameters at [user.yaml](https://github.com/enpkg/enpkg_full/blob/main/params/user.yml)
 
 All parameters are commented and should be self-explanatory.
 
 
 ### E.g. selection of the dataset to process
 
-For example you can enter the record_id and record_name of a Zenodo dataset on [line](https://github.com/enpkg/enpkg_full/blob/c8e649290ee72f000c3385e7669b5da2215abad8/params/user.yml#L8).
+For example you can enter the record_id and record_name of a Zenodo dataset on [line](https://github.com/enpkg/enpkg_full/blob/main/params/user.yml#L8).
 As it is set up here, this will download a small test dataset (https://doi.org/10.5281/zenodo.10018590).
 
 ## 🚀 Launching the Workflow
