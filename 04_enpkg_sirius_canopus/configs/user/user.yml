@@ -2,11 +2,17 @@ paths:
   - path_to_data: '' # Path to files to process
   - path_to_sirius: '/mnt/c/Program Files/sirius/' #'/Applications/sirius.app/Contents/MacOS/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
 options:
-  - sirius_version: 5 # Sirius version: 4 or 5
+  - sirius_version: 6 # Sirius version: 4, 5, or 6
   - ionization: 'neg' # Ionization mode to process: pos or neg
-  - sirius_command_arg:  " sirius -i {file} --output {output_name} --maxmz 800 formula --ppm-max 10 \
-# --profile orbitrap --candidates 10 --tree-timeout 50 --compound-timeout 500 --ions-considered [M-H+K-H]-,[M-H]-,[M-H+Na-H]- \
-# --ions-enforced [M-H]- zodiac fingerprint structure --db bio canopus write-summaries --output {output_name}"
+  - sirius_command_arg:  "-i {file} --output {output_name} --maxmz 2500 config --AlgorithmProfile=orbitrap --MS2MassDeviation.allowedMassDeviation=5.0ppm \
+--SpectralSearchDB=METACYC,BloodExposome,CHEBI,COCONUT,FooDB,GNPS,HMDB,HSDB,KEGG,KNAPSACK,LOTUS,LIPIDMAPS,MACONDA,MESH,MiMeDB,NORMAN,PLANTCYC,PUBCHEMANNOTATIONBIO,PUBCHEMANNOTATIONDRUG,PUBCHEMANNOTATIONFOOD,PUBCHEMANNOTATIONSAFETYANDTOXIC,SUPERNATURAL,TeroMol,YMDB \
+--AdductSettings.fallback=[[M+H]+,[M+Na]+,[M+K]+,[M+H3N+H]+,[M-H2O+H]+] \
+--FormulaSettings.enforced=H,C,N,O,P \
+--IdentitySearchSettings.precursorDeviation=20.0ppm \
+--FormulaSearchSettings.performBottomUpAboveMz=0 \
+--FormulaSearchDB=, \
+--StructureSearchDB=METACYC,BloodExposome,CHEBI,COCONUT,FooDB,GNPS,HMDB,HSDB,KEGG,KNAPSACK,LOTUS,LIPIDMAPS,MACONDA,MESH,MiMeDB,NORMAN,PLANTCYC,PUBCHEMANNOTATIONBIO,PUBCHEMANNOTATIONDRUG,PUBCHEMANNOTATIONFOOD,PUBCHEMANNOTATIONSAFETYANDTOXIC,SUPERNATURAL,TeroMol,YMDB \
+formulas zodiac fingerprints classes structures write-summaries"
         # Don't change input and output parameters
   - recompute: False # Recompute files for which output directory (with the same prefix) already exists: True of False (no quotes)
   - zip_output: True # Zip individual features outputs to save disk space: True of False (no quotes)

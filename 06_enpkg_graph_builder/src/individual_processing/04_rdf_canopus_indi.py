@@ -121,7 +121,7 @@ for directory in tqdm(samples_dir):
         except NotADirectoryError:
             continue
         
-    elif sirius_version == 5:
+    elif sirius_version in (5, 6):
         # Canopus NPC results integration for sirius 5
         try:
             canopus_npc_path = os.path.join(path, directory, ionization_mode, directory + '_WORKSPACE_SIRIUS', 'canopus_compound_summary.tsv')
