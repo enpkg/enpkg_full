@@ -5,7 +5,7 @@ general:
   polarity: pos # required=True, help="ionization mode to treat: pos, neg or both", type= str
 
 data-download:
-  record_id: 10018590 # required=False, help="Zenodo record id of the dataset to download", type= int
+  record_id: 10018590 # required=False, help="Zenodod record id of the dataset to download", type= int
   record_name: enpkg_toy_dataset.zip # required=False, help="Name of the dataset to download", type= str
 
 data-organization:
@@ -59,19 +59,19 @@ isdb:
 
 sirius:
   paths:
-    path_to_sirius: /Users/pma/02_tmp/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
+    path_to_sirius: /Users/pma/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
   options:
-    sirius_version: 5 # Sirius version: 4 or 5
+    sirius_version: 6 # Sirius version: 4, 5, or 6
     ionization: 'pos' # Ionization mode to process: pos or neg
-    sirius_command_arg:  "-i {file} --output {output_name} --maxmz 800 config --IsotopeSettings.filter=true --FormulaSearchDB=BIO --Timeout.secondsPerTree=0 \
-  --FormulaSettings.enforced=HCNOP --Timeout.secondsPerInstance=0 --AdductSettings.detectable=[[M+Na]+,[M+H3N+H]+,[M-H4O2+H]+,[M+K]+,[M+H]+,[M-H2O+H]+] \
-  --UseHeuristic.mzToUseHeuristicOnly=650 --AlgorithmProfile=qtof --IsotopeMs2Settings=IGNORE --MS2MassDeviation.allowedMassDeviation=10.0ppm \
-  --NumberOfCandidatesPerIon=1 --UseHeuristic.mzToUseHeuristic=300 --FormulaSettings.detectable=B,Cl,Br,Se,S --NumberOfCandidates=10 \
-  --ZodiacNumberOfConsideredCandidatesAt300Mz=10 --ZodiacRunInTwoSteps=true --ZodiacEdgeFilterThresholds.minLocalConnections=10 \
-  --ZodiacEdgeFilterThresholds.thresholdFilter=0.95 --ZodiacEpochs.burnInPeriod=2000 --ZodiacEpochs.numberOfMarkovChains=10 --ZodiacNumberOfConsideredCandidatesAt800Mz=50 \
-  --ZodiacEpochs.iterations=20000 --AdductSettings.enforced=, --AdductSettings.fallback=[[M+Na]+,[M-H+K+K]+,[M+K]+,[M+H]+,[M-H2O+H]+] \
-  --FormulaResultThreshold=true --InjectElGordoCompounds=true --StructureSearchDB=BIO --RecomputeResults=false \
-  formula zodiac fingerprint structure canopus write-summaries --output {output_name}"
+    sirius_command_arg:  "-i {file} --output {output_name} --maxmz 2500 config --AlgorithmProfile=orbitrap --MS2MassDeviation.allowedMassDeviation=5.0ppm \
+  --SpectralSearchDB=METACYC,BloodExposome,CHEBI,COCONUT,FooDB,GNPS,HMDB,HSDB,KEGG,KNAPSACK,LOTUS,LIPIDMAPS,MACONDA,MESH,MiMeDB,NORMAN,PLANTCYC,PUBCHEMANNOTATIONBIO,PUBCHEMANNOTATIONDRUG,PUBCHEMANNOTATIONFOOD,PUBCHEMANNOTATIONSAFETYANDTOXIC,SUPERNATURAL,TeroMol,YMDB \
+  --AdductSettings.fallback=[[M+H]+,[M+Na]+,[M+K]+,[M+H3N+H]+,[M-H2O+H]+] \
+  --FormulaSettings.enforced=H,C,N,O,P \
+  --IdentitySearchSettings.precursorDeviation=20.0ppm \
+  --FormulaSearchSettings.performBottomUpAboveMz=0 \
+  --FormulaSearchDB=, \
+  --StructureSearchDB=METACYC,BloodExposome,CHEBI,COCONUT,FooDB,GNPS,HMDB,HSDB,KEGG,KNAPSACK,LOTUS,LIPIDMAPS,MACONDA,MESH,MiMeDB,NORMAN,PLANTCYC,PUBCHEMANNOTATIONBIO,PUBCHEMANNOTATIONDRUG,PUBCHEMANNOTATIONFOOD,PUBCHEMANNOTATIONSAFETYANDTOXIC,SUPERNATURAL,TeroMol,YMDB \
+  formulas zodiac fingerprints classes structures write-summaries"
           # Don't change input and output parameters
     recompute: False # Recompute files for which output directory (with the same prefix) already exists: True of False (no quotes)
     zip_output: True # Zip individual features outputs to save disk space: True of False (no quotes)

@@ -77,6 +77,18 @@ To get the latest version for your platform, run the `install_sirius.sh` script 
 bash src/install_sirius.sh /home/username/sirius
 ```
 
+The script auto-detects your OS/CPU, but you can override them via optional arguments, e.g. for an Intel Mac:
+
+```bash
+bash src/install_sirius.sh /home/username/sirius macos x64
+```
+
+On macOS, the zip contains `sirius.app`; launch it with:
+
+```bash
+/home/username/sirius/sirius.app/Contents/MacOS/sirius
+```
+
 Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#-editing-config-files).
 
 

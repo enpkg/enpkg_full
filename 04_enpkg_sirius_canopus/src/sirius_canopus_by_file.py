@@ -110,11 +110,11 @@ for directory in tqdm(samples_dir):
                 C.npcSummary().to_csv(os.path.join(output_folder, "npc_summary.csv"))            
                 print(f"Zipping outputs on sample: {directory}")
                 
-            elif sirius_version == 5:
+            elif sirius_version in (5, 6):
                 print(f"Computing Sirius on sample: {directory}")
                 compute_sirius_canopus(sirius_mgf_path, output_folder)
             else:
-                raise ValueError("sirius_version parameter must be 4 or 5")
+                raise ValueError("sirius_version parameter must be 4, 5, or 6")
             
             if zip_output:
                 for dir in [directory for directory in os.listdir(output_folder)]:
