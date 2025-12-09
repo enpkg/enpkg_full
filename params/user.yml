@@ -59,7 +59,7 @@ isdb:
 
 sirius:
   paths:
-    path_to_sirius: /Users/pma/sirius/sirius.app/Contents/MacOS/sirius #/Users/pma/Downloads/sirius/sirius.app/sirius/bin #/Applications/sirius.app/Contents/MacOS/sirius #'/prog/sirius/bin/sirius' #'/prog/sirius/bin/sirius' # Path to sirius executable (default is 'sirius'). 
+    path_to_sirius: sirius # Path to sirius executable; override with the PATH_TO_SIRIUS environment variable if needed.
   options:
     sirius_version: 6 # Sirius version: 4, 5, or 6
     ionization: 'pos' # Ionization mode to process: pos or neg
@@ -104,7 +104,7 @@ graph-builder:
 
   wd_namespace : http://www.wikidata.org/entity/ # required=True, help="Namespace of Wikidata", type= str
 
-  structures_db_path : ../sql_db/structures_metadata.db # required=True, help="Path to the structures SQL database", type= str /home/allardpm/ENPKG/data/structures_db/structures_metadata.db #../
+  structures_db_path : ../sql_db/structures_metadata.db # required=True, help="Path to the structures SQL database", type= str
   gnps_dashboard_prefix : 'https://dashboard.gnps2.org/?usi=mzspec:' # required=True, help="Prefix of the GNPS dashboard", type= str
   gnps_tic_pic_prefix : 'https://dashboard.gnps2.org/mspreview?usi=mzspec:' # required=True, help="Prefix of the GNPS TIC/PIC", type= str
   massive_prefix : 'https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=' # required=True, help="Prefix of the MassIVE dataset", type= str
@@ -119,5 +119,5 @@ graph-builder:
     n_decimals: 1 # number of decimals of m/z to use for spectral binning
 
   graph_format : ttl # required=True, help="Format of the graph", type= str (default is .ttl format (ttl), but can be .nt (nt))
-  graph_output_dir_path : ../data/output/standalone_graphs #/home/allardpm/ENPKG/data/pf1600_sub/standalone_graphs #../tests/data/output/standalone_graphs # 
+  graph_output_dir_path : ../data/output/standalone_graphs # Directory for standalone graph exports
   compress_outputs : False # required=False, help="Compress outputs", type= bool, default= False)

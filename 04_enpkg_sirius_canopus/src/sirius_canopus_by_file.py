@@ -21,7 +21,11 @@ params_list = params_list_full['sirius']
 
 
 path_to_data = params_list_full['general']['treated_data_path']
-path_to_sirius = params_list_full['sirius']['paths']['path_to_sirius']
+raw_path_to_sirius = params_list_full['sirius']['paths']['path_to_sirius']
+path_to_sirius = os.environ.get('PATH_TO_SIRIUS', raw_path_to_sirius)
+path_to_sirius = os.path.expanduser(path_to_sirius)
+if not path_to_sirius:
+    raise ValueError("PATH_TO_SIRIUS is not set and no default path is provided in params.")
 
 sirius_version = params_list_full['sirius']['options']['sirius_version']
 ionization = params_list_full['sirius']['options']['ionization']
