@@ -92,13 +92,23 @@ On macOS, the zip contains `sirius.app`; launch it with:
 Once Sirius is installed, you will need to precise the path to the executable see section [Editing config files](#-editing-config-files).
 
 
-## 🔐 Setting Up Environment Variables
+## 🔐 Environment Variables (.env)
 
-Setting up the environment variables. To login to Sirius, you will need to set up the following environment variables (SIRIUS_USERNAME and SIRIUS_PASSWORD). You can do so launching the following command:
+Runtime secrets and machine-specific paths (e.g., `PATH_TO_SIRIUS`, `SIRIUS_USERNAME`, `SIRIUS_PASSWORD`) live in a `.env` file that is ignored by git. Configure it as follows:
 
 ```bash
-bash src/setup_sirius_env.sh
+cp .env.example .env
 ```
+
+Edit `.env` with your editor of choice and provide the correct values (absolute path to the Sirius executable, Sirius account credentials, etc.). Before running the workflow, load the file into your shell session:
+
+```bash
+set -a
+source .env
+set +a
+```
+
+Because `.env` is ignored by git, you can safely customize it without leaking credentials.
 
 
 ## 🛠 Editing Config Files

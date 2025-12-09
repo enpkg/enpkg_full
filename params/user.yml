@@ -59,7 +59,7 @@ isdb:
 
 sirius:
   paths:
-    path_to_sirius: sirius # Path to sirius executable; override with the PATH_TO_SIRIUS environment variable if needed.
+    path_to_sirius: PATH_TO_SIRIUS # Path to sirius executable; override with the PATH_TO_SIRIUS environment variable if needed.
   options:
     sirius_version: 6 # Sirius version: 4, 5, or 6
     ionization: 'pos' # Ionization mode to process: pos or neg
