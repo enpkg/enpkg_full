@@ -1,10 +1,12 @@
 [tool.poetry]
-name = "enpkg_full"
+name = "enpkg"
 version = "0.0.1"
 description = "ENPKG FULL"
 authors = ["Pierre-Marie Allard <pierre-marie.allard@unifr.ch>"]
 license = "LICENSE"
-packages = [{include = "*.py", from = "src/"}]
+packages = [
+    {include = "monolith", from = "monolith/"}
+]
 readme = "README.md"
 homepage = "https://github.com/enpkg/enpkg_full"
 repository = "https://github.com/enpkg/enpkg_full"
@@ -42,17 +44,8 @@ userinput = "^1.0.22"
 lxml = "^5.2.2"
 taxonomical-utils = "^0.0.9"
 duckdb = "^1.1.0"
-
-
-
-[tool.poetry.dev-dependencies]
-pytest = "^7.4.4"
-pytest-asyncio = "^0.23.2"
-pytest-mock = "*"
-requests_mock = "*"
-coverage = "^7.4.0"
-pytest-xdist = "^3.5.0"
-pytest-cov = "^4.1.0"
+pydantic = "^2.12.5"
+pip = "^25.3"
 
 
 [tool.poetry.scripts]
@@ -62,6 +55,13 @@ start = "app:main"
 tox = "^4.12.0"
 black = "^23.12.1"
 isort = "^5.13.2"
+pytest = "^7.4.4"
+pytest-asyncio = "^0.23.2"
+pytest-mock = "*"
+requests_mock = "*"
+coverage = "^7.4.0"
+pytest-xdist = "^3.5.0"
+pytest-cov = "^4.1.0"
 
 [build-system]
 requires = ["poetry-core"]
