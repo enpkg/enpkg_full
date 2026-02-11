@@ -1,6 +1,0 @@
-.pytest_cache/
-db_metadata
-0.csv
-0.csv.gz
-*.graphml
-sirius_output
