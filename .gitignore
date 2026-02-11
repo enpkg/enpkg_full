@@ -1,7 +1,7 @@
 *.DS_Store
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -134,3 +134,15 @@ dmypy.json
 sql_db
 
 tests/data
+
+enpkg/lib
+enpkg/tests
+enpkg/lib64
+enpkg/data
+enpkg/npc_classification_arx.duckdb
+enpkg/npc_classification_unclassed.duckdb
+enpkg/npc_classification.duckdb
+enpkg/pytest.ini
+enpkg/pyvenv.cfg
+enpkg/requirements.txt
+enpkg/topological_propagation.drawio
