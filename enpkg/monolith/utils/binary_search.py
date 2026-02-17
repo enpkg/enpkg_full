@@ -22,7 +22,9 @@ def binary_search_by_key(
     Returns:
         A tuple with a boolean indicating if the key was found and the index of the key.
     """
-    assert key is not None, "Key should not be None"
+    
+    if not key_func:
+        raise ValueError("Key function must be provided")
     if left is None:
         left = 0
     if right is None:
