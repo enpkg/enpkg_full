@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
 
-from monolith.data.analysis import Analysis
+from enpkg.monolith.data.analysis import Analysis
 
 
 class PipelineStep(ABC):
