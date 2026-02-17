@@ -5,7 +5,7 @@ from matchms import Spectrum
 import numpy as np
 from scipy.stats import entropy
 from enpkg.monolith.data.ms1_data_classes import ChemicalAdduct
-from enpkg.monolith.data.isdb_data_classes import ISDBChemicalAnnotation
+from enpkg.monolith.data.isdb_data_classes.isdb_chemical_annotation import ISDBChemicalAnnotation
 from enpkg.monolith.data.sirius_data_classes import SiriusChemicalAnnotation
 from enpkg.monolith.data.lotus_class import (
     Lotus,
