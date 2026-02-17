@@ -1,183 +1,31 @@
 """Submodule for the ISDB enricher."""
 
 import logging
-from pathlib import Path
 from time import time
-from typing import Optional, NamedTuple
-import pickle
+from typing import Optional
 from logging import Logger
 import pandas as pd
 import numpy as np
 from tqdm.auto import tqdm, trange
 from tqdm.contrib import tzip
-from downloaders import BaseDownloader
 
 from matchms import calculate_scores
 from matchms.similarity import PrecursorMzMatch
 from matchms.similarity import CosineGreedy
 from matchms import Spectrum
+
 from enpkg.monolith.enrichers.enricher import Enricher
 from enpkg.monolith.data.analysis import Analysis
 from enpkg.monolith.data.annotated_spectra_class import AnnotatedSpectrum
-from enpkg.monolith.data.isdb_data_classes.isdb_configuration_class import ISDBEnricherConfig, GeneralParams, Urls, Paths
-from enpkg.monolith.data.isdb_data_classes import ISDBChemicalAnnotation
+from enpkg.monolith.configuration.isdb_configuration_class import ISDBEnricherConfig, GeneralParams, Urls, Paths
+from enpkg.monolith.data.isdb_data_classes.isdb_chemical_annotation import ISDBChemicalAnnotation
 from enpkg.monolith.data.lotus_class import Lotus
 from enpkg.monolith.data.otl_class import Match
 from enpkg.monolith.utils import binary_search_by_key, label_propagation_algorithm
-from enpkg.monolith.exceptions import DBLoaderError
-
-# Valid URL field names that can be used in redownload_if_exists
-VALID_URL_FIELDS: list[str] = [
-    "taxo_db_metadata",
-    "spectral_db_pos",
-    "spectral_db_neg",
-    "taxo_db_pathways",
-    "taxo_db_superclasses",
-    "taxo_db_classes",
-]
+from enpkg.monolith.loaders.database_loader import DBLoader
 
 
-class DownloadInfo(NamedTuple):
-    """Container for database download information."""
-    field_name: str
-    url: str
-    local_path: str
-
-
-class DBLoader:
-    """
-    Loader for the different databases (ISDB, Taxonomical, etc).
-    """
-
-    def __init__(self, configuration: ISDBEnricherConfig, logger: Logger):
-
-        self.configuration = configuration
-        self.logger = logger
-        self.downloads: list[DownloadInfo] = []
-
-        if self.configuration.urls is not None:
-            self._validate_redownload_fields()
-            self._collect_downloads()
-            if self.downloads:
-                self._download_databases()
-
-    def _validate_redownload_fields(self) -> None:
-        """Validate that redownload_if_exists contains only valid URL field names."""
-        
-        redownload = self.configuration.general_params.redownload_if_exists
-        
-        # If it's a boolean, no validation needed
-        if isinstance(redownload, bool):
-            return
-        
-        # If it's a list, validate each field name
-        if isinstance(redownload, list):
-            invalid_fields = [field for field in redownload if field not in VALID_URL_FIELDS]
-            if invalid_fields:
-                raise DBLoaderError(
-                    f"Invalid field name(s): {invalid_fields}. "
-                    f"Valid fields are: {VALID_URL_FIELDS}"
-                )
-
-    def _collect_downloads(self) -> None:
-        """Match URLs to their corresponding local paths by field name."""
-        
-        for field_name, url in self.configuration.urls.items():
-            local_path = getattr(self.configuration.paths, field_name, None)
-            if local_path is not None:
-                self.downloads.append(DownloadInfo(field_name, url, local_path))
-            else:
-                self.logger.warning(
-                    f"No local path defined for URL '{field_name}'; skipping download"
-                )
-
-    def _download_databases(self) -> None:
-        """Download databases from URLs to local paths."""
-
-        self.logger.info(f"Downloading {len(self.downloads)} databases")
-        downloader = BaseDownloader()
-        for download in self.downloads:
-            try:
-                p = Path(download.local_path)
-                redownload = self.configuration.general_params.redownload_if_exists
-                should_redownload = (
-                    redownload is True or 
-                    (isinstance(redownload, list) and download.field_name in redownload)
-                )
-                
-                if p.is_file() and not should_redownload:
-                    self.logger.info(
-                        f"Database at {download.local_path} already exists; skipping download"
-                    )
-                else:
-                    downloader.download(download.url, download.local_path)
-                    self.logger.info(f"Downloaded database from {download.url} to {download.local_path}")
-                    
-            except Exception as e:
-                self.logger.error(
-                    f"Failed to download database from {download.url} to {download.local_path}: {str(e)}"
-                )
-        self.logger.info("Databases downloaded successfully")
-
-    def load_taxonomical_databases(self) -> None:
-        """Load databases into memory."""
-
-        self.logger.info("Loading databases into memory")
-        
-        start = time()
-        self.lotus_metadata: pd.DataFrame = pd.read_csv(
-            self.configuration.paths.taxo_db_metadata, low_memory=False
-        )
-        self.logger.info(f"Loaded Taxonomical Database metadata in {time() - start:.2f} seconds")
-        self.logger.debug(f"Loaded Taxonomical Database metadata with columns: {self.lotus_metadata.columns.tolist()}")
-        
-        start = time()
-        self.lotus_metadata_pathways: pd.DataFrame = pd.read_csv(
-            self.configuration.paths.taxo_db_pathways,
-            index_col=0,
-        )
-        self.logger.info(f"Loaded Taxonomical Database pathways in {time() - start:.2f} seconds")
-        self._number_of_pathways = self.lotus_metadata_pathways.shape[1]
-        self._pathways = self.lotus_metadata_pathways.columns
-        
-        start = time()
-        self.lotus_metadata_superclasses: pd.DataFrame = pd.read_csv(
-            self.configuration.paths.taxo_db_superclasses,
-            index_col=0,
-        )
-        self.logger.info(f"Loaded Taxonomical Database superclasses in {time() - start:.2f} seconds")
-        self._number_of_superclasses = self.lotus_metadata_superclasses.shape[1]
-        self._superclasses = self.lotus_metadata_superclasses.columns
-        
-        start = time()
-        self.lotus_metadata_classes: pd.DataFrame = pd.read_csv(
-            self.configuration.paths.taxo_db_classes,
-            index_col=0,
-        )
-        self.logger.info(f"Loaded Taxonomical Database classes in {time() - start:.2f} seconds")
-        self._number_of_classes = self.lotus_metadata_classes.shape[1]
-        self._classes = self.lotus_metadata_classes.columns
-        
-        self.logger.info(
-            "Loaded %d Taxonomical Database metadata entries",
-            len(self.lotus_metadata),
-        )
-
-    def load_spectral_databases(self, mode) -> None:
-        """Load spectral databases into memory."""
-        start = time()
-        if mode == "pos":
-            with open(self.configuration.paths.spectral_db_pos, "rb") as f:
-                self.spectral_db: list[Spectrum] = pickle.load(f)
-        elif mode == "neg":
-            with open(self.configuration.paths.spectral_db_neg, "rb") as f:
-                self.spectral_db: list[Spectrum] = pickle.load(f)
-        else:
-            raise ValueError(f"Invalid mode '{mode}' for loading spectral database")
-        self.logger.debug(f"Loaded {mode} mode spectral database in {time() - start:.2f} seconds")
-
-
-class ISDBEnricher(Enricher):
+class Ms2Enricher(Enricher):
     """Enricher that adds ISDB information to the analysis."""
 
     def __init__(
@@ -277,7 +125,7 @@ class ISDBEnricher(Enricher):
 
             spectrum.set("lotus_entries", self.lotus_objects[smallest_idx:largest_idx])
 
-            self.logger.debug(f"Linked lotus to spectra in {time() - start:.2f} seconds")
+        self.logger.debug(f"Linked lotus to spectra in {time() - start:.2f} seconds")
 
     
     def _initialize_lotus_objects(self) -> None:
@@ -341,6 +189,9 @@ class ISDBEnricher(Enricher):
         cosinegreedy = CosineGreedy(
             tolerance=self.configuration.spectral_match_params.msms_mz_tol
         )
+        self.logger.debug(
+            f"similarity_score: {similarity_score}\nCosinegreedy: {cosinegreedy}"
+        )
 
         range_size = 1000
         for min_range in trange(
@@ -351,18 +202,20 @@ class ISDBEnricher(Enricher):
             leave=False,
             dynamic_ncols=True,
         ):
-            spectra_chunk: list[AnnotatedSpectrum] = analysis.tandem_mass_spectra[
+            spectra_chunk: list[AnnotatedSpectrum] = analysis.spectra[
                 min_range : min_range + range_size
             ]
 
             cosine_similarities_with_database = calculate_scores(
                 references=spectra_chunk,
-                queries=self._spectral_db_pos,
+                queries=self.databases.spectral_db,
                 similarity_function=similarity_score,
             )
 
             idx_reference = cosine_similarities_with_database.scores[:, :][0]
+            self.logger.debug(f"idx_reference: {idx_reference}")
             idx_query = cosine_similarities_with_database.scores[:, :][1]
+            self.logger.debug(f"idx_query: {idx_query}")
             for x, y in tzip(
                 idx_reference,
                 idx_query,
@@ -371,7 +224,7 @@ class ISDBEnricher(Enricher):
             ):
                 if x < y:
                     msms_score, n_matches = cosinegreedy.pair(
-                        spectra_chunk[x], self._spectral_db_pos[y]
+                        spectra_chunk[x], self.databases.spectral_db[y]
                     )[()]
                     if (
                         msms_score > self.configuration.spectral_match_params.min_score
@@ -382,7 +235,7 @@ class ISDBEnricher(Enricher):
                             ISDBChemicalAnnotation(
                                 cosine_similarity=msms_score,
                                 number_of_matched_peaks=int(n_matches),
-                                lotus=self._spectral_db_pos[y].get("lotus_entries"),
+                                lotus=self.databases.spectral_db[y].get("lotus_entries"),
                             )
                         )
 
@@ -506,19 +359,19 @@ class ISDBEnricher(Enricher):
         loading_bar.update(1)
         loading_bar.close()
 
-        for i, spectrum in enumerate(analysis.tandem_mass_spectra):
-            spectrum.set_isdb_hammer_pathway_scores(propagated_pathway[i])
-            spectrum.set_isdb_hammer_superclass_scores(propagated_superclass[i])
-            spectrum.set_isdb_hammer_class_scores(propagated_class[i])
+        # for i, spectrum in enumerate(analysis.tandem_mass_spectra):
+        #     spectrum.set_isdb_hammer_pathway_scores(propagated_pathway[i])
+        #     spectrum.set_isdb_hammer_superclass_scores(propagated_superclass[i])
+        #     spectrum.set_isdb_hammer_class_scores(propagated_class[i])
 
         # THIS SHOULD BE DELETED AFTERWARDS! DO NOT KEEP THIS!
 
-        pathway = pd.DataFrame(propagated_pathway, columns=self._pathways)
-        pathway.to_csv("downloads/isdb_pathway.csv", index=False)
-        superclass = pd.DataFrame(propagated_superclass, columns=self._superclasses)
-        superclass.to_csv("downloads/isdb_superclass.csv", index=False)
-        classes = pd.DataFrame(propagated_class, columns=self._classes)
-        classes.to_csv("downloads/isdb_class.csv", index=False)
+        # pathway = pd.DataFrame(propagated_pathway, columns=self._pathways)
+        # pathway.to_csv("downloads/isdb_pathway.csv", index=False)
+        # superclass = pd.DataFrame(propagated_superclass, columns=self._superclasses)
+        # superclass.to_csv("downloads/isdb_superclass.csv", index=False)
+        # classes = pd.DataFrame(propagated_class, columns=self._classes)
+        # classes.to_csv("downloads/isdb_class.csv", index=False)
 
         return analysis
     
@@ -551,5 +404,4 @@ if __name__ == "__main__":
         paths = paths
     )
     print("Config=", config)
-
-    enricher = ISDBEnricher(configuration=config, logger=logger)
+    enricher = Ms2Enricher(configuration=config, logger=logger)

@@ -6,8 +6,8 @@ from typing import Optional
 import pandas as pd
 from matchms.importing import load_from_mgf, load_from_mzml, load_from_mzxml
 
-from monolith.data.analysis import Analysis
-from monolith.data.sample_metadata import SampleMetadata
+from enpkg.monolith.data.analysis import Analysis
+from enpkg.monolith.data.sample_metadata import SampleMetadata
 
 
 class AnalysisLoader:
