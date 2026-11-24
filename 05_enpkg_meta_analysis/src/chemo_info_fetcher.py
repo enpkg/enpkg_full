@@ -1,17 +1,13 @@
 from urllib.error import HTTPError
 import pandas as pd 
-from pandas import json_normalize
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import os
-from json import JSONDecodeError
 from tqdm import tqdm
 import sqlite3
-from sqlite3 import Error
-from pathlib import Path
-import argparse
-import textwrap
+from contextlib import closing
+import re
 from pathlib import Path
 from rdkit.Chem import AllChem
 import yaml
@@ -61,42 +57,61 @@ def _build_session(max_retries=3, backoff_factor=1.0):
 session = _build_session()
 
 
-def get_all_ik(url):
-    query = '''
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-SELECT ?ik ?wd ?isomeric_smiles
-WHERE{
-    ?wd wdt:P235 ?ik .
-    optional { ?wd wdt:P2017 ?isomeric_smiles } 
-}
-  '''
-    try:
-        r = session.get(url, params={'format': 'json', 'query': query}, timeout=60)
-        r.raise_for_status()
-    except requests.RequestException as exc:
-        print(f'Failed to retrieve Wikidata records: {exc}')
-        return None
-    try:
-      data = r.json()
-      results = pd.DataFrame.from_dict(data).results.bindings
-      df = json_normalize(results)
-      df.rename(columns={'wd.value':'wikidata_id', 'ik.value':'inchikey', 'isomeric_smiles.value': 'isomeric_smiles'}, inplace=True)
-      return df[['wikidata_id', 'inchikey', 'isomeric_smiles']]
-    except JSONDecodeError:
-       return None
+def wikidata_matches(connectivity_keys):
+    keys = sorted(connectivity_keys)
+    if any(not re.fullmatch('[A-Z]{14}', key) for key in keys):
+        raise ValueError('Expected a 14-letter InChIKey connectivity block')
+    rows = []
+    batch_size = 100
+    for start in range(0, len(keys), batch_size):
+        batch = keys[start:start + batch_size]
+        literals = ' '.join(f'"{key}"' for key in batch)
+        query = f'''
+            PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+            SELECT DISTINCT ?wd ?ik ?isomeric_smiles WHERE {{
+              VALUES ?connectivity {{ {literals} }}
+              {{ SELECT ?wd ?ik (SUBSTR(STR(?ik), 1, 14) AS ?connectivity)
+                 WHERE {{ ?wd wdt:P235 ?ik }} }}
+              OPTIONAL {{ ?wd wdt:P2017 ?isomeric_smiles }}
+            }}
+        '''
+        try:
+            response = session.get('https://qlever.dev/api/wikidata', params={'query': query},
+                                   headers={'Accept': 'application/sparql-results+json',
+                                            'User-Agent': 'ENPKG (https://github.com/enpkg/enpkg_full)'},
+                                   timeout=60)
+            response.raise_for_status()
+            bindings = response.json()['results']['bindings']
+            if not isinstance(bindings, list):
+                raise ValueError('expected a list of result bindings')
+            for binding in bindings:
+                entity = binding['wd']['value']
+                inchikey = binding['ik']['value']
+                if (not re.fullmatch(r'https?://www\.wikidata\.org/entity/Q[1-9][0-9]*', entity)
+                        or not re.fullmatch('[A-Z]{14}-[A-Z]{10}-[A-Z]', inchikey)
+                        or inchikey[:14] not in batch):
+                    raise ValueError(f'unexpected Wikidata match {entity!r}, {inchikey!r}')
+                smiles = binding['isomeric_smiles']['value'] if 'isomeric_smiles' in binding else None
+                rows.append((inchikey[:14], entity, inchikey, smiles))
+        except (requests.RequestException, ValueError, KeyError, TypeError) as error:
+            raise RuntimeError(f'Wikidata lookup failed for batch starting with {batch[0]}: {error}') from error
+    return pd.DataFrame(rows, columns=['short_inchikey', 'wikidata_id', 'inchikey', 'isomeric_smiles'])
 
 
-def update_sqldb(dataframe, sql_path):
-    """ create a database connection to a SQLite database """
-    conn = None
-    try:
-        conn = sqlite3.connect(sql_path)
-        dataframe.to_sql('structures_metadata', con=conn, if_exists='append')
-    except Error as e:
-        print(e)
-    finally:
-        if conn:
-            conn.close()
+LEGACY_FALLBACK = "wikidata_id = 'no_wikidata_match' AND inchikey = short_inchikey"
+
+
+def update_sqldb(dataframe, sql_path, fallback_keys):
+    with closing(sqlite3.connect(sql_path)) as connection, connection:
+        if not fallback_keys:
+            dataframe.to_sql('structures_metadata', con=connection, if_exists='append')
+            return
+        connection.executemany(f'DELETE FROM structures_metadata WHERE short_inchikey = ? AND {LEGACY_FALLBACK}',
+                               ((key,) for key in fallback_keys))
+        columns = ', '.join(dataframe.columns)
+        placeholders = ', '.join('?' for column in dataframe.columns)
+        connection.executemany(f'INSERT INTO structures_metadata ({columns}) VALUES ({placeholders})',
+                               dataframe.itertuples(index=False, name=None))
 
 def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npclassifier.ucsd.edu/classify?smiles="):   
     for sik, smiles in tqdm(short_ik_smiles_query.items(), leave=False):
@@ -141,27 +156,19 @@ def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npcla
     
 
 
-wd_url = 'https://query.wikidata.org/sparql'
-
 path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 
 # Check if sql DB of metadata already exist and load short IK if yes
 print('Connecting to SQL DB')
-short_ik_in_db = []
+short_ik_in_db = set()
+legacy_fallback_keys = set()
 if os.path.exists(sql_path):
-    dat = sqlite3.connect(sql_path)
-    print(f'Connected to {sql_path}')
-    try:
-        query = dat.execute("SELECT * From structures_metadata")
-        cols = [column[0] for column in query.description]
-        df_metadata = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
-        short_ik_in_db = list(set(df_metadata['short_inchikey']))
-        print(f'{len(short_ik_in_db)} short IK in DB')
-    except sqlite3.OperationalError:
-        print('structures_metadata table not found, starting a fresh database.')
-    finally:
-        dat.close()
+    with closing(sqlite3.connect(sql_path)) as connection:
+        if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='structures_metadata'").fetchone():
+            for key, fallback in connection.execute(f'SELECT DISTINCT short_inchikey, {LEGACY_FALLBACK} FROM structures_metadata'):
+                (legacy_fallback_keys if fallback else short_ik_in_db).add(key)
+            print(f'{len(short_ik_in_db)} resolved connectivity keys in DB')
 else:
     print(f'No SQL DB found at {sql_path}')
     
@@ -241,43 +248,14 @@ else :
 print('Processing Sirius results')
 
 for directory in tqdm(samples_dir):
-    sirius_path_pos = os.path.join(path, directory, 'pos',  directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
-    sirius_path_neg = os.path.join(path, directory, 'neg',  directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
-    sirius_annotations_pos = None
-    sirius_annotations_neg = None
-    try:
-        sirius_annotations_pos = pd.read_csv(sirius_path_pos, sep='\t')\
-            [['InChIkey2D','smiles']]
-    except FileNotFoundError:
-        pass
-    except NotADirectoryError:
-        pass
-    try:
-        sirius_annotations_neg = pd.read_csv(sirius_path_neg, sep='\t')\
-            [['InChIkey2D','smiles']]
-    except FileNotFoundError:
-        pass
-    except NotADirectoryError:
-        pass
-
-    if (sirius_annotations_pos is not None) & (sirius_annotations_neg is not None):
-        sirius_annotations = pd.concat([sirius_annotations_pos, sirius_annotations_neg])
-        del(sirius_annotations_pos, sirius_annotations_neg)
-    elif sirius_annotations_pos is not None:
-        sirius_annotations = sirius_annotations_pos.copy()
-        del(sirius_annotations_pos)
-    elif sirius_annotations_neg is not None:
-        sirius_annotations = sirius_annotations_neg.copy()
-        del(sirius_annotations_neg)
-    else:
-        continue
-    
-    #print(f'Processing sirius results for sample {len(sirius_annotations)}')
-    
-    sirius_annotations.drop_duplicates(subset=['InChIkey2D'], inplace=True)        
-    short_ik = list(sirius_annotations['InChIkey2D'])
-    short_ik_smiles_query = pd.Series(sirius_annotations.smiles.values,index=sirius_annotations.InChIkey2D).to_dict()
-    metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
+    for polarity in ('pos', 'neg'):
+        workspace = Path(path, directory, polarity, directory + '_WORKSPACE_SIRIUS')
+        for filename in ('structure_identifications.tsv', 'compound_identifications.tsv'):
+            report = workspace / filename
+            if report.is_file():
+                annotations = pd.read_csv(report, sep='\t', usecols=['InChIkey2D', 'smiles'])
+                annotations = annotations.dropna(subset=['InChIkey2D']).drop_duplicates('InChIkey2D')
+                get_NPC(annotations.set_index('InChIkey2D')['smiles'].to_dict(), short_ik_in_db, metadata_short_ik)
      
 df_ik_meta = pd.DataFrame.from_dict(metadata_short_ik, orient='index')\
     .reset_index().rename(columns={'index':'short_inchikey'}).fillna('unknown')
@@ -285,19 +263,9 @@ df_ik_meta = pd.DataFrame.from_dict(metadata_short_ik, orient='index')\
 print('Getting WD identifiers and formatting results')
 
 if len(df_ik_meta) > 0:
-    wd_all = get_all_ik(wd_url)
-    if wd_all is not None:
-        wd_all['short_inchikey'] = wd_all['inchikey'].str[:14]
-        wd_filtred = wd_all[wd_all['short_inchikey'].isin(list(metadata_short_ik.keys()))]
-        df_total = wd_filtred.merge(df_ik_meta, on='short_inchikey', how='outer')
-        df_total['isomeric_smiles'] = df_total['isomeric_smiles'].fillna(df_total['smiles'])
-        df_total = df_total.fillna('no_wikidata_match')
-    else:
-        print('Skipping Wikidata enrichment due to request failures.')
-        df_total = df_ik_meta.copy()
-        df_total['wikidata_id'] = 'no_wikidata_match'
-        df_total['inchikey'] = df_total['short_inchikey']
-        df_total['isomeric_smiles'] = df_total['smiles']
-        df_total = df_total.fillna('no_wikidata_match')
+    matches = wikidata_matches(metadata_short_ik)
+    df_total = df_ik_meta.merge(matches, on='short_inchikey', how='left')
+    df_total['isomeric_smiles'] = df_total['isomeric_smiles'].fillna(df_total['smiles'])
+    df_total = df_total.fillna('no_wikidata_match')
 
-    update_sqldb(df_total, sql_path)
+    update_sqldb(df_total, sql_path, legacy_fallback_keys.intersection(metadata_short_ik))

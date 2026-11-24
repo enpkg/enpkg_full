@@ -23,7 +23,7 @@ echo "Launching 07_workflow_annotate_sirius.sh"
 sh ./workflow/07_workflow_annotate_sirius.sh
 
 echo "Launching 08_workflow_chemo_info_fetcher.sh"
-sh ./workflow/08_workflow_chemo_info_fetcher.sh
+sh ./workflow/08_workflow_chemo_info_fetcher.sh || exit $?
 
 echo "Launching 09_workflow_memo.sh"
 sh ./workflow/09_workflow_memo.sh

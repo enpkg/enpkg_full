@@ -31,12 +31,15 @@ conda activate meta_analysis
 ```
 
 ## 1. Fetching structures' metadata
-To enrich our knowledge graph, we will fetch for dereplicated structures their Wikidata id and their [NPClassifier](https://pubs.acs.org/doi/10.1021/acs.jnatprod.1c00399) taxonomy. Because the NPClassifier API can be slow for large amount of structures, results are stored in a SQL database. You can use the same SQL DB in your different project to avoid processing multiple times the same structure. The first time you run the process, a new SQL DB will be created at the default location (**./output_data/sql_db/{sql_name.db}**).
-### Worflow
-To do so, use the following command:
-```console
-python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ --sql_name structures_metadata.db
+Set `general.treated_data_path`, `chemo-info-fetching.sql_db_path` (directory with trailing slash), and `chemo-info-fetching.sql_db_name` in `params/user.yml`. Relative paths resolve from `05_enpkg_meta_analysis`. For a benchmark replay, use a copy of the trial database or a new database and keep the retained trial unchanged. Run from the repository root.
+
+```sh
+python 05_enpkg_meta_analysis/src/chemo_info_fetcher.py
 ```
+
+Enrichment reads ISDB annotations, an optional GNPS job and both `structure_identifications.tsv` and `compound_identifications.tsv` in each positive and negative SIRIUS workspace. The fetcher looks up distinct 14-letter InChIKey connectivity blocks in the [QLever Wikidata snapshot](https://qlever.dev/wikidata), in batches of 100. Each matching Wikidata `P235` full InChIKey and chemical entity is retained. A connectivity match can include multiple stereoisomers or isotopologues. NPClassifier supplies the classification for SIRIUS-only structures.
+
+`no_wikidata_match` denotes a successful lookup with no matching entry in the queried snapshot. An HTTP or response error stops enrichment before any rows are written. Rerun the command after service recovery. A cached row with `wikidata_id = 'no_wikidata_match'` and `inchikey = short_inchikey` is retried when its connectivity key occurs in the input. Keep the resulting SQLite database with the benchmark inputs and record the lookup date because the public snapshot changes. Sample taxon links are generated separately.
 
 ## 2. MEMO analysis (optional)
 Using individual fragmentation spectra files, it is possible to generate for each sample a MS2-based fingerprint, or [MEMO](https://github.com/mandelbrot-project/memo) vector. This allows to rapidly compare large amount of chemo-diverse samples to identify potential similarities in composition among them. Here, the aligned MEMO matrix of all samples' fingerprints will be generated.
